@@ -22,7 +22,7 @@ This will be a website
 
 ---
 
-The goal of this project is to provide gamers an online platform to find, create, join and interact with groups, clans and parties of other gamers playing the same game as their selves.
+The goal of this project is to provide gamers an online platform to find, create, join and interact with groups, clans and parties of other gamers playing the same game as their selves for the express purpose of playing together.
 
 ## Demographic
 
