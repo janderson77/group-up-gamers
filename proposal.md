@@ -46,41 +46,54 @@ My approach will be to first select a frontend React theme, as design is not my 
 ### The database schema
 
 1. Games
-   * Name [pk]
-   * genres
+   * ID [pk]
+   * game_name
+   * slug
+   * cover_art
+   * summary
+   * game_website_url
    * platforms
    * multiplayer_modes
 2. Users
-   * Username [pk]
-   * Email
-   * Password
-   * First Name
-   * Last Name
-   * Discord URL
+   * ID [pk]
+   * username
+   * email
+   * password
+   * first Name
+   * last Name
+   * discord URL
+   * profile_img_url
 3. Games_playing
-   * Player_username
-   * Game_name
+   * User_id
+   * Game_id
 4. Groups
    * ID [pk]
-   * Group_name
-   * Group_type (group, clan, guild, etc…)
-   * group_game 
-   * group_owner 
-   * Group_discord_url
-   * Group_time_zone
-   * Group_logo_url
+   * group_name
+   * group_game_id
+   * group_owner_id
+   * group_discord_url
+   * group_time_zone
+   * group_logo_url
 5. Group_members
-   * Group_id
-   * Member_username
-   * Is_admin
+   * group_id
+   * user_id
+   * is_admin
    * is_banned
+6. Group Messages
+   * ID [pk]
+   * message_user_id
+   * message_group_id
+   * message_body
+   * posted_at
+
+![Database Schema](./schema.png)
 
 ### Anticipated issues
 
 The major issue I anticipate with the api is the complexity of it. The app will utilize the Twitch [IGDB API](https://api-docs.igdb.com/#about) to gather all game data.  
 Because of the strict rate limit of this api, it will be used to initialize the database, rather than make requests to get game data for every request made by users.  
 I will also be using AWS S3 for the storage/serving of user profile images, as well as creating my own backend api as the api I have chosen to collect the necessary data will not fully serve my purposes
- 
+
 ## Information requested from the users
 
 ---
@@ -141,7 +154,7 @@ The functionality of the app will include, but will not be limited to
    1. Can remove players from group
    1. Can ban users from the group
    1. Can delete the group
- 
+
 ## Features that make this a CRUD app
 
 ---
