@@ -66,6 +66,7 @@ My approach will be to first select a frontend React theme, as design is not my 
 3. Games_playing
    * User_id
    * Game_id
+   * in_game_name
 4. Groups
    * ID [pk]
    * group_name
