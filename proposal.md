@@ -1,5 +1,13 @@
 # Capstone 2 Proposal
 
+## Title
+
+---
+
+Group Up Gamers
+
+URL may end up being groupupgamers.io or some other domain ending
+
 ## Tech Stack
 
 ---
