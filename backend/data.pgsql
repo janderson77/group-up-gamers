@@ -15,14 +15,27 @@ CREATE TABLE users (
     UNIQUE(username, email)
 );
 
+CREATE TABLE game_modes (
+    mode_id integer PRIMARY KEY,
+    mode_name TEXT,
+    mode_slug TEXT
+);
+
+CREATE TABLE platforms (
+    platform_id INTEGER PRIMARY KEY,
+    abbreviation TEXT,
+    alternative_name TEXT,
+    platform_name TEXT
+);
+
 CREATE TABLE games (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     game_name TEXT NOT NULL,
     slug TEXT,
     cover_art TEXT,
     summary TEXT,
-    platforms TEXT[],
-    game_modes TEXT[]
+    platforms INTEGER[],
+    game_modes INTEGER[]
 );
 
 CREATE TABLE games_playing (
@@ -55,3 +68,4 @@ CREATE TABLE group_messages (
     message_body TEXT NOT NULL,
     posted_at DATE
 );
+

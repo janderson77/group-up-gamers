@@ -1,0 +1,132 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "New Game Schema",
+    "description": "The schema for adding a new game to the db.",
+    "default": {},
+    "examples": [
+        {
+            "game_name": "Skyrim",
+            "slug": "skyrim",
+            "cover_art": "string",
+            "summary": "Skyrim is an open world fantasy RPG",
+            "platforms": [
+                "PS4",
+                "Xbox1",
+                "PC"
+            ],
+            "multiplayer_modes": [
+                "battle-royale",
+                "deathmatch"
+            ]
+        }
+    ],
+    "required": [
+        "game_name",
+        "slug"
+    ],
+    "properties": {
+        "game_name": {
+            "$id": "#/properties/game_name",
+            "type": "string",
+            "title": "The game_name schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Skyrim"
+            ]
+        },
+        "slug": {
+            "$id": "#/properties/slug",
+            "type": "string",
+            "title": "The slug schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "skyrim"
+            ]
+        },
+        "cover_art": {
+            "$id": "#/properties/cover_art",
+            "type": "string",
+            "title": "The cover_art schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "string"
+            ]
+        },
+        "summary": {
+            "$id": "#/properties/summary",
+            "type": "string",
+            "title": "The summary schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Skyrim is an open world fantasy RPG"
+            ]
+        },
+        "platforms": {
+            "$id": "#/properties/platforms",
+            "type": "array",
+            "title": "The platforms schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    "PS4",
+                    "Xbox1"
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/platforms/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/platforms/items/anyOf/0",
+                        "type": "string",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": "",
+                        "examples": [
+                            "PS4",
+                            "Xbox1"
+                        ]
+                    }
+                ]
+            }
+        },
+        "multiplayer_modes": {
+            "$id": "#/properties/game_modes",
+            "type": "array",
+            "title": "The game_modes schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    "battle-royale",
+                    "deathmatch"
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/game_modes/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/game_modes/items/anyOf/0",
+                        "type": "string",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": "",
+                        "examples": [
+                            "battle-royale",
+                            "deathmatch"
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "additionalProperties": false
+}
