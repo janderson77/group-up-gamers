@@ -28,3 +28,4 @@ yarn-error.log*
 .vscode
 
 /backend/scrape.js
+/backend/db.pgsql
