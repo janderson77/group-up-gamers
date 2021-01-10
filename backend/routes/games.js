@@ -6,7 +6,14 @@ const { validate } = require("jsonschema");
 
 const {gameNewSchema} = require('../schemas/gameNewSchema')
 
-
+router.get('/', async function(req, res, next) {
+    try{
+        const games = await Game.findAll(req.query);
+        return res.json({games})
+    }catch(e){
+        return next(e)
+    }
+})
 
 router.post('/', async function(req, res, next){
     try{
