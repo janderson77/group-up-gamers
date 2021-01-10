@@ -1,1 +1,7 @@
 exports.gameNewSchema = require('./gameNewSchema')
+exports.gameUpdate = require('./gameUpdate')
+exports.groupNew = require('./groupNew')
+exports.groupUpdate = require('./groupUpdate')
+exports.userAuth = require('./userAuth')
+exports.userNew = require('./userNew')
+exports.userUpdate = require('./userUpdate')

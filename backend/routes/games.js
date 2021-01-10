@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router();
 
 const Game = require('../models/game')
-const { validate } = require("jsonschema");
+const { validate, ValidationError } = require("jsonschema");
 
-const {gameNewSchema} = require('../schemas/gameNewSchema')
+const {gameNewSchema, gameUpdate} = require('../schemas/index')
 
 router.get('/', async function(req, res, next) {
     try{
@@ -13,7 +13,16 @@ router.get('/', async function(req, res, next) {
     }catch(e){
         return next(e)
     }
-})
+});
+
+router.get('/slug', async function (req, res, next) {
+    try{
+        const game = await Game.findOne(req.params.slug);
+        return res.json({game})
+    }catch(e){
+        return next(e);
+    }
+});
 
 router.post('/', async function(req, res, next){
     try{
@@ -32,5 +41,35 @@ router.post('/', async function(req, res, next){
         return next(e)
     }
 });
+
+router.patch('/slug', async function(req, res, next) {
+    try{
+        if('slug' in req.body){
+            return next({status: 400, message: "Not Allowed"});
+        };
+    
+        const isValid = validate(req.body, gameUpdate);
+        if(!isValid.valid){
+            return next({
+                status: 400,
+                message: isValid.errors.map(e => e.stack)
+            });
+        }
+    
+        const game = await Game.updateGame(req.params.slug, req.body);
+        return res.json({game})
+    }catch(e){
+        return next(e)
+    }
+});
+
+router.delete('/slug', async function(req, res, next) {
+    try{
+        await Game.removeGame(req.params.slug);
+        return res.json({message: "Game deleted"});
+    }catch(e) {
+        return next(e)
+    }
+})
 
 module.exports = router
