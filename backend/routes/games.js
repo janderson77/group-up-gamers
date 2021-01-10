@@ -26,14 +26,14 @@ router.get('/slug', async function (req, res, next) {
 
 router.post('/', async function(req, res, next){
     try{
-        // const isValid = validate(req.body, gameNewSchema)
+        const isValid = validate(req.body, gameNewSchema)
 
-        // if(!isValid.valid) {
-        //     return next({
-        //         status: 400,
-        //         message: isValid.errors.map(e => e.stack)
-        //     });
-        // }
+        if(!isValid.valid) {
+            return next({
+                status: 400,
+                message: isValid.errors.map(e => e.stack)
+            });
+        }
 
         const newGame = await Game.addGame(req.body);
         return res.status(201).json({newGame})
