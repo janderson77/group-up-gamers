@@ -15,19 +15,6 @@ CREATE TABLE users (
     UNIQUE(username, email)
 );
 
-CREATE TABLE game_modes (
-    mode_id integer PRIMARY KEY,
-    mode_name TEXT,
-    mode_slug TEXT
-);
-
-CREATE TABLE platforms (
-    platform_id INTEGER PRIMARY KEY,
-    abbreviation TEXT,
-    alternative_name TEXT,
-    platform_name TEXT
-);
-
 CREATE TABLE games (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     game_name TEXT NOT NULL,
@@ -50,7 +37,6 @@ CREATE TABLE groups (
     group_game_id INTEGER NOT NULL REFERENCES games ON DELETE CASCADE,
     group_owner_id INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,
     group_discord_url TEXT,
-    group_time_zone TEXT,
     group_logo_url TEXT
 );
 
@@ -69,3 +55,15 @@ CREATE TABLE group_messages (
     posted_at DATE
 );
 
+CREATE TABLE game_modes (
+    mode_id integer PRIMARY KEY,
+    mode_name TEXT,
+    mode_slug TEXT
+);
+
+CREATE TABLE platforms (
+    platform_id INTEGER PRIMARY KEY,
+    abbreviation TEXT,
+    alternative_name TEXT,
+    platform_name TEXT
+);
