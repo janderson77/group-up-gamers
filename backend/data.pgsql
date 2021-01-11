@@ -12,6 +12,7 @@ CREATE TABLE users (
     last_name VARCHAR(25),
     discord_url TEXT,
     profile_img_url TEXT,
+    is_admin BOOLEAN DEFAULT false,
     UNIQUE(username, email)
 );
 
@@ -43,7 +44,7 @@ CREATE TABLE groups (
 CREATE TABLE group_members (
     group_id INTEGER REFERENCES groups ON DELETE CASCADE,
     user_id INTEGER REFERENCES users ON DELETE CASCADE,
-    is_admin BOOLEAN DEFAULT false,
+    is_group_admin BOOLEAN DEFAULT false,
     is_banned BOOLEAN DEFAULT false
 );
 
