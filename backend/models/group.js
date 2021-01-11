@@ -123,4 +123,4 @@ class Group {
     
 };
 
-module.exports = Company;
+module.exports = Group;
