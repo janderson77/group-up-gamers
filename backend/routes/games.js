@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 
 const Game = require('../models/game')
-const { validate, ValidationError } = require("jsonschema");
+const {validate} = require("jsonschema");
 
 const {gameNewSchema, gameUpdate} = require('../schemas/index')
 
