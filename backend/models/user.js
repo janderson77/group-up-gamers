@@ -8,13 +8,12 @@ class User {
     static async authenticate(data) {
         // try to find the user first
         const result = await db.query(
-            `SELECT username, 
+            `SELECT id,
+                    username, 
                     password, 
                     first_name, 
                     last_name, 
-                    email, 
-                    photo_url, 
-                    is_admin
+                    email
               FROM users 
               WHERE username = $1`,
             [data.username]
@@ -26,6 +25,7 @@ class User {
           // compare hashed password to a new hash from password
           const isValid = await bcrypt.compare(data.password, user.password);
           if (isValid) {
+            delete user.password;
             return user;
           }
         }
@@ -55,8 +55,8 @@ class User {
         const result = await db.query(
             `INSERT INTO users 
                 (username, password, first_name, last_name, email) 
-                VALUES ($1, $2, $3, $4, $5, $6) 
-                RETURNING username, password, first_name, last_name, email`,
+                VALUES ($1, $2, $3, $4, $5) 
+                RETURNING id, username, first_name, last_name, email`,
             [
                 data.username,
                 hashedPassword,

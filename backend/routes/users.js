@@ -5,9 +5,8 @@ const { ensureCorrectUser, authRequired } = require("../middleware/auth");
 
 const User = require("../models/user");
 const { validate } = require("jsonschema");
-const { userNew } = require("../schemas");
 
-const { userNew, userUpdate } = require('../schemas/index');
+const { userNew, userUpdate, userAuth } = require('../schemas/index');
 
 const createToken = require('../helpers/createToken');
 
@@ -32,7 +31,7 @@ router.get("/:username", async function(req, res, next) {
 router.post("/", async function(req, res, next) {
     try {
         delete req.body._token;
-        const validation = validate(req.body, userNewSchema);
+        const validation = validate(req.body, userNew);
 
         if (!validation.valid) {
         return next({
@@ -43,10 +42,33 @@ router.post("/", async function(req, res, next) {
 
         const newUser = await User.register(req.body);
         const token = createToken(newUser);
-        return res.status(201).json({ token });
+        newUser._token = token
+        return res.status(201).json(newUser);
     } catch (e) {
             return next(e);
 };
+});
+
+router.post('/login', async function(req, res, next){
+  try{
+    const isValid = validate(req.body, userAuth);
+
+    if(!isValid.valid){
+      return next({
+        status: 400,
+        message: validation.errors.map(e => e.stack)
+      });
+    };
+
+    const user = await User.authenticate(req.body);
+    const token = createToken(user);
+    user._token = token;
+
+    return res.status(200).json(user)
+
+  }catch(e){
+    return next(e)
+  };
 });
 
 router.patch("/:username", ensureCorrectUser, async function(req, res, next) {
@@ -58,16 +80,19 @@ router.patch("/:username", ensureCorrectUser, async function(req, res, next) {
         username: req.params.username,
         password: req.body.password
       });
-      delete req.body.password;
-      const validation = validate(req.body, userUpdateSchema);
+      let user = req.body;
+      delete user._token
+      const validation = validate(user, userUpdate);
       if (!validation.valid) {
         return next({
           status: 400,
           message: validation.errors.map(e => e.stack)
         });
       }
-  
-      const user = await User.update(req.params.username, req.body);
+      
+      user._token = req.body._token
+
+      user = await User.update(req.params.username, req.body);
       return res.json({ user });
     } catch (err) {
       return next(err);

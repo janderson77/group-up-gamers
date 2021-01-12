@@ -15,7 +15,7 @@ router.get('/', async function(req, res, next) {
     }
 });
 
-router.get('/slug', async function (req, res, next) {
+router.get('/:slug', async function (req, res, next) {
     try{
         const game = await Game.findOne(req.params.slug);
         return res.json({game})
@@ -42,7 +42,7 @@ router.post('/', async function(req, res, next){
     }
 });
 
-router.patch('/slug', async function(req, res, next) {
+router.patch('/:slug', async function(req, res, next) {
     try{
         if('slug' in req.body){
             return next({status: 400, message: "Not Allowed"});
@@ -63,7 +63,7 @@ router.patch('/slug', async function(req, res, next) {
     }
 });
 
-router.delete('/slug', async function(req, res, next) {
+router.delete('/:slug', async function(req, res, next) {
     try{
         await Game.removeGame(req.params.slug);
         return res.json({message: "Game deleted"});

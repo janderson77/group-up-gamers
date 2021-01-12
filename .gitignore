@@ -29,3 +29,5 @@ yarn-error.log*
 
 /backend/scrape.js
 /backend/db.pgsql
+
+/todo.md

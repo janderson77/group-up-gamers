@@ -7,7 +7,7 @@ CREATE TABLE users (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username VARCHAR(20) NOT NULL,
     email TEXT NOT NULL,
-    password VARCHAR(20) NOT NULL,
+    password TEXT NOT NULL,
     first_name VARCHAR(25),
     last_name VARCHAR(25),
     discord_url TEXT,
@@ -35,6 +35,7 @@ CREATE TABLE games_playing (
 CREATE TABLE groups (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     group_name TEXT UNIQUE NOT NULL,
+    group_slug TEXT UNIQUE NOT NULL,
     group_game_id INTEGER NOT NULL REFERENCES games ON DELETE CASCADE,
     group_owner_id INTEGER NOT NULL REFERENCES users ON DELETE CASCADE,
     group_discord_url TEXT,

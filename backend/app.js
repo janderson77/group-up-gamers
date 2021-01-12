@@ -10,10 +10,14 @@ app.use(morgan("tiny"));
 const gameRoutes = require('./routes/games')
 const gameModeRoutes = require('./routes/gameModes')
 const platformRoutes = require('./routes/platforms');
+const userRoutes = require('./routes/users')
+const groupsRoutes = require('./routes/groups')
 
 app.use('/games', gameRoutes)
 app.use('/platforms', platformRoutes)
 app.use('/game_modes', gameModeRoutes)
+app.use('/users', userRoutes)
+app.use('/groups', groupsRoutes)
 
 /** 404 handler */
 

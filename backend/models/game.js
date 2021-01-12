@@ -9,14 +9,14 @@ class Game {
 
         if (data.search){
             queryValues.push(`%${data.search}%`);
-            whereExpressions.push(`game_name ILIKE ${data.search}`)
+            whereExpressions.push(`slug ILIKE $${queryValues.length}`)
         }
 
         if(whereExpressions.length > 0){
             baseQuery += " WHERE ";
         }
 
-        let finalQuery = baseQuery + whereExpressions.join(" AND ") + " ORDER BY game_name";
+        let finalQuery = baseQuery + whereExpressions.join(" AND ") + " ORDER BY game_name asc";
         const gamesRes = await db.query(finalQuery, queryValues);
         return gamesRes.rows;
     }
