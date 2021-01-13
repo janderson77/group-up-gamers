@@ -1,0 +1,53 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "message_user_id": 1,
+            "message_group_id": 2,
+            "message_body": "tacocat"
+        }
+    ],
+    "required": [
+        "message_user_id",
+        "message_group_id",
+        "message_body"
+    ],
+    "properties": {
+        "message_user_id": {
+            "$id": "#/properties/message_user_id",
+            "type": "integer",
+            "title": "The message_user_id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                1
+            ]
+        },
+        "message_group_id": {
+            "$id": "#/properties/message_group_id",
+            "type": "integer",
+            "title": "The message_group_id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                2
+            ]
+        },
+        "message_body": {
+            "$id": "#/properties/message_body",
+            "type": "string",
+            "title": "The message_body schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "tacocat"
+            ]
+        }
+    },
+    "additionalProperties": false
+}

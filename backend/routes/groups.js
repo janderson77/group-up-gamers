@@ -4,9 +4,13 @@ const router = new express.Router();
 const {adminRequired, authRequired} = require("../middleware/auth");
 
 const Group = require('../models/group');
+const Message = require('../models/message')
 const {validate} = require("jsonschema");
 
-const {groupNew, groupUpdate} = require('../schemas/index')
+const {groupNew, groupUpdate, messagesNew} = require('../schemas/index')
+
+// Groups Routes
+// ************************************************************
 
 router.get("/", async function (req, res, next) {
     try {
@@ -40,12 +44,12 @@ router.get("/:slug", async function (req, res, next) {
 
 router.post("/", async function (req, res, next) {
     try {
-      const validation = validate(req.body, groupNew);
+      const isValid = validate(req.body, groupNew);
   
-      if (!validation.valid) {
+      if (!isValid.valid) {
         return next({
           status: 400,
-          message: validation.eors.map(e => e.stack)
+          message: isValid.eors.map(e => e.stack)
         });
       };
       let group = req.body;
@@ -83,11 +87,11 @@ router.patch("/:id", async function (req, res, next) {
         return next({status: 400, message: "Not allowed"});
       }
   
-      const validation = validate(req.body, groupUpdate);
-      if (!validation.valid) {
+      const isValid = validate(req.body, groupUpdate);
+      if (!isValid.valid) {
         return next({
           status: 400,
-          message: validation.errors.map(e => e.stack)
+          message: isValid.errors.map(e => e.stack)
         });
       }
   
@@ -111,5 +115,48 @@ router.delete("/:id", async function (req, res, next) {
     }
 });
 
+// ************************************************************
+// Group messages Routes
+// ************************************************************
+
+router.get('/:id/messages', async function(req, res, next){
+  try{
+    const messages = await Message.getMessage(req.params.id);
+    return res.status(200).json(messages);
+  }catch(e){
+    return next(e)
+  }
+});
+
+router.post('/:id/messages', async function(req, res, next){
+  try{
+    const message = req.body;
+
+    const isValid = validate(message, messagesNew);
+
+    if (!isValid.valid) {
+      return next({
+        status: 400,
+        message: isValid.errors.map(e => e.stack)
+      });
+    };
+
+    const newMessage = Message.createMessage(message);
+
+    return res.status(201).json(newMessage);
+  }catch(e){
+    return next(e)
+  };
+});
+
+router.delete('/:id/messages/:message_id', async function(req, res, next){
+  try{
+    const message = await Message.deleteMessage(req.params.message_id);
+
+    return res.status(200).json({message: "Message deleted"});
+  }catch(e){
+    return next(e)
+  }
+})
 
 module.exports = router;

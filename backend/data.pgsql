@@ -54,7 +54,7 @@ CREATE TABLE group_messages (
     message_user_id INTEGER REFERENCES users ON DELETE CASCADE,
     message_group_id INTEGER REFERENCES groups ON DELETE CASCADE,
     message_body TEXT NOT NULL,
-    posted_at DATE
+    posted_at DATE DEFAULT NOW()
 );
 
 CREATE TABLE game_modes (
