@@ -44,6 +44,18 @@ class Game {
     }
 
     static async addGame(data) {        
+        const duplicateCheck = await db.query(`
+        SELECT game_name
+        FROM games
+        WHERE game_name = $1
+        `,[data.name]);
+
+        if(duplicateCheck.rows.length !== 0){
+            let error = new Error('This game already exists in the database.');
+            error.status = 400;
+            throw error;
+        }
+
 
         let res = await db.query(`
             INSERT INTO games
@@ -90,6 +102,8 @@ class Game {
             notFound.status = 404;
             throw notFound;
         }
+
+        return res.rows[0];
     }
 };
 

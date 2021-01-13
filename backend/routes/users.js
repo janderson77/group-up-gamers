@@ -4,11 +4,15 @@ const router = express.Router();
 const { ensureCorrectUser, authRequired } = require("../middleware/auth");
 
 const User = require("../models/user");
+const GamePlaying = require('../models/gamePlaying')
 const { validate } = require("jsonschema");
 
-const { userNew, userUpdate, userAuth } = require('../schemas/index');
+const { userNew, userUpdate, userAuth, gamePlayingSchema } = require('../schemas/index');
 
 const createToken = require('../helpers/createToken');
+
+// User Routes
+// **************************************************************
 
 router.get('/', async function(req, res, next) {
     try{
@@ -31,12 +35,12 @@ router.get("/:username", async function(req, res, next) {
 router.post("/", async function(req, res, next) {
     try {
         delete req.body._token;
-        const validation = validate(req.body, userNew);
+        const isValid = validate(req.body, userNew);
 
-        if (!validation.valid) {
+        if (!isValid.valid) {
         return next({
             status: 400,
-            message: validation.errors.map(e => e.stack)
+            message: isValid.errors.map(e => e.stack)
         });
         };
 
@@ -56,7 +60,7 @@ router.post('/login', async function(req, res, next){
     if(!isValid.valid){
       return next({
         status: 400,
-        message: validation.errors.map(e => e.stack)
+        message: isValid.errors.map(e => e.stack)
       });
     };
 
@@ -82,11 +86,11 @@ router.patch("/:username", ensureCorrectUser, async function(req, res, next) {
       });
       let user = req.body;
       delete user._token
-      const validation = validate(user, userUpdate);
-      if (!validation.valid) {
+      const isValid = validate(user, userUpdate);
+      if (!isValid.valid) {
         return next({
           status: 400,
-          message: validation.errors.map(e => e.stack)
+          message: isValid.errors.map(e => e.stack)
         });
       }
       
@@ -107,5 +111,89 @@ router.delete("/:username", ensureCorrectUser, async function(req, res, next) {
       return next(err);
     }
   });
+
+
+// ******************************************************
+// games_playing routes
+// ******************************************************
+
+router.get('/:username/games_playing', async function(req, res, next){
+  try{
+    const gamesPlaying = await GamePlaying.getAllGamesPlaying(req.body);
+
+    return res.json(gamesPlaying);
+  }catch(e){
+    return next(e);
+}
+});
+
+router.get('/:username/games_playing/:game_id', async function(req, res, next){
+  try{
+    let game_id = req.params.game_id;
+    let body = req.body;
+    body.game_id = game_id;
+    const game = await GamePlaying.getOneGamePlayingById(body);
+
+    return res.json(game);
+  }catch(e){
+    return next(e);
+}
+});
+
+router.post('/:username/games_playing', async function(req, res, next){
+  const isValid = validate(req.body, gamePlayingSchema);
+
+  if (!isValid.valid) {
+    return next({
+        status: 400,
+        message: isValid.errors.map(e => e.stack)
+    });
+    };
+
+  try{
+    const game = await GamePlaying.addGamePlaying(req.body);
+
+    return res.json(game);
+  }catch(e){
+    return next(e);
+}
+});
+
+router.patch('/:username/games_playing/:game_id', async function(req, res, next){
+  const isValid = validate(req.body, gamePlayingSchema);
+
+  if (!isValid.valid) {
+    return next({
+        status: 400,
+        message: isValid.errors.map(e => e.stack)
+    });
+    };
+
+  try{
+    let game_id = req.params.game_id;
+    let body = req.body;
+    body.game_id = game_id;
+
+    const game = await GamePlaying.updateGamePlaying(body);
+
+    return res.json(game);
+  }catch(e){
+    return next(e);
+}
+});
+
+router.delete('/:username/games_playing/:game_id', async function(req, res, next){
+  try{
+    let game_id = req.params.game_id;
+    let body = req.body;
+    body.game_id = game_id;
+
+    const game = await GamePlaying.removeGamePlaying(body);
+
+    return res.json(game);
+  }catch(e){
+    return next(e);
+}
+});
   
-  module.exports = router;
+module.exports = router;
