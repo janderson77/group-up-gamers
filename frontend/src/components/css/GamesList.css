@@ -1,0 +1,12 @@
+.card {
+	width: 40rem;
+}
+
+.card h3 {
+	word-wrap: break-word;
+}
+
+.card img {
+	max-width: 90px;
+	max-height: 90px;
+}
