@@ -1,25 +1,22 @@
 import React, {useEffect, useCallback} from 'react'
 import './css/GamesList.css'
 import {useSelector, useDispatch} from 'react-redux';
-import {getAllGamesFromAPI, resetGameState} from '../actions/games'
+import {getAllGroupsFromApi, resetGroupsState} from '../actions/groups'
 import {NavLink} from 'react-router-dom'
 
 
-const GamesList = () => {
-    const dispatch = useDispatch();
-    const user = useSelector(st => st.users.user)
-    
+const GroupsList = () => {
     const initialize = useCallback(
         () => {
-            dispatch(resetGameState())
+            dispatch(resetGroupsState())
         },
-        [resetGameState],
+        [resetGroupsState],
     )
 
     useEffect(() => {initialize(); }, [initialize])
-    const games = useSelector(st => st.games.games);
-    
-    const missing = !games;
+    const groups = useSelector(st => st.groups.groups);
+    const dispatch = useDispatch();
+    const missing = !groups;
 
     // const [offset, setOffset] = useState(0);
     // const [data, setData] = useState([]);
@@ -28,28 +25,27 @@ const GamesList = () => {
 
     useEffect(function() {
         if(missing) {
-            dispatch(getAllGamesFromAPI())
+            dispatch(getAllGroupsFromApi())
         }
     }, [missing, dispatch])
 
     
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
-    let gamesArr = Object.values(games)
+    let groupsArr = Object.values(groups)
     
 
     return(
         <div className="container d-flex flex-column align-items-center">
-            {gamesArr.map(e => (
+            {groupsArr.map(e => (
                 <div>
-                    <NavLink to={`/games/${e.slug}`} >
+                    <NavLink to={`/groups/${e.id}`} >
                     <div className="card flex-row flex-wrap">
                         <div className="card-header border-0">
-                            <img src={e.cover_art} alt="" />
+                            <img src={e.group_logo_url} alt={e.group_name} />
                         </div>
                         <div className="card-block px-2">
-                            <h4 className="card-title">{e.game_name}</h4>
-                            {/* <p className="card-text overflow-elipses">{e.summary}</p> */}
+                            <h4 className="card-title">{e.group_name}</h4>
                         </div>
 
                     </div>
@@ -62,4 +58,4 @@ const GamesList = () => {
     )
 };
 
-export default GamesList;
+export default GroupsList;

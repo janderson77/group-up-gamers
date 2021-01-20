@@ -1,11 +1,12 @@
-import axios from "axios";
 import React, { useState } from "react";
+import {useDispatch, useSelector} from 'react-redux'
 import { useHistory } from "react-router-dom";
+import {login, register} from '../actions/users'
 import './css/Login.css'
 import Alert from "./Alert";
 
-function Login({ setToken }) {
-    const baseUrl = "http://localhost:3001/users"
+function Login() {
+  const dispatch = useDispatch();
   const history = useHistory();
   const [activeView, setActiveView] = useState("login");
   const [loginInfo, setLoginInfo] = useState({
@@ -17,13 +18,21 @@ function Login({ setToken }) {
     errors: []
   });
 
+  const handleLogin = () => {
+    dispatch(login(loginInfo))
+  };
+
+  const handleRegister = () => {
+    dispatch(register(loginInfo))
+  };
+
   function setLoginView() {
     setActiveView("login");
-  }
+  };
 
   function setSignupView() {
     setActiveView("signup");
-  }
+  };
 
   async function handleSubmit(evt) {
     evt.preventDefault();
@@ -48,16 +57,22 @@ function Login({ setToken }) {
       endpoint = "login";
     }
 
-    let token;
-
-    try {
-      token = await axios.post(`${baseUrl}/${endpoint}`,data);
-    } catch (errors) {
-      return setLoginInfo(l => ({ ...l, errors }));
+    if(endpoint === "login"){
+      try {
+        handleLogin();
+      } catch (errors) {
+        return setLoginInfo(l => ({ ...l, errors }));
+      }
+      history.push('/profile')
+    }else if(endpoint === "register"){
+      try {
+        handleRegister();
+      } catch (errors) {
+        return setLoginInfo(l => ({ ...l, errors }));
+      }
+      history.push('/profile')
     }
-
-    setToken(token.data._token);
-    history.push("/profile");
+    
   }
 
   function handleChange(e) {

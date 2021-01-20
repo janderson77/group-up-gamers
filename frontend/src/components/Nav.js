@@ -1,10 +1,21 @@
 import React, {useContext} from 'react';
 import {NavLink} from 'react-router-dom'
-import UserContext from '../UserContext';
-import './css/Nav.css'
+import {useDispatch, useSelector} from 'react-redux'
+import './css/Nav.css';
+import {logout} from '../actions/users';
 
-const Navigation = ({logout}) => {
-  const {currentUser} = useContext(UserContext)
+const Navigation = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(st => st.users.user)
+
+  const handleLogout = () => {
+    try{
+      dispatch(logout())
+    }catch(e){
+      console.log(e)
+    }
+    
+  }
   const loggedOutNav = () => {
     return(
         <nav className="navbar navbar-expand-md navbar-dark bg-dark">
@@ -63,7 +74,7 @@ const Navigation = ({logout}) => {
             <div className="d-flex">
             <ul className="navbar-nav">
               <li className="nav-item">
-              <NavLink className="nav-link me-2" to="/" onClick={logout} >Logout</NavLink>
+              <NavLink className="nav-link me-2" to="/" onClick={handleLogout} >Logout</NavLink>
               </li>
             </ul>
             </div>
@@ -74,7 +85,7 @@ const Navigation = ({logout}) => {
 
   return(
     <div>
-      {currentUser ? loggedInNav() : loggedOutNav()}
+      {user ? loggedInNav() : loggedOutNav()}
     </div>
   );
 };

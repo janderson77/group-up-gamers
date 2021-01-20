@@ -5,6 +5,9 @@ import {getGameFromAPI, resetGameState} from '../actions/games'
 import "./css/Game.css"
 
 const Game = () => {
+    const dispatch = useDispatch();
+    const user = useSelector(st => st.users.user)
+
     const initialize = useCallback(
         () => {
             dispatch(resetGameState())
@@ -16,7 +19,7 @@ const Game = () => {
 
     const {slug} = useParams();
     const game = useSelector(st => st.games[slug]);
-    const dispatch = useDispatch();
+    
     const missing = !game;
 
     useEffect(function() {
@@ -41,7 +44,7 @@ const Game = () => {
                 <div className="card-body">
                     <p className="card-text">{game.summary}</p>
                     <ul class="list-group list-group-flush text-left">
-                        <li class="list-group-item">Game Modes
+                        <li key="game-modes" class="list-group-item">Game Modes
                             <ul>
                                 {gameModes.map(e => <li key={e.id}>{e}</li>)}
                             </ul>

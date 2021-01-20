@@ -1,13 +1,17 @@
-import React, { useContext } from "react";
-import UserContext from "../UserContext";
+import React, { useState, useCallback } from "react";
+import {useSelector } from 'react-redux'
 import './css/Profile.css'
 import { NavLink } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 function Profile() {
-  const { currentUser } = useContext(UserContext);
+  const user = useSelector(st => st.users.user)
+  if(!user){
+      return <ClipLoader size={150} color="#123abc" />;
+  };
 
-  const user = currentUser.data.user;
-  const userGames = user.games_playing.data
+  const userGames = user.games_playing || [];
+  const userGroups = user.groups || [];
 
   let gamesList;
 
@@ -20,9 +24,27 @@ function Profile() {
           <div>No Games Added Yet</div>
           <div><NavLink to='/games'>Go Add Some!</NavLink></div>
       </div>
+  };
+
+  let groups;
+
+  if(userGroups.length){
+      groups = userGroups.map(e => (
+          <div>
+              <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
+          </div>
+      ))
+  }else{
+      groups = (
+        <div>
+          <p>You have not joined any groups</p>
+          <p><NavLink to="/groups">Join One Now!</NavLink></p>
+        </div>
+      )
   }
 
-  console.log(user)
+
+
   return (
     // <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
     <div>
@@ -32,11 +54,11 @@ function Profile() {
             <div className="col-md-6">
                 {user.profile_img_url ? <img alt={user.username} src={user.profile_img_url} /> : <img alt={user.username} src='../static/404.png'/>}
             </div>
+            
             <div className="col-md-6 d-flex flex-column align-items-center">
                 <div>
                     <h4>Groups</h4>
-                    {user.groups.length > 0 ?
-                    user.groups.map(e => <div>{e.group_id}</div>) : <div><p>No Groups Joined</p><p><NavLink to="/groups">Join one now!</NavLink></p></div>}
+                    {groups}
                 </div>
             </div>
             </div>
