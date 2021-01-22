@@ -1,17 +1,37 @@
-import React, { useState, useCallback } from "react";
-import {useSelector } from 'react-redux'
+import React, { useState, useEffect } from "react";
+import {useSelector, useDispatch } from 'react-redux'
 import './css/Profile.css'
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams, useHistory } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import {getUser} from '../actions/users'
 
 function Profile() {
-  const user = useSelector(st => st.users.user)
+    const loggedInUser = useSelector(st => st.users.user);
+    const history = useHistory();
+    const params = useParams();
+    
+    if(loggedInUser){
+        if(loggedInUser.id === params.id){
+            history.push('/profile')
+        }
+    }
+    
+    const dispatch = useDispatch();
+    
+    useEffect(() => {
+        dispatch(getUser(params.id))
+    }, [params.id])
+
+  const user = useSelector(st => st.users.visiting.user)
   if(!user){
       return <ClipLoader size={150} color="#123abc" />;
   };
 
-  const userGames = Object.values(user.games_playing) || [];
-  const userGroups = user.groups || [];
+  let userGames;
+  let userGroups;
+  
+  user.games_playing ? userGames= Object.values(user.games_playing) : userGames= [];
+  user.userGroups ? userGroups = user.groups : userGroups = [];
 
   let gamesList;
 
@@ -21,8 +41,7 @@ function Profile() {
       ))
   }else{
       gamesList = <div>
-          <div>No Games Added Yet</div>
-          <div><NavLink to='/games'>Go Add Some!</NavLink></div>
+          <div>{user.username} has not added any games yet.</div>
       </div>
   };
 
@@ -37,8 +56,7 @@ function Profile() {
   }else{
       groups = (
         <div>
-          <p>You have not joined any groups</p>
-          <p><NavLink to="/groups">Join One Now!</NavLink></p>
+          <p>{user.username} has not joined any groups</p>
         </div>
       )
   }

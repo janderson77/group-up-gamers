@@ -38,7 +38,7 @@ const GroupsList = () => {
     return(
         <div className="container d-flex flex-column align-items-center">
             {groupsArr.map(e => (
-                <div>
+                <div key={e.id}>
                     <NavLink to={`/groups/${e.id}`} >
                     <div className="card flex-row flex-wrap">
                         <div className="card-header border-0">

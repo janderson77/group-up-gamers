@@ -1,11 +1,13 @@
 import React, {useEffect, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {useParams} from 'react-router-dom';
+import {useParams, useHistory} from 'react-router-dom';
 import {getGameFromAPI, resetGameState} from '../actions/games'
+import {addGameToList} from '../actions/users'
 import "./css/Game.css"
 
 const Game = () => {
     const dispatch = useDispatch();
+    const history = useHistory();
     const user = useSelector(st => st.users.user)
 
     const initialize = useCallback(
@@ -19,7 +21,7 @@ const Game = () => {
 
     const {slug} = useParams();
     const game = useSelector(st => st.games[slug]);
-    
+
     const missing = !game;
 
     useEffect(function() {
@@ -33,6 +35,28 @@ const Game = () => {
 
     let gameModes = game.game_modes;
     let gamePlatforms = game.platforms;
+
+    const AddGame = () => {
+        dispatch(addGameToList(user.id, game.id))
+    }
+
+    const tryAddGame = () => {
+        try{
+            AddGame();
+        }catch(e){
+            console.log(e)
+            return
+        }
+        // history.push("/profile")
+    }
+
+    let button;
+
+    if(user.games_playing[game.id]){
+        button = <button className="btn btn-small btn-info" disabled>Added</button>
+    }else{
+        button = <button onClick={tryAddGame} className="btn btn-small btn-success">Add Game</button>
+    }
     
 
     return(
@@ -42,7 +66,8 @@ const Game = () => {
             <div className="card w-50">
                 <img className="card-img-top" src={game.cover_art} alt={game.game_name}></img>
                 <div className="card-body">
-                    <p className="card-text">{game.summary}</p>
+                    <p className="card-text">{game.summary}</p><br/>
+                    {button}
                     <ul class="list-group list-group-flush text-left">
                         <li key="game-modes" class="list-group-item">Game Modes
                             <ul>

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {LOGIN, LOGOUT, REGISTER, GET_CURR_USER} from './types';
+import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER} from './types';
+import {toObject} from '../helpers/toObject'
 
 const base_url = "http://localhost:3001/users"
 
@@ -25,10 +26,38 @@ const login = (data) => {
 
         let user = res.data;
         let gamesPlayingRes = await axios.get(`${base_url}/${user.id}/games_playing`);
-        user.games_playing = gamesPlayingRes.data
+        user.games_playing = toObject(gamesPlayingRes.data, "id")
 
         dispatch(doLogin(res.data));
     };
+};
+
+const addGameToList = (user_id, game_id, inGameName) => {
+    return async function(dispatch) {
+        let body = {};
+        body.game_id = game_id;
+        body.in_game_name = inGameName || undefined;
+
+        const res = await axios.post(`${base_url}/${user_id}/games_playing/${game_id}`,body);
+
+        dispatch(addGameToPlaying(res.data))
+    }
+}
+
+const getUser = (user_id) => {
+    return async function(dispatch) {
+        const res = await axios.get(`${base_url}/${user_id}`)
+
+        dispatch(doGetUser(res.data))
+    }
+}
+
+const doGetUser = (data) => {
+    return {type: GET_USER, payload: data}
+}
+
+const addGameToPlaying = (data) => {
+    return {type: ADD_GAME_TO_PLAYING, payload: data}
 };
 
 const logout = () => {
@@ -49,4 +78,4 @@ function doLogout() {
     return {type: LOGOUT}
 };
 
-export {login, logout, register};
+export {login, logout, register, addGameToList, getUser};

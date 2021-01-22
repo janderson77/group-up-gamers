@@ -1,4 +1,4 @@
-import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER} from '../actions/types'
+import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER} from '../actions/types'
 
 const INITIAL_STATE = {};
 
@@ -10,6 +10,10 @@ const users = (state = INITIAL_STATE, action) => {
             user = {...state}
             user.groups = {...action.payload}
             return user;
+        case GET_USER:
+            let visiting = INITIAL_STATE;
+            visiting = {...action.payload}
+            return {...state, visiting: visiting};
         case REGISTER:
             user = {};
             user = {...action.payload};

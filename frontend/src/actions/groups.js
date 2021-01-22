@@ -33,7 +33,6 @@ const getAllGroupsFromApi = (limit, offset) => {
         const res = await axios.get(`http://localhost:3001/groups`, {limit: limit, offset: offset});
 
         let groupsList = res.data;
-        console.log(groupsList)
 
         dispatch(gotGroups(groupsList));
     }

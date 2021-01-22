@@ -7,6 +7,7 @@ import Login from './components/Login'
 import Profile from './components/Profile'
 import GroupsList from './components/GroupsList'
 import Group from './components/Group'
+import ProfileVisit from './components/ProfileVisit'
 
 const Routes = () => {
     return(
@@ -18,7 +19,7 @@ const Routes = () => {
             <Route exact path="/profile" ><Profile /></Route>
             <Route exact path="/groups"><GroupsList /></Route>
             <Route exact path="/groups/:id"><Group /></Route>
-            <Route exact path="/users/:id"><Profile /></Route>
+            <Route exact path="/users/:id"><ProfileVisit /></Route>
             <Redirect to="/" />
         </Switch>
     )
