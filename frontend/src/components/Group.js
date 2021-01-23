@@ -1,11 +1,14 @@
-import React, {useEffect, useCallback, useContext} from 'react';
+import React, {useEffect, useCallback, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {NavLink, useParams} from 'react-router-dom';
-import {getGroupFromApi, resetGroupsState, joinGroup} from '../actions/groups' 
+import {NavLink, useParams, useHistory} from 'react-router-dom';
+import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup} from '../actions/groups' 
 import "./css/Game.css"
 
 const Group = () => {
+    const history = useHistory();
     const user = useSelector(st => st.users.user)
+    const [inGroup, setInGroup] = useState(false);
+    
 
     let userGames;
     let userGroups;
@@ -22,14 +25,12 @@ const Group = () => {
         [resetGroupsState],
     )
 
-    useEffect(() => {initialize(); }, [initialize])
+    useEffect(() => {initialize(); }, [])
 
     const {id} = useParams();
     const group = useSelector(st => st.groups[id]);
-    
-    const missing = !group;
 
-    console.log(group)
+    const missing = !group;
 
     useEffect(function() {
         if(missing) {
@@ -40,9 +41,15 @@ const Group = () => {
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
 
+    // if(user.groups){
+    //     if(user.groups[group.id]){
+    //         setInGroup(true)
+    //     }
+    // }
+
     const addGroup = () => {
         dispatch(joinGroup(user.id, group.id))
-    }
+    };
 
     const tryAddGroup = () => {
         try{
@@ -50,24 +57,39 @@ const Group = () => {
         }catch(e){
             console.log(e)
         }
-    }
+    };
+
+    const doLeaveGroup = () => {
+        dispatch(leaveGroup(user.id, group.id))
+        history.push('/groups')
+    };
+
+    const tryLeaveGroup = () => {
+        try{
+            doLeaveGroup();
+        }catch(e){
+            console.log(e)
+        }
+    };
 
     let joinButton;
     if(user.groups){
         if(user.groups[group.id]){
             joinButton = (
                 <div>
+                    <div className="btn btn-secondary btn-sm" disabled>Joined</div>
+                    <div className="btn btn-danger btn-sm" onClick={tryLeaveGroup}>Leave</div>
+                </div>
+                
+            );
+        }else{
+            joinButton = (
+                <div>
                     <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
                 </div>
-            )
-        }
-      joinButton = (
-          <div>
-              <div className="btn btn-secondary btn-sm" disabled>Joined</div>
-              <div className="btn btn-danger btn-sm">Leave</div>
-          </div>
-          
-      )
+            );
+        };
+      
     }else{
         joinButton = (
             <div>

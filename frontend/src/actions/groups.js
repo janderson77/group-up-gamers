@@ -1,10 +1,12 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP} from './types';
-import {toObject} from '../helpers/toObject'
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP} from './types';
+// import {toObject} from '../helpers/toObject'
+
+const BASE_URL = 'http://localhost:3001/groups'
 
 const getGroupFromApi = (group_id) => {
     return async function(dispatch) {
-        const res = await axios.get(`http://localhost:3001/groups/${group_id}`);
+        const res = await axios.get(`${BASE_URL}/${group_id}`);
         let{
             id,
             group_name,
@@ -31,7 +33,7 @@ const getGroupFromApi = (group_id) => {
 
 const getAllGroupsFromApi = (limit, offset) => {
     return async function(dispatch) {
-        const res = await axios.get(`http://localhost:3001/groups`, {limit: limit, offset: offset});
+        const res = await axios.get(`${BASE_URL}`, {limit: limit, offset: offset});
 
         let groupsList = res.data;
 
@@ -41,13 +43,29 @@ const getAllGroupsFromApi = (limit, offset) => {
 
 const joinGroup = (user_id, group_id) => {
     return async function(dispatch) {
-        const res = await axios.post(`http://localhost:3001/groups/${group_id}/join`,{user: user_id});
+        const res = await axios.post(`${BASE_URL}/${group_id}/join`,{user: user_id});
 
         if(res.status === 200){
-            const groups = await axios.get(`http://localhost:3001/groups/members/${user_id}`)
+            const groups = await axios.get(`${BASE_URL}/members/${user_id}`)
             dispatch(doJoinGroup(groups))
         }
     }
+};
+
+const leaveGroup = (user_id, group_id) => {
+    return async function(dispatch) {
+        const res = await axios.post(`${BASE_URL}/${group_id}/leave`,{
+            user: user_id
+        });
+
+        if(res.status === 200){
+            dispatch(doLeaveGroup(res.data))
+        }
+    }
+};
+
+function doLeaveGroup(group){
+    return {type: LEAVE_GROUP, payload: group}
 }
 
 function doJoinGroup(group) {
@@ -66,4 +84,4 @@ function resetGroupsState() {
     return {type: RESET_GROUPS};
 };
 
-export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup}
+export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup}

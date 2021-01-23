@@ -88,6 +88,18 @@ router.post('/:id/join', async function(req, res, next){
   }
 });
 
+router.post('/:id/leave', async function(req, res, next) {
+  try{
+    const user = req.body.user;
+    const group_id = req.params.id;
+
+    const result = await Group.leaveGroup(user, group_id)
+    return res.status(200).json(result);
+  }catch(e){
+    return next(e);
+  };
+});
+
 router.patch("/:id", async function (req, res, next) {
     try {
       if ("id" in req.body) {

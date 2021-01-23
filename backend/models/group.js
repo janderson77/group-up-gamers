@@ -188,7 +188,7 @@ class Group {
   };
 
   static async leaveGroup(user, group){
-    const checkIfJoined = await checkIfJoinedOrBanned(user.user_id, group.id);
+    const checkIfJoined = await checkIfJoinedOrBanned(user, group);
 
     if(!checkIfJoined.joined || checkIfJoined.is_banned){
       let error = new Error("You are not in this group.")
@@ -201,7 +201,7 @@ class Group {
       WHERE user_id = $1
       AND group_id = $2
       RETURNING group_id, user_id
-    `, [user.user_id, group.id])
+    `, [user, group])
 
     if(leaveRes.rows === 0){
       let error = new Error(`ERROR! Something went wrong!`);
