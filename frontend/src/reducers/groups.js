@@ -7,6 +7,7 @@ const groups = (state = INITIAL_STATE, action) => {
         case RESET_GROUPS:
             return{...INITIAL_STATE};
         case LOAD_GROUP:
+            console.log(action.payload)
             return{
                 ...state,
                 [action.payload.id]: {...action.payload}

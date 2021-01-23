@@ -23,12 +23,8 @@ const register = (data) => {
 const login = (data) => {
     return async function(dispatch) {
         const res = await axios.post(`${base_url}/login`, {username: data.username, password: data.password});
-
         let user = res.data;
-        let gamesPlayingRes = await axios.get(`${base_url}/${user.id}/games_playing`);
-        user.games_playing = toObject(gamesPlayingRes.data, "id")
-
-        dispatch(doLogin(res.data));
+        dispatch(doLogin(user));
     };
 };
 
@@ -37,10 +33,11 @@ const addGameToList = (user_id, game_id, inGameName) => {
         let body = {};
         body.game_id = game_id;
         body.in_game_name = inGameName || undefined;
+        body.user_id = user_id
 
-        const res = await axios.post(`${base_url}/${user_id}/games_playing/${game_id}`,body);
+        const res = await axios.post(`${base_url}/${user_id}/games_playing`,body);          
 
-        dispatch(addGameToPlaying(res.data))
+        dispatch(addGameToPlaying(res.data[0]))
     }
 }
 

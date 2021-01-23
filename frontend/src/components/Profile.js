@@ -10,8 +10,13 @@ function Profile() {
       return <ClipLoader size={150} color="#123abc" />;
   };
 
-  const userGames = Object.values(user.games_playing) || [];
-  const userGroups = user.groups || [];
+  let userGames;
+  let userGroups;
+
+  user.games_playing ? userGames = Object.values(user.games_playing) : userGames = {};
+  user.groups ? userGroups = Object.values(user.groups) : userGroups = {};
+
+  console.log(userGames)
 
   let gamesList;
 
@@ -30,7 +35,7 @@ function Profile() {
 
   if(userGroups.length){
       groups = userGroups.map(e => (
-          <div>
+          <div key={e.id}>
               <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
           </div>
       ))

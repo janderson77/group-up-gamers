@@ -1,14 +1,17 @@
 import React, {useEffect, useCallback, useContext} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams} from 'react-router-dom';
-import {getGroupFromApi, resetGroupsState} from '../actions/groups' 
+import {getGroupFromApi, resetGroupsState, joinGroup} from '../actions/groups' 
 import "./css/Game.css"
 
 const Group = () => {
     const user = useSelector(st => st.users.user)
 
-    const userGames = user.games_playing.data
-    const userGroups = user.groups.data;
+    let userGames;
+    let userGroups;
+
+    user.games_playing ? userGames = user.games_playing.data : userGames = [];
+    user.groups ? userGroups = user.groups.data : userGroups = [];
 
     const dispatch = useDispatch();
     
@@ -37,8 +40,27 @@ const Group = () => {
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
 
+    const addGroup = () => {
+        dispatch(joinGroup(user.id, group.id))
+    }
+
+    const tryAddGroup = () => {
+        try{
+            addGroup();
+        }catch(e){
+            console.log(e)
+        }
+    }
+
     let joinButton;
-    if(user){
+    if(user.groups){
+        if(user.groups[group.id]){
+            joinButton = (
+                <div>
+                    <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
+                </div>
+            )
+        }
       joinButton = (
           <div>
               <div className="btn btn-secondary btn-sm" disabled>Joined</div>
@@ -49,7 +71,7 @@ const Group = () => {
     }else{
         joinButton = (
             <div>
-                <div className="btn btn-success btn-sm" disabled>Join!</div>
+                <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
             </div>
         )
     }

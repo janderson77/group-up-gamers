@@ -1,4 +1,4 @@
-import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER} from '../actions/types'
+import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER, ADD_GAME_TO_PLAYING} from '../actions/types'
 
 const INITIAL_STATE = {};
 
@@ -7,9 +7,14 @@ const users = (state = INITIAL_STATE, action) => {
     switch(action.type){
         case JOIN_GROUP:
             user = {};
-            user = {...state}
-            user.groups = {...action.payload}
-            return user;
+            user = {...state.user}
+            console.log(action.payload)
+            user.groups = {...user.groups, [action.paylaod.group_id]: action.payload}
+            return {user: user};
+        case ADD_GAME_TO_PLAYING:
+            user = {...state.user}
+            user.games_playing = {...user.games_playing, [action.payload.id]: action.payload}
+            return {user: user}
         case GET_USER:
             let visiting = INITIAL_STATE;
             visiting = {...action.payload}

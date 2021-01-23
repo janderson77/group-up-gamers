@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP} from './types';
+import {toObject} from '../helpers/toObject'
 
 const getGroupFromApi = (group_id) => {
     return async function(dispatch) {
@@ -14,7 +15,7 @@ const getGroupFromApi = (group_id) => {
             members
         } = res.data.group;
 
-        const group = {
+        const group =  {
             id,
             group_name,
             group_slug,
@@ -40,7 +41,7 @@ const getAllGroupsFromApi = (limit, offset) => {
 
 const joinGroup = (user_id, group_id) => {
     return async function(dispatch) {
-        const res = await axios.post(`http://localhost:3001/groups/${group_id}`,{user: user_id});
+        const res = await axios.post(`http://localhost:3001/groups/${group_id}/join`,{user: user_id});
 
         if(res.status === 200){
             const groups = await axios.get(`http://localhost:3001/groups/members/${user_id}`)
