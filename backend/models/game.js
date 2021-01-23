@@ -3,7 +3,7 @@ const sqlForPartialUpdate = require("../helpers/partialUpdate");
 
 class Game {
     static async findAll(data) {
-        let baseQuery = `SELECT game_name, slug, cover_art, summary, platforms, game_modes FROM games`;
+        let baseQuery = `SELECT * FROM games`;
         let whereExpressions = [];
         let queryValues = [];
 
@@ -17,6 +17,16 @@ class Game {
         }
 
         let finalQuery = baseQuery + whereExpressions.join(" AND ") + " ORDER BY game_name asc";
+
+        if(data.limit){
+            finalQuery += ` LIMIT ${data.limit} `
+        }else{
+            finalQuery += ` LIMIT 25 `
+        }
+
+        if(data.offset) {
+            finalQuery += ` OFFSET ${data.offset} `
+        }
         const gamesRes = await db.query(finalQuery, queryValues);
         return gamesRes.rows;
     }
@@ -24,7 +34,7 @@ class Game {
     static async findOne(slug) {
         const gameRes = await db.query(
             `
-            SELECT game_name, slug, cover_art, summary, platforms, game_modes 
+            SELECT * 
             FROM games
             WHERE slug = $1
             `,

@@ -31,9 +31,9 @@ router.get("/", async function (req, res, next) {
     }
   });
 
-router.get("/:slug", async function (req, res, next) {
+router.get("/:id", async function (req, res, next) {
     try {
-      const group = await Group.findOneByName(req.params.slug);
+      const group = await Group.findOneById(req.params.id);
       return res.json({group});
     }
   
@@ -41,6 +41,15 @@ router.get("/:slug", async function (req, res, next) {
       return next(e);
     }
 });
+
+router.get('/members/:id', async function(req, res, next){
+  try{
+    const groups = await Group.findAllOfOwn(req.params.id);
+    return res.json(groups)
+  }catch(e){
+    return next(e)
+  }
+})
 
 router.post("/", async function (req, res, next) {
     try {
@@ -67,12 +76,12 @@ router.post("/", async function (req, res, next) {
     };
 });
 
-router.post('/:slug/join', async function(req, res, next){
+router.post('/:id/join', async function(req, res, next){
   try{
-    const user = req.body;
-    const groupSlug = req.params.slug;
+    const user = req.body.user;
+    const group_id = req.params.id;
 
-    const group = await Group.findOneByName(groupSlug);
+    const group = await Group.findOneById(group_id);
 
     const result = await Group.joinGroup(user, group);
     return res.status(200).json(result);

@@ -48,20 +48,46 @@ class Group {
               WHERE id = $1`,
           [id]);
   
-      const group = groupRes.rows[0];
+      let group = groupRes.rows[0];
   
       if (!group) {
         const error = new Error(`There exists no group '${handle}'`);
         error.status = 404;   // 404 NOT FOUND
         throw error;
       };
+
+      const membersRes = await db.query(`
+      SELECT group_id, user_id, is_group_admin, is_banned, username, users.id
+      FROM group_members
+      RIGHT JOIN users
+      ON group_members.user_id = users.id
+      WHERE group_id = $1
+        `, [id])
+
+      group.members = membersRes.rows;
   
       return group;
   };
 
+  static async findAllOfOwn(user_id){
+    const groupRes = await db.query(
+      `SELECT *
+      FROM group_members
+      RIGHT JOIN groups
+      ON group_members.group_id = groups.id
+      WHERE user_id = $1`,[user_id]
+    );
+    const groups = groupRes.rows;
+
+    if(groups.length === 0){
+      groups.message = "You have not joined any groups"
+    };
+    return groups;
+  }
+
   static async joinGroup(user, group){
 
-    const joinedOrBanned = await checkIfJoinedOrBanned(user.user_id, group.id);
+    const joinedOrBanned = await checkIfJoinedOrBanned(user, group.id);
 
     if(joinedOrBanned.joined){
       if(joinedOrBanned.is_banned){
@@ -80,7 +106,7 @@ class Group {
       VALUES
       ($1, $2)
       RETURNING group_id, user_id
-    `, [group.id, user.user_id])
+    `, [group.id, user])
 
     if(joinRes.rows === 0){
       let joinError = new Error(`ERROR! Something went wrong!`);
@@ -88,7 +114,7 @@ class Group {
       throw error;
     }
 
-    return(joinRes.rows[0]);
+    return(joinRes.rows[0].data);
   };
 
   static async banUser(user, group) {

@@ -14,8 +14,7 @@
     ],
     "required": [
         "user_id",
-        "game_id",
-        "in_game_name"
+        "game_id"
     ],
     "properties": {
         "user_id": {

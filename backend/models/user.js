@@ -1,6 +1,7 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
 const partialUpdate = require("../helpers/partialUpdate");
+const toObject = require('../helpers/toObject')
 
 const BCRYPT_WORK_FACTOR = 10;
 
@@ -26,6 +27,37 @@ class User {
           const isValid = await bcrypt.compare(data.password, user.password);
           if (isValid) {
             delete user.password;
+
+            const userGroupsRes = await db.query(`
+                SELECT *
+                FROM group_members
+                RIGHT JOIN groups
+                ON group_members.group_id = groups.id
+                WHERE user_id = $1
+            `,[user.id])
+
+            if(userGroupsRes.rows.length > 0){
+                let groups = userGroupsRes.rows;
+                groups = toObject(groups, "id")
+
+                user.groups = groups;
+            };
+
+            const userGamesRes = await db.query(`
+                SELECT *
+                FROM games_playing
+                RIGHT JOIN games
+                ON games_playing.game_id = games.id
+                WHERE user_id = $1
+            `,[user.id]);
+
+            if(userGamesRes.rows.length > 0){
+                let games_playing = userGamesRes.rows;
+                games_playing = toObject(games_playing, "id")
+
+                user.games_playing = games_playing
+            }
+
             return user;
           }
         }
@@ -70,27 +102,37 @@ class User {
 
     static async findAll() {
         const result = await db.query(
-            `SELECT username, first_name, last_name, email
+            `SELECT id, username, first_name, last_name, email
                 FROM users
                 ORDER BY username`);
 
         return result.rows;
     };
 
-    static async findOne(username) {
+    static async findOne(id) {
         const userRes = await db.query(
-            `SELECT username, first_name, last_name, email, profile_img_url 
+            `SELECT id, username, first_name, last_name, email, profile_img_url 
                 FROM users 
-                WHERE username = $1`,
-            [username]);
+                WHERE id = $1`,
+            [id]);
     
         const user = userRes.rows[0];
     
         if (!user) {
-          const error = new Error(`There exists no user '${username}'`);
+          const error = new Error(`There exists no user with id '${id}'`);
           error.status = 404;
           throw error;
         };
+
+        const userGroupsRes = await db.query(`
+                SELECT *
+                FROM group_members
+                WHERE user_id = $1
+            `,[user.id])
+
+            if(userGroupsRes.rows.length > 0){
+                user.groups = userGroupsRes.rows;
+            };
 
         return user;
     };

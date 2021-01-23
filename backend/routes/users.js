@@ -23,16 +23,16 @@ router.get('/', async function(req, res, next) {
     };
 });
 
-router.get("/:username", async function(req, res, next) {
+router.get("/:id", async function(req, res, next) {
     try {
-      const user = await User.findOne(req.params.username);
+      const user = await User.findOne(req.params.id);
       return res.json({ user });
     } catch (err) {
       return next(err);
     }
   });
 
-router.post("/", async function(req, res, next) {
+router.post("/register", async function(req, res, next) {
     try {
         delete req.body._token;
         const isValid = validate(req.body, userNew);
@@ -117,9 +117,9 @@ router.delete("/:username", ensureCorrectUser, async function(req, res, next) {
 // games_playing routes
 // ******************************************************
 
-router.get('/:username/games_playing', async function(req, res, next){
+router.get('/:id/games_playing', async function(req, res, next){
   try{
-    const gamesPlaying = await GamePlaying.getAllGamesPlaying(req.body);
+    const gamesPlaying = await GamePlaying.getAllGamesPlaying(req.params.id);
 
     return res.json(gamesPlaying);
   }catch(e){
@@ -127,12 +127,12 @@ router.get('/:username/games_playing', async function(req, res, next){
 }
 });
 
-router.get('/:username/games_playing/:game_id', async function(req, res, next){
+router.get('/:id/games_playing/:game_id', async function(req, res, next){
   try{
     let game_id = req.params.game_id;
     let body = req.body;
     body.game_id = game_id;
-    const game = await GamePlaying.getOneGamePlayingById(body);
+    const game = await GamePlaying.getOneGamePlayingById(body, req.params.id);
 
     return res.json(game);
   }catch(e){
@@ -140,7 +140,7 @@ router.get('/:username/games_playing/:game_id', async function(req, res, next){
 }
 });
 
-router.post('/:username/games_playing', async function(req, res, next){
+router.post('/:id/games_playing', async function(req, res, next){
   const isValid = validate(req.body, gamePlayingSchema);
 
   if (!isValid.valid) {
@@ -151,7 +151,7 @@ router.post('/:username/games_playing', async function(req, res, next){
     };
 
   try{
-    const game = await GamePlaying.addGamePlaying(req.body);
+    const game = await GamePlaying.addGamePlaying(req.body, req.params.id);
 
     return res.json(game);
   }catch(e){
@@ -159,7 +159,7 @@ router.post('/:username/games_playing', async function(req, res, next){
 }
 });
 
-router.patch('/:username/games_playing/:game_id', async function(req, res, next){
+router.patch('/:id/games_playing/:game_id', async function(req, res, next){
   const isValid = validate(req.body, gamePlayingSchema);
 
   if (!isValid.valid) {
@@ -174,7 +174,7 @@ router.patch('/:username/games_playing/:game_id', async function(req, res, next)
     let body = req.body;
     body.game_id = game_id;
 
-    const game = await GamePlaying.updateGamePlaying(body);
+    const game = await GamePlaying.updateGamePlaying(body, req.params.id);
 
     return res.json(game);
   }catch(e){
@@ -182,13 +182,13 @@ router.patch('/:username/games_playing/:game_id', async function(req, res, next)
 }
 });
 
-router.delete('/:username/games_playing/:game_id', async function(req, res, next){
+router.delete('/:id/games_playing/:game_id', async function(req, res, next){
   try{
     let game_id = req.params.game_id;
     let body = req.body;
     body.game_id = game_id;
 
-    const game = await GamePlaying.removeGamePlaying(body);
+    const game = await GamePlaying.removeGamePlaying(body, req.params.id);
 
     return res.json(game);
   }catch(e){

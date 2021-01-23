@@ -2,28 +2,31 @@ const db = require('../db');
 
 class GamePlaying {
     static async getAllGamesPlaying(user_id){
-        const res = db.query(`
+        const res = await db.query(`
         SELECT * 
         FROM games_playing
+        RIGHT JOIN games
+        ON games.id = game_id
         WHERE user_id = $1
         `, [user_id])
 
-        if((await res).rows.length === 0){
-            let error = new Error("You have not added any games to your list.");
-            error.status = 404;
-            throw error;
+        if((res).rows.length === 0){
+            return{
+                status: 404,
+                message: "You have not added any games."
+            }
         }
 
         return res.rows;
     }
 
-    static async getOneGamePlayingById(data){
+    static async getOneGamePlayingById(data, user_id){
         const res = db.query(`
         SELECT *
         FROM games_playing
         WHERE user_id = $1
         AND game_id = $2
-        `, [data.user_id, data.game_id]);
+        `, [user_id, data.game_id]);
 
         if((await res).rows.length === 0){
             let error = new Error("This game is not on your list.");
@@ -34,13 +37,13 @@ class GamePlaying {
         return res.rows;
     }
 
-    static async addGamePlaying(data) {
+    static async addGamePlaying(data, user_id) {
         const duplicateCheck = await db.query(`
         SELECT * 
         FROM games_playing
         WHERE user_id = $1
         AND game_id = $2
-        `, [data.user_id, data.game_id]);
+        `, [user_id, data.game_id]);
 
         if(duplicateCheck.rows.length !== 0){
             let error = new Error('You already have this game added.');
@@ -54,19 +57,25 @@ class GamePlaying {
         VALUES
         ($1,$2,$3)
         RETURNING  user_id, game_id, in_game_name
-        `,[data.user_id, data.game_id, data.in_game_name]);
+        `,[user_id, data.game_id, data.in_game_name]);
 
-        return res.rows[0]
+        let gameRes = await db.query(`
+        SELECT *
+        FROM games
+        WHERE id = $1
+        `, [data.game_id])
+
+        return gameRes.rows
     };
 
-    static async updateGamePlaying(data){
+    static async updateGamePlaying(data, user_id){
         const query = db.query(`
         UPDATE games_playing
         SET in_game_name = $1
         WHERE user_id = $2
         AND game_id = $3
         RETURNING *
-        `, [data.in_game_name, data.user_id, data.game_id])
+        `, [data.in_game_name, user_id, data.game_id])
 
         const res = query.rows[0]
 
@@ -79,13 +88,13 @@ class GamePlaying {
         return res;
     };
 
-    static async removeGamePlaying(data){
+    static async removeGamePlaying(data, user_id){
         const res = await db.query(`
         DELETE FROM games_playing
         WHERE game_id = $1
         AND user_id = $2
         RETURING *
-        `, [data.game_id, data.user_id]);
+        `, [data.game_id, user_id]);
 
         if(res.rows.length === 0) {
             let notFound = new Error(`Could not find game with id '${data.game_id} in your list`);
