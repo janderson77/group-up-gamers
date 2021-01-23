@@ -85,9 +85,9 @@ class Group {
     return groups;
   }
 
-  static async joinGroup(user, group){
+  static async joinGroup(user, group_id){
 
-    const joinedOrBanned = await checkIfJoinedOrBanned(user, group.id);
+    const joinedOrBanned = await checkIfJoinedOrBanned(user, group_id);
 
     if(joinedOrBanned.joined){
       if(joinedOrBanned.is_banned){
@@ -106,7 +106,7 @@ class Group {
       VALUES
       ($1, $2)
       RETURNING group_id, user_id
-    `, [group.id, user])
+    `, [group_id, user])
 
     if(joinRes.rows === 0){
       let joinError = new Error(`ERROR! Something went wrong!`);
@@ -114,7 +114,13 @@ class Group {
       throw error;
     }
 
-    return(joinRes.rows[0].data);
+    let groupRes = await db.query(`
+      SELECT groups.id, group_name, group_game_id, group_slug
+      FROM groups
+      WHERE groups.id = $1
+    `,[group_id]);
+
+    return(groupRes.rows[0].data);
   };
 
   static async banUser(user, group) {

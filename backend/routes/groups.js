@@ -81,9 +81,7 @@ router.post('/:id/join', async function(req, res, next){
     const user = req.body.user;
     const group_id = req.params.id;
 
-    const group = await Group.findOneById(group_id);
-
-    const result = await Group.joinGroup(user, group);
+    const result = await Group.joinGroup(user, group_id);
     return res.status(200).json(result);
   }catch(e){
     return next(e)

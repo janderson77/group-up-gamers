@@ -8,8 +8,9 @@ const users = (state = INITIAL_STATE, action) => {
         case JOIN_GROUP:
             user = {};
             user = {...state.user}
-            console.log(action.payload)
-            user.groups = {...user.groups, [action.paylaod.group_id]: action.payload}
+            console.log(action.payload.data[0])
+            let group = action.payload.data[0]
+            user.groups = {...user.groups, [group.group_id]: group}
             return {user: user};
         case ADD_GAME_TO_PLAYING:
             user = {...state.user}
