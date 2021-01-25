@@ -8,8 +8,27 @@ const {gameNewSchema, gameUpdate} = require('../schemas/index')
 
 router.get('/', async function(req, res, next) {
     try{
-        const games = await Game.findAll(req.query);
+        const games = await Game.findAll(req.body);
         return res.json({games})
+    }catch(e){
+        return next(e)
+    }
+});
+
+router.get('/min', async function(req, res, next){
+    try{
+        const games = await Game.findAllMin();
+        return res.json([games])
+    }catch(e){
+        return next(e)
+    }
+});
+
+router.post('/search', async function(req, res, next){
+    try{
+        console.log(req.body)
+        const games = await Game.findAllStartsWith(req.body.search);
+        return res.json([games])
     }catch(e){
         return next(e)
     }

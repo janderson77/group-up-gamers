@@ -12,3 +12,5 @@ export const LOGIN = 'LOGIN';
 export const REGISTER = 'REGISTER';
 export const ADD_GAME_TO_PLAYING = 'ADD_GAME_TO_PLAYING';
 export const LEAVE_GROUP = 'LEAVE_GROUP';
+export const SET_GROUP_GAME = 'SET_GROUP_GAME'
+export const CREATE_GROUP = 'CREATE_GROUP';

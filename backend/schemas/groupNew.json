@@ -8,6 +8,7 @@
     "examples": [
         {
             "group_name": "BossKillers",
+            "group_slug": "bosskillers",
             "group_game_id": 3,
             "group_owner_id": 2,
             "group_discord_url": "https//:discord.gg/server",
@@ -27,6 +28,16 @@
             "default": "",
             "examples": [
                 "BossKillers"
+            ]
+        },
+        "group_slug": {
+            "$id": "#/properties/group_slug",
+            "type": "string",
+            "title": "The group_slug schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "bosskillers"
             ]
         },
         "group_game_id": {

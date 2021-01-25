@@ -225,8 +225,6 @@ class Group {
         duplicateError.status = 409; // 409 Conflict
         throw duplicateError
       }
-
-      console.log(data)
   
       const result = await db.query(
           `INSERT INTO groups 

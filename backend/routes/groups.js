@@ -58,16 +58,10 @@ router.post("/", async function (req, res, next) {
       if (!isValid.valid) {
         return next({
           status: 400,
-          message: isValid.eors.map(e => e.stack)
+          message: isValid.errors.map(e => e.stack)
         });
       };
       let group = req.body;
-      
-      let groupNameStr = req.body.group_name.toLowerCase()
-      let convertNameArr = groupNameStr.split(" ");
-      groupSlug = convertNameArr.join("-");
-
-      group.group_slug = groupSlug
 
       const newGroup = await Group.create(group);
       return res.status(201).json({newGroup});   // 201 CREATED

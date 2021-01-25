@@ -73,6 +73,19 @@ const Group = () => {
     };
 
     let joinButton;
+    let adminButton;
+
+    if(user.owned_groups[group.id]){
+        adminButton = (
+            <div>
+                <div className="btn btn-success btn-sm">Admin Page</div>
+            </div>
+        )
+    }else{
+        adminButton = null;
+    }
+
+
     if(user.groups){
         if(user.groups[group.id]){
             joinButton = (
@@ -106,7 +119,7 @@ const Group = () => {
                 <h1>{group.group_name}</h1>
                 </div>
                 <div className="justify-self-start">
-                    {joinButton}
+                    {adminButton ? adminButton: joinButton}
                 </div>
                 <div className="card-body d-flex justify-content-around">
                 

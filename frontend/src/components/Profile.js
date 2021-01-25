@@ -16,8 +16,6 @@ function Profile() {
   user.games_playing ? userGames = Object.values(user.games_playing) : userGames = {};
   user.groups ? userGroups = Object.values(user.groups) : userGroups = {};
 
-  console.log(userGames)
-
   let gamesList;
 
   if(userGames.length > 0){
@@ -48,37 +46,62 @@ function Profile() {
       )
   }
 
+  let ownedGroups = [];
+  user.owned_groups ? ownedGroups = Object.values(user.owned_groups) : ownedGroups = [] ;
+  
+
+  let ownedGroupsDisplay;
+
+  if(ownedGroups.length){
+    ownedGroupsDisplay =  ownedGroups.map(e => (
+        <div key={e.id}>
+            <NavLink to={`/groups/${e.id}`}>{e.group_name}</NavLink>
+        </div>
+    ))
+  }else{
+    ownedGroupsDisplay = (
+        <div>
+            <p>You haven't created any groups yet.</p>
+            <p><NavLink to="/groups/select" >Go Make One!</NavLink></p>
+        </div>
+    )
+  }
+
+
 
 
   return (
     // <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
     <div>
-        <div className="col-md-10 offset-md-1">
-            <h3>Profile</h3>
+        <div className="col-md-10 offset-md-1 my-5">
+            <h3>My Profile</h3>
             <div className="d-flex">
-            <div className="col-md-6">
-                {user.profile_img_url ? <img alt={user.username} src={user.profile_img_url} /> : <img alt={user.username} src='../static/404.png'/>}
-            </div>
-            
-            <div className="col-md-6 d-flex flex-column align-items-center">
-                <div>
-                    <h4>Groups</h4>
-                    {groups}
+                <div className="col-md-6">
+                    {user.profile_img_url ? <img alt={user.username} src={user.profile_img_url} /> : <img alt={user.username} src='../static/404.png'/>}
                 </div>
-            </div>
+            
+                <div className="col-md-6 d-flex flex-column align-items-center">
+                    <div>
+                        <h4>My Groups</h4>
+                        {groups}
+                    </div>
+                </div>
             </div>
         </div>
-        <div className="col-md-10 offset-md-1">
+
+        <div className="col-md-10 offset-md-1 my-5 py-3">
             <div className="d-flex">
-            <div className="col-md-6">
-                <h4>Games</h4>
-                {gamesList}
-            </div>
-            <div className="col-md-6 d-flex flex-column align-items-center">
-                <div>
-                    
+                <div className="col-md-6">
+                    <h4>My Games</h4>
+                    {gamesList}
                 </div>
-            </div>
+
+                <div className="col-md-6 d-flex flex-column align-items-center">
+                    <div>
+                        <h4>My Owned Groups</h4>
+                        {ownedGroupsDisplay}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -7,6 +7,8 @@ import Login from './components/Login'
 import Profile from './components/Profile'
 import GroupsList from './components/GroupsList'
 import Group from './components/Group'
+import GroupGameForm from './components/GroupGameForm'
+import GroupForm from './components/GroupForm'
 import ProfileVisit from './components/ProfileVisit'
 
 const Routes = () => {
@@ -18,6 +20,8 @@ const Routes = () => {
             <Route exact path="/login"><Login /></Route>
             <Route exact path="/profile" ><Profile /></Route>
             <Route exact path="/groups"><GroupsList /></Route>
+            <Route exact path="/groups/select"><GroupGameForm /></Route>
+            <Route exact path="/groups/create"><GroupForm /></Route>
             <Route exact path="/groups/:id"><Group /></Route>
             <Route exact path="/users/:id"><ProfileVisit /></Route>
             <Redirect to="/" />

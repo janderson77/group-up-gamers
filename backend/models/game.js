@@ -18,10 +18,14 @@ class Game {
 
         let finalQuery = baseQuery + whereExpressions.join(" AND ") + " ORDER BY game_name asc";
 
-        if(data.limit){
+        
+
+        if(!data.limit){
+            finalQuery += ` LIMIT 25 `
+        }else if(data.limit > 0){
             finalQuery += ` LIMIT ${data.limit} `
         }else{
-            finalQuery += ` LIMIT 25 `
+            finalQuery = finalQuery
         }
 
         if(data.offset) {
@@ -29,6 +33,16 @@ class Game {
         }
         const gamesRes = await db.query(finalQuery, queryValues);
         return gamesRes.rows;
+    };
+
+    static async findAllMin() {
+        const result = await db.query(`
+            SELECT id, game_name, slug
+            FROM games
+            ORDER BY game_name
+        `);
+
+        return result.rows;
     }
 
     static async findOne(slug) {
@@ -51,6 +65,19 @@ class Game {
 
         return game;
 
+    };
+
+    static async findAllStartsWith(str) {
+        let query = `SELECT id, game_name, slug FROM games `
+        if(str === 'other'){
+            query = query + `WHERE lower(game_name) NOT SIMILAR TO '(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)%'`
+        }else{
+           query = query + `WHERE lower(game_name) SIMILAR TO '(${str})%'`
+        }
+        
+        const gamesRes = await db.query(`${query}`)
+
+        return gamesRes.rows
     }
 
     static async addGame(data) {        
