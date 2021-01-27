@@ -12,8 +12,7 @@
             "last_name": "Gregorson",
             "discord_url": "https://discord.gg/serverName",
             "profile_img_url": "https://avatars0.githubusercontent.com/u/13444851?s=460&v=4",
-            "email": "email@gmail.com",
-            "token": "foo123"
+            "email": "email@gmail.com"
         }
     ],
     "required": [],
@@ -76,16 +75,6 @@
             "default": "",
             "examples": [
                 "email@gmail.com"
-            ]
-        },
-        "token": {
-            "$id": "#/properties/token",
-            "type": "string",
-            "title": "The token schema",
-            "description": "An explanation about the purpose of this instance.",
-            "default": "",
-            "examples": [
-                "foo123"
             ]
         }
     },

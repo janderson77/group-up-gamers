@@ -75,28 +75,39 @@ router.post('/login', async function(req, res, next){
   };
 });
 
-router.patch("/:username", ensureCorrectUser, async function(req, res, next) {
+router.patch("/:id", async function(req, res, next) {
+  let data = req.body
     try {
-      if ("username" in req.body || "is_admin" in req.body) {
+      if (data.isAdmin) {
         return next({ status: 400, message: "Not allowed" });
       }
       await User.authenticate({
-        username: req.params.username,
-        password: req.body.password
+        username: data.username,
+        password: data.password
       });
-      let user = req.body;
-      delete user._token
+
+      let user = {
+        password: data.password || undefined,
+        first_name: data.first_name || undefined,
+        last_name: data.last_name || undefined,
+        discord_url: data.discord_url || undefined,
+        profile_img_url: data.profile_img_url || undefined,
+        email: data.email || undefined
+      };
+
       const isValid = validate(user, userUpdate);
       if (!isValid.valid) {
         return next({
           status: 400,
           message: isValid.errors.map(e => e.stack)
         });
-      }
-      
-      user._token = req.body._token
+      };
 
-      user = await User.update(req.params.username, req.body);
+      user.username = data.username;
+
+      user = await User.update(req.params.id, data);
+      delete user.isAdmin;
+      delete user.password;
       return res.json({ user });
     } catch (err) {
       return next(err);

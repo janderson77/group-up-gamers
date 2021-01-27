@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER, REMOVE_GAME_FROM_PLAYING} from './types';
+import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE} from './types';
 import {toObject} from '../helpers/toObject'
 
 const base_url = "http://localhost:3001/users"
@@ -58,6 +58,16 @@ const getUser = (user_id) => {
     }
 };
 
+const editProfile = (data) => {
+    return async function(dispatch) {
+        dispatch(doEditProfile(data))
+    }
+};
+
+const doEditProfile = (data) => {
+    return {type: EDIT_PROFILE, payload: data}
+}
+
 const doRemoveGameFromList = (data) => {
     return {type: REMOVE_GAME_FROM_PLAYING, payload: data};
 };
@@ -88,4 +98,4 @@ function doLogout() {
     return {type: LOGOUT}
 };
 
-export {login, logout, register, addGameToList, getUser, removeGameFromList};
+export {login, logout, register, addGameToList, getUser, removeGameFromList, editProfile};

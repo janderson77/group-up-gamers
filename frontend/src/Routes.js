@@ -10,6 +10,7 @@ import Group from './components/Group'
 import GroupGameForm from './components/GroupGameForm'
 import GroupForm from './components/GroupForm'
 import ProfileVisit from './components/ProfileVisit'
+import ProfileEdit from './components/ProfileEdit'
 
 const Routes = () => {
     return(
@@ -19,6 +20,7 @@ const Routes = () => {
             <Route exact path="/games/:slug" ><Game /></Route>
             <Route exact path="/login"><Login /></Route>
             <Route exact path="/profile" ><Profile /></Route>
+            <Route exact path="/profile/edit" ><ProfileEdit /></Route>
             <Route exact path="/groups"><GroupsList /></Route>
             <Route exact path="/groups/select"><GroupGameForm /></Route>
             <Route exact path="/groups/create"><GroupForm /></Route>

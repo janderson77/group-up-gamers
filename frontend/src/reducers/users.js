@@ -1,4 +1,4 @@
-import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER, ADD_GAME_TO_PLAYING, LEAVE_GROUP, CREATE_GROUP, REMOVE_GAME_FROM_PLAYING} from '../actions/types'
+import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER, ADD_GAME_TO_PLAYING, LEAVE_GROUP, CREATE_GROUP, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE} from '../actions/types'
 
 const INITIAL_STATE = {};
 
@@ -47,7 +47,20 @@ const users = (state = INITIAL_STATE, action) => {
             user = {...action.payload}
             return {...state, user: user};
         case LOGOUT:
-            return{...INITIAL_STATE}
+            return{...INITIAL_STATE};
+        case EDIT_PROFILE:
+            user = {}
+            user = {...state.user}
+            let newUserData = {...action.payload}
+            for(let [key, val] of Object.entries(user)){
+                if(newUserData[`${key}`]){
+                    user[`${key}`] = newUserData[`${key}`]
+                }
+            }
+            return{
+                ...state, user: user
+            }
+            return
         default:
             return state;
     }

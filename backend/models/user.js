@@ -137,7 +137,7 @@ class User {
         return user;
     };
 
-    static async update(username, data) {
+    static async update(user_id, data) {
         if (data.password) {
             data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
         }
@@ -145,15 +145,15 @@ class User {
         let {query, values} = partialUpdate(
             "users",
             data,
-            "username",
-            username
+            "id",
+            user_id
         );
 
         const result = await db.query(query, values);
         const user = result.rows[0];
 
         if (!user) {
-            let notFound = new Error(`There exists no user '${username}`);
+            let notFound = new Error(`There exists no user '${data.username}`);
             notFound.status = 404;
             throw notFound;
         }

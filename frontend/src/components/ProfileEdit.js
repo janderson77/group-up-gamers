@@ -1,21 +1,22 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import {useSelector, useDispatch} from 'react-redux'
+import axios from 'axios'
+import {editProfile} from '../actions/users'
+import './css/Profile.css'
 import Alert from "./Alert";
-import UserContext from "../UserContext";
-import axios from "axios";
 
-const MESSAGE_SHOW_PERIOD_IN_MSEC = 3000;
+const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
 
 function Profile() {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
-
-  console.log(currentUser)
+  const user = useSelector(st => st.users.user)
+  const dispatch = useDispatch();
 
   const [userForm, setUserForm] = useState({
-    first_name: currentUser.data.user.first_name || "",
-    last_name: currentUser.data.user.last_name || "",
-    email: currentUser.data.user.email || "",
-    profile_img_url: currentUser.data.user.profile_img_url || "",
-    username: currentUser.data.user.username,
+    first_name: user.first_name || "",
+    last_name: user.last_name || "",
+    email: user.email || "",
+    profile_img_url: user.profile_img_url || "",
+    username: user.username,
     password: "",
     errors: [],
     saveConfirmed: false
@@ -35,8 +36,9 @@ function Profile() {
     [userForm]
   );
 
-  async function handleSubmit(evt) {
-    evt.preventDefault();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    // dispatch(editProfile(userForm))
 
     try {
       let profileData = {
@@ -47,16 +49,19 @@ function Profile() {
         password: userForm.password
       };
 
-      let username = userForm.username;
-      let updatedUser = await axios.patch(`http://localhost:3001/`,{username, profileData});
-      console.log("UPDATED USER", updatedUser)
+      profileData.username = user.username;
+      profileData._token = user._token
+
+      let updatedUser = await axios.patch(`http://localhost:3001/users/${user.id}`,profileData);
+
       setUserForm(f => ({
         ...f,
         errors: [],
         saveConfirmed: true,
         password: ""
       }));
-      setCurrentUser(updatedUser);
+
+      dispatch(editProfile(updatedUser.data.user))
     } catch (errors) {
       setUserForm(f => ({ ...f, errors }));
     }
@@ -73,7 +78,7 @@ function Profile() {
 
   return (
     <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
-      <h3>Profile</h3>
+      <h3>Edit Profile</h3>
       <div className="card">
         <div className="card-body">
           <form>
