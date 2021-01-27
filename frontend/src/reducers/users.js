@@ -7,19 +7,16 @@ const users = (state = INITIAL_STATE, action) => {
     let group;
     switch(action.type){
         case JOIN_GROUP:
-            user = {};
             user = {...state.user}
             group = action.payload.data[0]
             user.groups = {...user.groups, [group.group_id]: group}
             return {user: user};
         case LEAVE_GROUP:
-            user = {};
             user = {...state.user}
             group = action.payload
             delete user.groups[group.group_id]
             return{user: user}
         case CREATE_GROUP:
-            user = {}
             user = {...state.user}
             let owned_group = action.payload.newGroup
             user.owned_groups = {[owned_group.id]: owned_group};
@@ -29,7 +26,6 @@ const users = (state = INITIAL_STATE, action) => {
             user.games_playing = {...user.games_playing, [action.payload.id]: action.payload}
             return {user: user};
         case REMOVE_GAME_FROM_PLAYING:
-            user = {};
             user = {...state.user};
             delete user.games_playing[user.toRemove];
             delete user.toRemove;
@@ -39,20 +35,16 @@ const users = (state = INITIAL_STATE, action) => {
             visiting = {...action.payload}
             return {...state, visiting: visiting};
         case REGISTER:
-            user = {};
-            user = {...action.payload};
-            return {...state, user: user};
+            return {...state, user: {...action.payload}};
         case LOGIN:
-            user = {};
-            user = {...action.payload}
-            return {...state, user: user};
+            return {...state, 
+                user: {...action.payload}};
         case LOGOUT:
             return{...INITIAL_STATE};
-        case EDIT_PROFILE:
-            // user = {}
-            // user = {...state.user, ...action.paylod}       
+        case EDIT_PROFILE:     
             return{
-                ...state, user: {...state.user, ...action.payload}
+                ...state, 
+                user: {...state.user, ...action.payload}
             }
             return
         default:

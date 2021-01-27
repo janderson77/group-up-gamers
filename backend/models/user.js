@@ -14,7 +14,9 @@ class User {
                     password, 
                     first_name, 
                     last_name, 
-                    email
+                    email,
+                    profile_img_url,
+                    discord_url
               FROM users 
               WHERE username = $1`,
             [data.username]

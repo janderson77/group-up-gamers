@@ -87,7 +87,7 @@ function Profile() {
             <h3>My Profile</h3>
             <div className="d-flex">
                 <div className="col-md-6">
-                    <div className="d-flex justify-content-center">
+                    <div className="d-flex justify-content-center align-items-end">
                     {user.profile_img_url ? <img alt={user.username} src={user.profile_img_url} /> : <img alt={user.username} src='../static/404.png'/>}
                     <NavLink to="/profile/edit" className="btn btn-info btn-sm" style={{height: '2rem'}}>Edit Profile</NavLink>
                     </div>
