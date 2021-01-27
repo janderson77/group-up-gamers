@@ -77,7 +77,7 @@ function Profile() {
   }
 
   return (
-    <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+    <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4 d-flex flex-column align-items-center">
       <h3>Edit Profile</h3>
       <div className="card">
         <div className="card-body">

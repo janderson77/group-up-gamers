@@ -49,16 +49,10 @@ const users = (state = INITIAL_STATE, action) => {
         case LOGOUT:
             return{...INITIAL_STATE};
         case EDIT_PROFILE:
-            user = {}
-            user = {...state.user}
-            let newUserData = {...action.payload}
-            for(let [key, val] of Object.entries(user)){
-                if(newUserData[`${key}`]){
-                    user[`${key}`] = newUserData[`${key}`]
-                }
-            }
+            // user = {}
+            // user = {...state.user, ...action.paylod}       
             return{
-                ...state, user: user
+                ...state, user: {...state.user, ...action.payload}
             }
             return
         default:
