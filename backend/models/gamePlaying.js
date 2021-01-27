@@ -93,7 +93,7 @@ class GamePlaying {
         DELETE FROM games_playing
         WHERE game_id = $1
         AND user_id = $2
-        RETURING *
+        RETURNING game_id
         `, [data.game_id, user_id]);
 
         if(res.rows.length === 0) {

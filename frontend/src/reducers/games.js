@@ -1,11 +1,9 @@
-import {LOAD_ALL_GAMES, LOAD_GAME, RESET_GAME} from '../actions/types';
+import {LOAD_ALL_GAMES, LOAD_GAME} from '../actions/types';
 
 const INITIAL_STATE = {};
 
 const games = (state = INITIAL_STATE, action) => {
     switch (action.type){
-        case RESET_GAME:
-            return{...INITIAL_STATE};
         case LOAD_GAME:
             return{
                 ...state,

@@ -1,11 +1,13 @@
-import React, { useState, useCallback } from "react";
-import {useSelector } from 'react-redux'
+import React from "react";
+import {useSelector, useDispatch} from 'react-redux'
 import './css/Profile.css'
 import { NavLink } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import {removeGameFromList} from '../actions/users'
 
 function Profile() {
   const user = useSelector(st => st.users.user)
+  const dispatch = useDispatch();
   if(!user){
       return <ClipLoader size={150} color="#123abc" />;
   };
@@ -17,18 +19,6 @@ function Profile() {
   user.groups ? userGroups = Object.values(user.groups) : userGroups = {};
 
   let gamesList;
-
-  if(userGames.length > 0){
-      gamesList = userGames.map(e => (
-          <div key={e.slug}><NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink></div>
-      ))
-  }else{
-      gamesList = <div>
-          <div>No Games Added Yet</div>
-          <div><NavLink to='/games'>Go Add Some!</NavLink></div>
-      </div>
-  };
-
   let groups;
 
   if(userGroups.length){
@@ -66,6 +56,26 @@ function Profile() {
         </div>
     )
   }
+
+  const handleRemoveGame = (e) => {
+    console.log(e.target.id)
+    user.toRemove = e.target.id;
+    dispatch(removeGameFromList(user, user.toRemove))
+  }
+
+  if(userGames.length > 0){
+    gamesList = userGames.map(e => (
+        <div key={e.slug}>
+            <button className="btn btn-sm btn-danger" id={e.id} onClick={handleRemoveGame}>X</button>
+            <NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink>
+        </div>
+    ))
+}else{
+    gamesList = <div>
+        <div>No Games Added Yet</div>
+        <div><NavLink to='/games'>Go Add Some!</NavLink></div>
+    </div>
+};
 
 
 

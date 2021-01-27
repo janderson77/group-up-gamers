@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER} from './types';
+import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER, REMOVE_GAME_FROM_PLAYING} from './types';
 import {toObject} from '../helpers/toObject'
 
 const base_url = "http://localhost:3001/users"
@@ -39,7 +39,16 @@ const addGameToList = (user_id, game_id, inGameName) => {
 
         dispatch(addGameToPlaying(res.data[0]))
     }
-}
+};
+
+const removeGameFromList = (user, game_id) => {
+    return async function(dispatch) {
+        const user_id = user.id;
+        const res = axios.delete(`${base_url}/${user_id}/games_playing/${game_id}`);
+
+        dispatch(doRemoveGameFromList(user))
+    };
+};
 
 const getUser = (user_id) => {
     return async function(dispatch) {
@@ -47,11 +56,15 @@ const getUser = (user_id) => {
 
         dispatch(doGetUser(res.data))
     }
-}
+};
+
+const doRemoveGameFromList = (data) => {
+    return {type: REMOVE_GAME_FROM_PLAYING, payload: data};
+};
 
 const doGetUser = (data) => {
     return {type: GET_USER, payload: data}
-}
+};
 
 const addGameToPlaying = (data) => {
     return {type: ADD_GAME_TO_PLAYING, payload: data}
@@ -75,4 +88,4 @@ function doLogout() {
     return {type: LOGOUT}
 };
 
-export {login, logout, register, addGameToList, getUser};
+export {login, logout, register, addGameToList, getUser, removeGameFromList};

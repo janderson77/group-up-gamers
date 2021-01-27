@@ -51,12 +51,18 @@ const Game = () => {
     }
 
     let button;
+    let notAddedButton = <button onClick={tryAddGame} className="btn btn-small btn-success">Add Game</button>
 
-    if(user.games_playing[game.id]){
-        button = <button className="btn btn-small btn-info" disabled>Added</button>
+    if(user.games_playing){
+        if(user.games_playing[game.id]){
+            button = <button className="btn btn-small btn-info" disabled>Added</button>
+        }else{
+            button = notAddedButton
+        }
     }else{
-        button = <button onClick={tryAddGame} className="btn btn-small btn-success">Add Game</button>
-    }
+        button = notAddedButton
+    };
+    
     
 
     return(

@@ -185,8 +185,7 @@ router.patch('/:id/games_playing/:game_id', async function(req, res, next){
 router.delete('/:id/games_playing/:game_id', async function(req, res, next){
   try{
     let game_id = req.params.game_id;
-    let body = req.body;
-    body.game_id = game_id;
+    let body = {game_id: game_id};
 
     const game = await GamePlaying.removeGamePlaying(body, req.params.id);
 
