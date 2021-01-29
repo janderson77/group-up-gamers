@@ -21,7 +21,8 @@ function Profile() {
     username: user.username,
     password: "",
     errors: [],
-    saveConfirmed: false
+    saveConfirmed: false,
+    hasErrors: false
   });
 
   const [deleteShown, toggleDeleteShown] = useState(false);
@@ -43,9 +44,21 @@ function Profile() {
     [userForm]
   );
 
+  useEffect(
+    function() {
+      if (userForm.hasErrors && !messageShownRef.current) {
+        messageShownRef.current = true;
+        setTimeout(function() {
+          setUserForm(f => ({ ...f, hasErrors: false, errors: [] }));
+          messageShownRef.current = false;
+        }, MESSAGE_SHOW_PERIOD_IN_MSEC);
+      }
+    },
+    [userForm]
+  );
+
   async function handleSubmit(e) {
     e.preventDefault();
-    // dispatch(editProfile(userForm))
 
     try {
       let profileData = {
@@ -69,8 +82,14 @@ function Profile() {
       }));
 
       dispatch(editProfile(updatedUser.data.user))
-    } catch (errors) {
-      setUserForm(f => ({ ...f, errors }));
+    } catch (e) {
+      let err = e.response.data.message
+      console.log(err)
+      setUserForm({
+        ...userForm,
+        hasErrors: true,
+        errors: [...userForm.errors, err]
+      });
     }
   }
 
@@ -229,17 +248,7 @@ function Profile() {
               >
                 Delete Profile
               </button>
-            )}
-
-            {userForm.errors.length ? (
-              <Alert type="danger" messages={userForm.errors} />
-            ) : null}
-
-            {userForm.saveConfirmed ? (
-              <Alert type="success" messages={["User updated successfully."]} />
-            ) : null}
-
-            
+            )}            
           </form>
         </div>
       </div>
