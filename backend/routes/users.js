@@ -114,9 +114,16 @@ router.patch("/:id", async function(req, res, next) {
     }
 });
 
-router.delete("/:username", ensureCorrectUser, async function(req, res, next) {
+router.delete("/:id",authRequired, ensureCorrectUser, async function(req, res, next) {
+  const data = req.body
     try {
-      await User.remove(req.params.username);
+      console.log(data)
+      await User.authenticate({
+        username: data.username,
+        password: data.password
+      });
+
+      await User.remove(req.params.id);
       return res.json({ message: "User deleted" });
     } catch (err) {
       return next(err);

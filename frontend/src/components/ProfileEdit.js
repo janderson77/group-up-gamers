@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import {useHistory} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import axios from 'axios'
-import {editProfile} from '../actions/users'
+import {editProfile, deleteProfile} from '../actions/users'
 import './css/Profile.css'
 import Alert from "./Alert";
 
@@ -10,6 +11,7 @@ const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
 function Profile() {
   const user = useSelector(st => st.users.user)
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [userForm, setUserForm] = useState({
     first_name: user.first_name || "",
@@ -21,6 +23,11 @@ function Profile() {
     errors: [],
     saveConfirmed: false
   });
+
+  const [deleteShown, toggleDeleteShown] = useState(false);
+  const [toDeletePass, setToDeletePass] = useState({
+    password: ""
+  })
 
   const messageShownRef = useRef(false);
   useEffect(
@@ -75,6 +82,40 @@ function Profile() {
       errors: []
     }));
   }
+
+  const handleDeletePassChange = (e) => {
+    const { name, value } = e.target;
+    setToDeletePass(f => ({
+      ...f,
+      [name]: value,
+      errors: []
+    }));
+  }
+
+  const toggleDelete = () => {
+    toggleDeleteShown(!deleteShown);
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    const toDelete = {
+      id: user.id,
+      username: user.username,
+      password: toDeletePass.password,
+      _token: user._token
+    };
+  
+    try{
+      const res = await axios.delete(`http://localhost:3001/users/${user.id}`,{data: toDelete});
+
+      if(res.status === 200){
+        history.push('/deleted');
+        dispatch(deleteProfile());
+      }
+    }catch(errors){
+      setUserForm(f => ({ ...f, errors }));
+    }
+  };
 
   return (
     <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4 d-flex flex-column align-items-center">
@@ -147,6 +188,58 @@ function Profile() {
             >
               Save Changes
             </button>
+          </form>
+        </div>
+      </div>
+      <h3>Delete Profile</h3>
+      <div className="card">
+        <div className="card-body">
+          <form>
+            {deleteShown ? (
+              <>
+              <div className="form-group">
+                <label>
+                  Confirm password to permanently delete your account:
+                  <br/>
+                  NOTE: This cannot be undone!
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  className="form-control"
+                  value={toDeletePass.password}
+                  onChange={handleDeletePassChange}
+                />
+              </div>
+
+              <button
+              className="btn btn-primary btn-block mt-4"
+              onClick={handleDelete}
+              >
+              Delete Profile
+              </button>
+              <button className="btn btn-danger btn-block mt-4" onClick={toggleDelete} >
+                Cancel
+              </button>
+            </>
+            ) : (
+              <button
+                className="btn btn-primary btn-block mt-4"
+                onClick={toggleDelete}
+              >
+                Delete Profile
+              </button>
+            )}
+
+            {userForm.errors.length ? (
+              <Alert type="danger" messages={userForm.errors} />
+            ) : null}
+
+            {userForm.saveConfirmed ? (
+              <Alert type="success" messages={["User updated successfully."]} />
+            ) : null}
+
+            
           </form>
         </div>
       </div>

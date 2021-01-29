@@ -166,15 +166,15 @@ class User {
         return result.rows[0];
     };
 
-    static async remove(username) {
+    static async remove(id) {
         let result = await db.query(
                 `DELETE FROM users 
-                  WHERE username = $1
-                  RETURNING username`,
-                [username]);
+                  WHERE id = $1
+                  RETURNING id, username`,
+                [id]);
   
       if (result.rows.length === 0) {
-        let notFound = new Error(`There exists no user '${username}'`);
+        let notFound = new Error(`This user does not exist.`);
         notFound.status = 404;
         throw notFound;
       };

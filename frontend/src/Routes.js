@@ -11,6 +11,7 @@ import GroupGameForm from './components/GroupGameForm'
 import GroupForm from './components/GroupForm'
 import ProfileVisit from './components/ProfileVisit'
 import ProfileEdit from './components/ProfileEdit'
+import ProfileDeleted from './components/ProfileDeleted'
 
 const Routes = () => {
     return(
@@ -26,6 +27,7 @@ const Routes = () => {
             <Route exact path="/groups/create"><GroupForm /></Route>
             <Route exact path="/groups/:id"><Group /></Route>
             <Route exact path="/users/:id"><ProfileVisit /></Route>
+            <Route exact path="/deleted"><ProfileDeleted /></Route>
             <Redirect to="/" />
         </Switch>
     )
