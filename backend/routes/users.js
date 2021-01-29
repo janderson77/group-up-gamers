@@ -75,7 +75,7 @@ router.post('/login', async function(req, res, next){
   };
 });
 
-router.patch("/:id", async function(req, res, next) {
+router.patch("/:id", authRequired, ensureCorrectUser, async function(req, res, next) {
   let data = req.body
     try {
       if (data.isAdmin) {
@@ -158,8 +158,13 @@ router.get('/:id/games_playing/:game_id', async function(req, res, next){
 }
 });
 
-router.post('/:id/games_playing', async function(req, res, next){
-  const isValid = validate(req.body, gamePlayingSchema);
+router.post('/:id/games_playing', authRequired, async function(req, res, next){
+  let toValidate = {
+    user_id: req.body.user_id,
+    game_id: req.body.game_id,
+    in_game_name: req.body.in_game_name
+  }
+  const isValid = validate(toValidate, gamePlayingSchema);
 
   if (!isValid.valid) {
     return next({
@@ -177,7 +182,7 @@ router.post('/:id/games_playing', async function(req, res, next){
 }
 });
 
-router.patch('/:id/games_playing/:game_id', async function(req, res, next){
+router.patch('/:id/games_playing/:game_id', authRequired, ensureCorrectUser, async function(req, res, next){
   const isValid = validate(req.body, gamePlayingSchema);
 
   if (!isValid.valid) {
@@ -200,7 +205,7 @@ router.patch('/:id/games_playing/:game_id', async function(req, res, next){
 }
 });
 
-router.delete('/:id/games_playing/:game_id', async function(req, res, next){
+router.delete('/:id/games_playing/:game_id', authRequired, async function(req, res, next){
   try{
     let game_id = req.params.game_id;
     let body = {game_id: game_id};

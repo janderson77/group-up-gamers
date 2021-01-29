@@ -37,7 +37,7 @@ const Game = () => {
     let gamePlatforms = game.platforms;
 
     const AddGame = () => {
-        dispatch(addGameToList(user.id, game.id))
+        dispatch(addGameToList(user.id, game.id, user._token))
     }
 
     const tryAddGame = () => {

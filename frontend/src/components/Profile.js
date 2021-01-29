@@ -60,7 +60,7 @@ function Profile() {
   const handleRemoveGame = (e) => {
     console.log(e.target.id)
     user.toRemove = e.target.id;
-    dispatch(removeGameFromList(user, user.toRemove))
+    dispatch(removeGameFromList(user, user.toRemove, user._token))
   }
 
   if(userGames.length > 0){

@@ -27,12 +27,14 @@ const login = (data) => {
     };
 };
 
-const addGameToList = (user_id, game_id, inGameName) => {
+const addGameToList = (user_id, game_id, _token, inGameName) => {
     return async function(dispatch) {
-        let body = {};
-        body.game_id = game_id;
-        body.in_game_name = inGameName || undefined;
-        body.user_id = user_id
+        let body = {
+            game_id,
+            user_id,
+            _token,
+            in_game_name: inGameName || undefined
+        };
 
         const res = await axios.post(`${base_url}/${user_id}/games_playing`,body);          
 
@@ -40,10 +42,10 @@ const addGameToList = (user_id, game_id, inGameName) => {
     }
 };
 
-const removeGameFromList = (user, game_id) => {
+const removeGameFromList = (user, game_id, token) => {
     return async function(dispatch) {
         const user_id = user.id;
-        const res = axios.delete(`${base_url}/${user_id}/games_playing/${game_id}`);
+        const res = axios.delete(`${base_url}/${user_id}/games_playing/${game_id}`,{data: {_token: token}});
 
         dispatch(doRemoveGameFromList(user))
     };
