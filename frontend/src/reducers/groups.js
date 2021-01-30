@@ -21,12 +21,6 @@ const groups = (state = INITIAL_STATE, action) => {
                 ...state,
                 "group_game": action.payload
             };
-        // case CREATE_GROUP:
-        //     console.log(action.payload)
-        //     return{
-        //         ...state,
-        //         "owned_groups": {[action.payload.newGroup.id]: action.payload.newGroup}
-        //     }
         default:
             return state;
     };

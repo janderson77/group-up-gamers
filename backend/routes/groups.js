@@ -7,7 +7,8 @@ const Group = require('../models/group');
 const Message = require('../models/message')
 const {validate} = require("jsonschema");
 
-const {groupNew, groupUpdate, messagesNew} = require('../schemas/index')
+const {groupNew, groupUpdate, messagesNew} = require('../schemas/index');
+const toObject = require("../helpers/toObject");
 
 // Groups Routes
 // ************************************************************

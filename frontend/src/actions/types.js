@@ -14,6 +14,7 @@ export const LEAVE_GROUP = 'LEAVE_GROUP';
 export const SET_GROUP_GAME = 'SET_GROUP_GAME'
 export const CREATE_GROUP = 'CREATE_GROUP';
 export const RESET_GROUPS = 'RESET_GROUPS';
+export const UPDATE_JOINED_GROUPS = 'UPDATE_JOINED_GROUPS';
 
 // Users
 export const GET_USER = 'GET_USER';

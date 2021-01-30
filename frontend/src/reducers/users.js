@@ -1,4 +1,4 @@
-import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER, ADD_GAME_TO_PLAYING, LEAVE_GROUP, CREATE_GROUP, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE, DELETE_PROFILE} from '../actions/types'
+import {JOIN_GROUP, LOGIN, LOGOUT, REGISTER, GET_USER, ADD_GAME_TO_PLAYING, LEAVE_GROUP, CREATE_GROUP, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE, DELETE_PROFILE, UPDATE_JOINED_GROUPS} from '../actions/types'
 
 const INITIAL_STATE = {};
 
@@ -18,9 +18,13 @@ const users = (state = INITIAL_STATE, action) => {
             return{user: user}
         case CREATE_GROUP:
             user = {...state.user}
-            let owned_group = action.payload.newGroup
+            let owned_group = action.payload.newGroup.group
             user.owned_groups = {...user.owned_groups, [owned_group.id]: owned_group};
             return {user: user}
+        case UPDATE_JOINED_GROUPS:
+            user = {...state.user}
+            user.groups = {...user.groups, [action.payload.id]: action.payload}
+            return{user: user}
         case ADD_GAME_TO_PLAYING:
             user = {...state.user}
             user.games_playing = {...user.games_playing, [action.payload.id]: action.payload}

@@ -70,19 +70,25 @@ class Group {
   };
 
   static async findAllOfOwn(user_id){
-    const groupRes = await db.query(
-      `SELECT *
-      FROM group_members
-      RIGHT JOIN groups
-      ON group_members.group_id = groups.id
-      WHERE user_id = $1`,[user_id]
-    );
-    const groups = groupRes.rows;
+    const groupRes = await db.query(`
+        SELECT *
+        FROM group_members
+        RIGHT JOIN groups
+        ON group_members.group_id = groups.id
+        WHERE user_id = $1
+    `,[user_id])
 
-    if(groups.length === 0){
+    if(groupRes.rows.length > 0){
+        let groups = groupRes.rows;
+        groups = toObject(groups, "id")
+
+        user.groups = groups;
+    }else{
       groups.message = "You have not joined any groups"
     };
     return groups;
+
+    
   }
 
   static async joinGroup(user, group_id){
@@ -240,14 +246,19 @@ class Group {
             data.group_logo_url
           ]);
       
-      const memebersRes = await db.query(`
+      const membersRes = await db.query(`
           INSERT INTO group_members
           (group_id, user_id, is_group_admin)
           VALUES ($1,$2,$3)
-          RETURNING group_id
+          RETURNING *
       `,[result.rows[0].id, data.group_owner_id, true])
+
+      const returnVal = {
+        group: result.rows[0],
+        member: membersRes.rows[0]
+      }
   
-      return result.rows[0];
+      return returnVal;
     };
 
   static async update(id, data) {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME} from './types';
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS} from './types';
 
 const BASE_URL = 'http://localhost:3001/groups'
 
@@ -66,9 +66,15 @@ const leaveGroup = (user_id, group_id) => {
 const createGroup = (data) => {
     return async function(dispatch) {
         const res = await axios.post(`${BASE_URL}`, data);
+        const groupForMyGroups = {
+            ...res.data.newGroup.group,
+            user_id: res.data.newGroup.member.user_id
+        }
+        
 
         if(res.status === 201){
             dispatch(doCreateGroup(res.data))
+            dispatch(doUpdateGroups(groupForMyGroups))
         }
     }
 };
@@ -79,6 +85,10 @@ const setGroupGame = (game) => {
     }
 }
 
+
+const doUpdateGroups = (groups) => {
+    return {type: UPDATE_JOINED_GROUPS, payload: groups}
+}
 
 const doSetGroupGame = (game) => {
     return {type: SET_GROUP_GAME, payload: game}
