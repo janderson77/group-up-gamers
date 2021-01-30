@@ -19,7 +19,7 @@ const users = (state = INITIAL_STATE, action) => {
         case CREATE_GROUP:
             user = {...state.user}
             let owned_group = action.payload.newGroup
-            user.owned_groups = {[owned_group.id]: owned_group};
+            user.owned_groups = {...user.owned_groups, [owned_group.id]: owned_group};
             return {user: user}
         case ADD_GAME_TO_PLAYING:
             user = {...state.user}

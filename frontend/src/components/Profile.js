@@ -43,11 +43,18 @@ function Profile() {
   let ownedGroupsDisplay;
 
   if(ownedGroups.length){
-    ownedGroupsDisplay =  ownedGroups.map(e => (
+    let myOwnedGroups =  ownedGroups.map(e => (
         <div key={e.id}>
             <NavLink to={`/groups/${e.id}`}>{e.group_name}</NavLink>
         </div>
     ))
+    ownedGroupsDisplay = (
+        <div>
+            <div>{myOwnedGroups}</div>
+            <hr></hr>
+            <div><NavLink to={'/groups/select'} >Make another!</NavLink></div>
+        </div>
+    )
   }else{
     ownedGroupsDisplay = (
         <div>

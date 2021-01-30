@@ -23,7 +23,6 @@ const GroupForm = () => {
     };
 
     let [formData, setFormData] = useState(FORM_INITIAL_STATE);
-    let [isLoading, setIsLoading] = useState(false);
     let [gamesLoaded, setGamesLoaded] = useState(false);
     let [games, setGames] = useState([])
     
@@ -70,6 +69,7 @@ const GroupForm = () => {
         slug = slug.join("-")
         data.group_slug = slug
         dispatch(createGroup(data))
+        history.push('/profile')
     }
 
     const handleCancel = (e) => {

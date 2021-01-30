@@ -45,6 +45,19 @@ class User {
                 user.groups = groups;
             };
 
+            const userOwnedGroups = await db.query(`
+                SELECT*
+                FROM groups
+                WHERE group_owner_id = $1
+            `,[user.id]);
+
+            if(userOwnedGroups.rows.length > 0){
+                let ogroups = userOwnedGroups.rows;
+                ogroups = toObject(ogroups, "id")
+
+                user.owned_groups = ogroups;
+            };
+
             const userGamesRes = await db.query(`
                 SELECT *
                 FROM games_playing

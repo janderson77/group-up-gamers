@@ -239,6 +239,13 @@ class Group {
             data.group_discord_url,
             data.group_logo_url
           ]);
+      
+      const memebersRes = await db.query(`
+          INSERT INTO group_members
+          (group_id, user_id, is_group_admin)
+          VALUES ($1,$2,$3)
+          RETURNING group_id
+      `,[result.rows[0].id, data.group_owner_id, true])
   
       return result.rows[0];
     };
