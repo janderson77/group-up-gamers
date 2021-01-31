@@ -144,7 +144,12 @@ router.get('/:id/messages', async function(req, res, next){
 
 router.post('/:id/messages', async function(req, res, next){
   try{
-    const message = req.body;
+    const data = req.body;
+    const message = {
+      message_user_id: data.user_id,
+      message_group_id: data.group_id,
+      message_body: data.message
+    };
 
     const isValid = validate(message, messagesNew);
 
@@ -155,7 +160,11 @@ router.post('/:id/messages', async function(req, res, next){
       });
     };
 
-    const newMessage = Message.createMessage(message);
+    let newMessage = await Message.createMessage(message);
+
+    newMessage.username = data.username
+
+    
 
     return res.status(201).json(newMessage);
   }catch(e){

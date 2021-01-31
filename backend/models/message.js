@@ -37,9 +37,9 @@ class Message {
         const res = await db.query(`
         INSERT INTO group_messages
         (message_user_id, message_group_id, message_body)
-        VALUES ($1,$2,$3,$4)
+        VALUES ($1,$2,$3)
         RETURNING *
-        `, [data.user_id, data.message_group_id, data.message_body]);
+        `, [data.message_user_id, data.message_group_id, data.message_body]);
 
         if(!res.rows[0]){
             let error = new Error("ERROR! Please try again.");

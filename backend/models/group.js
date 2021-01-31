@@ -65,6 +65,17 @@ class Group {
         `, [id])
 
       group.members = membersRes.rows;
+
+      const messagesRes = await db.query(`
+        SELECT message_id, message_user_id, message_group_id, message_body, posted_at, users.username as message_username
+        FROM group_messages
+        RIGHT JOIN users
+        ON group_messages.message_user_id = users.id
+        WHERE message_group_id = $1
+        ORDER BY message_id desc
+      `,[id]);
+
+      group.messages = messagesRes.rows || [];
   
       return group;
   };

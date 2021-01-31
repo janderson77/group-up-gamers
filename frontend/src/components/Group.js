@@ -1,13 +1,15 @@
 import React, {useEffect, useCallback, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
-import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup} from '../actions/groups' 
+import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup, createMessage, deleteMessage} from '../actions/groups' 
 import "./css/Game.css"
 
 const Group = () => {
     const history = useHistory();
     const user = useSelector(st => st.users.user)
-    const [inGroup, setInGroup] = useState(false);
+    const FORM_INITIAL_STATE = {message: ""}
+    const [messagePosting, setMessagePosting] = useState(false);
+    const [formData, setFormData] = useState(FORM_INITIAL_STATE)
     
 
     let userGames;
@@ -41,11 +43,66 @@ const Group = () => {
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
 
-    // if(user.groups){
-    //     if(user.groups[group.id]){
-    //         setInGroup(true)
-    //     }
-    // }
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData(formData => ({
+            ...formData,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const data = {
+            ...formData,
+            user_id: user.id,
+            username: user.username,
+            group_id: group.id
+        };
+        dispatch(createMessage(data));
+    };
+
+    let messages;
+
+    const handleDeleteMessage = (e) => {
+
+        const deleteMessageData = {
+            message_id: e.target.id,
+            group_id: group.id
+        };
+        dispatch(deleteMessage(deleteMessageData))
+    }
+    
+
+    if(group.messages.length){
+        messages = group.messages.map(m => (
+            <div className="card w-75 text-left" data-messageid={m.message_id} key={`message-${m.message_id}`}>
+                <div className="card-body">
+                    <h6 className="card-subtitle mb-2 text-muted">{m.message_username}</h6>
+                    <div className="message-body d-flex justify-content-between">
+                        <span className="card-text">{m.message_body}</span>
+                        {user.id === m.message_user_id ? <button 
+                            id={m.message_id}
+                            className="btn btn-sm btn-danger"
+                            onClick={handleDeleteMessage}
+                        >X</button> : null}
+                    </div>
+                    
+                </div>
+            </div>
+        ))
+    }else{
+        messages = (
+            <div className="card w-75 text-left" key={`message-default`}>
+                <div className="card-body">
+                    <p className="card-text">No messages...</p>
+                </div>
+            </div>
+        )
+    };
+
+    
 
     const addGroup = () => {
         dispatch(joinGroup(user.id, group.id))
@@ -130,7 +187,7 @@ const Group = () => {
                     </div>
                     <div id="group-members">
                         <h4>Group Members</h4>
-                        <ul class="list-group list-group-flush text-left">
+                        <ul className="list-group list-group-flush text-left">
                             {group.members.map(e => (
                                 <div><NavLink to={`/users/${e.username}`} >{e.username}</NavLink></div>
                             ))}
@@ -138,6 +195,36 @@ const Group = () => {
                     </div>
                     
                 </div>
+            </div>
+            <div className="messages-area w-50 mt-5" >
+                <h3>Messages</h3>
+                <div>
+                    <form className="form-inline pl-0 ml-0" onSubmit={handleSubmit}>
+                        <div className="form-group mb-2 pl-0 col-12">
+                            <div className="col-sm-10">
+                                <input 
+                                style={{width: "100%"}}
+                                onChange={handleChange}
+                                type="text" 
+                                className="form-control" 
+                                id="message" 
+                                name="message"
+                                aria-describedby="message" 
+                                placeholder="Write a message..." 
+                                required
+                            />
+                            </div>
+                            <button className="btn btn-sm btn-primary">OK</button>
+                        </div>
+                        
+                    </form>
+                </div>
+                <div>
+                    <div className="messages w-100 d-flex flex-column align-items-center border border-dark">
+                        {messages}
+                    </div>
+                </div>
+                
             </div>
         </div>
     )

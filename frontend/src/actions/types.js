@@ -16,6 +16,11 @@ export const CREATE_GROUP = 'CREATE_GROUP';
 export const RESET_GROUPS = 'RESET_GROUPS';
 export const UPDATE_JOINED_GROUPS = 'UPDATE_JOINED_GROUPS';
 
+// Group Messages
+
+export const CREATE_MESSAGE = 'CREATE_MESSAGE'
+export const DELETE_MESSAGE = 'DELETE_MESSAGE'
+
 // Users
 export const GET_USER = 'GET_USER';
 export const LOGOUT = 'LOGOUT';
