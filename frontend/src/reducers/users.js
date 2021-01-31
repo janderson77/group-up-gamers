@@ -8,8 +8,8 @@ const users = (state = INITIAL_STATE, action) => {
     switch(action.type){
         case JOIN_GROUP:
             user = {...state.user}
-            group = action.payload.data[0]
-            user.groups = {...user.groups, [group.group_id]: group}
+            group = action.payload
+            user.groups ? user.groups = {...user.groups, [group.id]: group} : user.groups = {[group.id]: group};
             return {user: user};
         case LEAVE_GROUP:
             user = {...state.user}

@@ -133,7 +133,7 @@ const Group = () => {
     let joinButton;
     let adminButton;
 
-    if(user.owned_groups[group.id]){
+    if(user.owned_groups && user.owned_groups[group.id]){
         adminButton = (
             <div>
                 <NavLink to={`/groups/${group.id}/admin`} className="btn btn-success btn-sm">Admin Page</NavLink>

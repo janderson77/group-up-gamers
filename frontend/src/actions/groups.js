@@ -48,7 +48,7 @@ const joinGroup = (user_id, group_id) => {
 
         if(res.status === 200){
             const groups = await axios.get(`${BASE_URL}/members/${user_id}`)
-            dispatch(doJoinGroup(groups))
+            dispatch(doJoinGroup(groups.data[group_id]))
         }
     }
 };

@@ -1,6 +1,7 @@
 const db = require("../db");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 const checkIfJoinedOrBanned = require('../helpers/checkIfJoinedOrBanned');
+const toObject = require('../helpers/toObject')
 
 class Group {
   static async findAll(data) {
@@ -89,11 +90,12 @@ class Group {
         WHERE user_id = $1
     `,[user_id])
 
+    let groups
     if(groupRes.rows.length > 0){
-        let groups = groupRes.rows;
+        groups = groupRes.rows;
         groups = toObject(groups, "id")
 
-        user.groups = groups;
+        // user.groups = groups;
     }else{
       groups.message = "You have not joined any groups"
     };
