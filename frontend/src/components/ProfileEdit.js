@@ -31,6 +31,7 @@ function Profile() {
   })
 
   const messageShownRef = useRef(false);
+  
   useEffect(
     function() {
       if (userForm.saveConfirmed && !messageShownRef.current) {

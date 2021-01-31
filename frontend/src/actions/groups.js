@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE} from './types';
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP} from './types';
 
 const BASE_URL = 'http://localhost:3001/groups'
 
@@ -102,7 +102,28 @@ const deleteMessage = (data) => {
         dispatch(doDeleteMessage(data))
         
     }
-}
+};
+
+const updateGroup = (data) => {
+    let groupData = {
+        group_name: data.group_name,
+        group_discord_url: data.group_discord_url,
+        group_logo_url: data.group_logo_url
+    };
+
+    let group_slug = data.group_name.toLowerCase().split(" ").join("-");
+    groupData.group_slug = group_slug;
+    console.log(data.id)
+    return async function(dispatch){
+        const res = await axios.patch(`${BASE_URL}/${data.id}`, groupData)
+
+        dispatch(doUpdateGroup(res.data))
+    }
+};
+
+const doUpdateGroup = (data) => {
+    return{type: UPDATE_GROUP, payload: data}
+};
 
 const doDeleteMessage = (data) => {
     return {type: DELETE_MESSAGE, payload: data}
@@ -157,4 +178,4 @@ function resetGroupsState() {
     return {type: RESET_GROUPS};
 };
 
-export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage}
+export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup}

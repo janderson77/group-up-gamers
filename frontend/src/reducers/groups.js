@@ -1,4 +1,4 @@
-import {LOAD_ALL_GROUPS, LOAD_GROUP, RESET_GROUPS, SET_GROUP_GAME, CREATE_MESSAGE, DELETE_MESSAGE} from '../actions/types';
+import {LOAD_ALL_GROUPS, LOAD_GROUP, RESET_GROUPS, SET_GROUP_GAME, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP} from '../actions/types';
 
 const INITIAL_STATE = {};
 
@@ -45,6 +45,11 @@ const groups = (state = INITIAL_STATE, action) => {
                     ...state[action.payload.group_id],
                     "messages": filteredMessages
                 }
+            };
+        case UPDATE_GROUP:
+            return{
+                ...state, 
+                [action.payload.group.id]: {...state[action.payload.group.id], ...action.payload.group}
             }
         default:
             return state;

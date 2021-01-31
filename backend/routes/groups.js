@@ -109,7 +109,7 @@ router.patch("/:id", async function (req, res, next) {
         });
       }
   
-      const group = await Group.update(req.params.handle, req.body);
+      const group = await Group.update(req.params.id, req.body);
       return res.json({group});
     }
   

@@ -136,7 +136,7 @@ const Group = () => {
     if(user.owned_groups[group.id]){
         adminButton = (
             <div>
-                <div className="btn btn-success btn-sm">Admin Page</div>
+                <NavLink to={`/groups/${group.id}/admin`} className="btn btn-success btn-sm">Admin Page</NavLink>
             </div>
         )
     }else{
@@ -190,7 +190,11 @@ const Group = () => {
                         <h4>Group Members</h4>
                         <ul className="list-group list-group-flush text-left">
                             {group.members.map(e => (
-                                <div><NavLink to={`/users/${e.username}`} >{e.username}</NavLink></div>
+                                <div>
+                                    <span>{e.user_id === group.group_owner_id ? <span>Owner / </span> : null}
+                                    {e.is_group_admin ? <span>Admin </span> : null}</span>
+                                    <NavLink to={`/users/${e.username}`} >{e.username}</NavLink>
+                                </div>
                             ))}
                         </ul>
                     </div>
