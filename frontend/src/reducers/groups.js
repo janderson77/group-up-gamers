@@ -31,7 +31,7 @@ const groups = (state = INITIAL_STATE, action) => {
                                 message_id: action.payload.message_id,
                                 message_user_id: action.payload.message_user_id,
                                 message_username: action.payload.username,
-                                body: action.payload.message_body
+                                message_body: action.payload.message_body
                         },
                         ...state[action.payload.message_group_id].messages,
                         ]

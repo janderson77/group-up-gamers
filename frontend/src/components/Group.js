@@ -53,6 +53,7 @@ const Group = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setFormData(FORM_INITIAL_STATE)
 
         const data = {
             ...formData,
@@ -211,6 +212,7 @@ const Group = () => {
                                 name="message"
                                 aria-describedby="message" 
                                 placeholder="Write a message..." 
+                                value={formData.message}
                                 required
                             />
                             </div>
