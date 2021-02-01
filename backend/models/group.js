@@ -206,6 +206,23 @@ class Group {
     return unbanRes.status(200).json(unbanRes)
   };
 
+  static async kickUser(user, group){
+    const kickRes = await db.query(`
+    DELETE FROM group_members
+    WHERE user_id = $1
+    AND group_id = $2
+    RETURNING user_id
+    `, [user, group]);
+
+    if(kickRes.rows.length === 0){
+      let error = new Error(`ERROR: This user is not in this group`)
+      error.status = 404;
+      throw error;
+    };
+
+    return kickRes.rows[0]
+  }
+
   static async leaveGroup(user, group){
     const checkIfJoined = await checkIfJoinedOrBanned(user, group);
 
@@ -222,7 +239,7 @@ class Group {
       RETURNING group_id, user_id
     `, [user, group])
 
-    if(leaveRes.rows === 0){
+    if(leaveRes.rows.length === 0){
       let error = new Error(`ERROR! Something went wrong!`);
       error.status = 500;
       throw error;

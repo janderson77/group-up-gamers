@@ -1,7 +1,7 @@
 import React, {useEffect, useCallback, useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
-import {getGroupFromApi, resetGroupsState, deleteMessage, updateGroup} from '../actions/groups';
+import {getGroupFromApi, resetGroupsState, deleteMessage, updateGroup, kickMember} from '../actions/groups';
 import Alert from "./Alert";
 
 const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
@@ -179,6 +179,10 @@ const GroupAdmin = () => {
 
     let members;
 
+    const handleKickMember = (e) => {
+        dispatch(kickMember(group.id, e.target.getAttribute('data-userid')))
+    }
+
     if(group.members.length){
         members = group.members.map(m => (
             <div className="card text-left" data-userid={m.user_id} key={`member-${m.user_id}`}>
@@ -202,7 +206,7 @@ const GroupAdmin = () => {
                                 <button 
                                 data-userid={m.user_id}
                                 className="btn btn-sm btn-warning"
-                                // onClick={handleDeleteMessage}
+                                onClick={handleKickMember}
                                 >Kick</button>
                                 <button 
                                     data-userid={m.user_id}
@@ -219,7 +223,9 @@ const GroupAdmin = () => {
                 </div>
             </div>
         ))
-    }
+    };
+
+    
 
     return(
         <>

@@ -16,6 +16,7 @@ export const CREATE_GROUP = 'CREATE_GROUP';
 export const RESET_GROUPS = 'RESET_GROUPS';
 export const UPDATE_GROUP = 'UPDATE_GROUP';
 export const UPDATE_JOINED_GROUPS = 'UPDATE_JOINED_GROUPS';
+export const KICK_MEMBER = 'KICK_MEMBER';
 
 // Group Messages
 

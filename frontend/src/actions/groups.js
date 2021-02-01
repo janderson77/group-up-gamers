@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP} from './types';
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER} from './types';
 
 const BASE_URL = 'http://localhost:3001/groups'
 
@@ -121,6 +121,23 @@ const updateGroup = (data) => {
     }
 };
 
+const kickMember = (group_id, userid) => {
+    return async function(dispatch) {
+        console.log(userid)
+        const res = await axios.post(`${BASE_URL}/${group_id}/kick/${userid}`);
+
+        let data = {
+            group_id: group_id,
+            user_id: userid
+        }
+        dispatch(doKickMember(data))
+    }
+};
+
+const doKickMember = (data) => {
+    return{type: KICK_MEMBER, payload: data}
+};
+
 const doUpdateGroup = (data) => {
     return{type: UPDATE_GROUP, payload: data}
 };
@@ -132,11 +149,6 @@ const doDeleteMessage = (data) => {
 const doCreateMessage = (data) => {
     return {type: CREATE_MESSAGE, payload: data}
 };
-
-const doUpdateMessages = (group, message) => {
-    return {}
-};
-
 
 // Updates the groups a user has joined in the store with the newly add/created group
 const doUpdateGroups = (groups) => {
@@ -178,4 +190,4 @@ function resetGroupsState() {
     return {type: RESET_GROUPS};
 };
 
-export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup}
+export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember}

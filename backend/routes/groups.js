@@ -95,6 +95,16 @@ router.post('/:id/leave', async function(req, res, next) {
   };
 });
 
+router.post('/:id/kick/:user_id', async function(req, res, next){
+  try{
+    const result = await Group.kickUser(req.params.user_id, req.params.id);
+
+    return res.status(200).json(result);
+  }catch(e){
+    return next(e)
+  }
+});
+
 router.patch("/:id", async function (req, res, next) {
     try {
       if ("id" in req.body) {

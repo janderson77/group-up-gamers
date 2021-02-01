@@ -1,4 +1,4 @@
-import {LOAD_ALL_GROUPS, LOAD_GROUP, RESET_GROUPS, SET_GROUP_GAME, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP} from '../actions/types';
+import {LOAD_ALL_GROUPS, LOAD_GROUP, RESET_GROUPS, SET_GROUP_GAME, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER} from '../actions/types';
 
 const INITIAL_STATE = {};
 
@@ -50,7 +50,16 @@ const groups = (state = INITIAL_STATE, action) => {
             return{
                 ...state, 
                 [action.payload.group.id]: {...state[action.payload.group.id], ...action.payload.group}
-            }
+            };
+        case KICK_MEMBER:
+            let members = [...state[action.payload.group_id].members].filter(m => (Number(m.user_id) !== Number(action.payload.user_id)))
+            return {
+                ...state,
+                [action.payload.group_id]: {
+                    ...state[action.payload.group_id], 
+                    "members": members
+                }
+            };
         default:
             return state;
     };
