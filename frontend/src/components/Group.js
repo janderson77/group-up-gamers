@@ -42,6 +42,13 @@ const Group = () => {
 
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
+    if(user.groups[id] && user.groups[id].is_banned) return (
+    <div className="mt-5">
+        <h2>You Have Been Banned From This Group.</h2>
+        <h4>You can find another group to join.</h4>
+        <NavLink to='/groups'>Back to groups search.</NavLink>
+    </div>
+    )
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -103,7 +110,47 @@ const Group = () => {
         )
     };
 
-    
+    let messageArea;
+
+    if(user.groups[id]){
+        messageArea = (
+            <>
+            <div>
+                <form className="form-inline pl-0 ml-0" onSubmit={handleSubmit}>
+                    <div className="form-group mb-2 pl-0 col-12">
+                        <div className="col-sm-10">
+                            <input 
+                            style={{width: "100%"}}
+                            onChange={handleChange}
+                            type="text" 
+                            className="form-control" 
+                            id="message" 
+                            name="message"
+                            aria-describedby="message" 
+                            placeholder="Write a message..." 
+                            value={formData.message}
+                            required
+                        />
+                        </div>
+                        <button className="btn btn-sm btn-primary">OK</button>
+                    </div>
+                    
+                </form>
+            </div>
+            <div>
+                <div className="messages w-100 d-flex flex-column align-items-center border border-dark">
+                    {messages}
+                </div>
+            </div>
+            </>
+        )
+    }else{
+        messageArea = (
+            <>
+            <h5>You must be in the group to see or post messages.</h5>
+            </>
+        )
+    }
 
     const addGroup = () => {
         dispatch(joinGroup(user.id, group.id))
@@ -201,35 +248,10 @@ const Group = () => {
                     
                 </div>
             </div>
+
             <div className="messages-area w-50 mt-5" >
                 <h3>Messages</h3>
-                <div>
-                    <form className="form-inline pl-0 ml-0" onSubmit={handleSubmit}>
-                        <div className="form-group mb-2 pl-0 col-12">
-                            <div className="col-sm-10">
-                                <input 
-                                style={{width: "100%"}}
-                                onChange={handleChange}
-                                type="text" 
-                                className="form-control" 
-                                id="message" 
-                                name="message"
-                                aria-describedby="message" 
-                                placeholder="Write a message..." 
-                                value={formData.message}
-                                required
-                            />
-                            </div>
-                            <button className="btn btn-sm btn-primary">OK</button>
-                        </div>
-                        
-                    </form>
-                </div>
-                <div>
-                    <div className="messages w-100 d-flex flex-column align-items-center border border-dark">
-                        {messages}
-                    </div>
-                </div>
+                {messageArea}
                 
             </div>
         </div>

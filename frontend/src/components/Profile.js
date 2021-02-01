@@ -16,7 +16,7 @@ function Profile() {
   let userGroups;
 
   user.games_playing ? userGames = Object.values(user.games_playing) : userGames = {};
-  user.groups ? userGroups = Object.values(user.groups) : userGroups = {};
+  user.groups ? userGroups = Object.values(user.groups).filter(b => b.is_banned !== true) : userGroups = {};
 
   let gamesList;
   let groups;
