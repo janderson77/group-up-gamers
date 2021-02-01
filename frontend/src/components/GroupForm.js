@@ -1,5 +1,4 @@
-import axios from 'axios'
-import React, {useState, useCallback, useEffect} from 'react'
+import React, {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {useHistory} from 'react-router-dom'
 import {createGroup} from '../actions/groups'
@@ -9,7 +8,6 @@ const GroupForm = () => {
     const game = useSelector(st => st.groups.group_game)
     const dispatch = useDispatch();
     const history = useHistory();
-    const BASE_URL = 'http://localhost:3001'
 
     
 
@@ -23,24 +21,6 @@ const GroupForm = () => {
     };
 
     let [formData, setFormData] = useState(FORM_INITIAL_STATE);
-    let [gamesLoaded, setGamesLoaded] = useState(false);
-    let [games, setGames] = useState([])
-    
-
-    const getGames = useCallback(async () => {
-        try{
-            const res = await axios.get(`${BASE_URL}/games/min`)
-            if(res.status === 200){
-                setGamesLoaded(true);
-                return setGames(res.data[0])
-            };
-        }catch(e){
-            console.error(e)
-        };
-    },[gamesLoaded])
-
-    useEffect(() => {
-        getGames() }, [])
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -49,16 +29,6 @@ const GroupForm = () => {
             [name]: value
         }));
     };
-
-    let gamesList
-
-    if(!games.length){
-        gamesList = <option value="Loading..." />
-    }else{
-        gamesList = games.map(e => (
-            <option key={e.id} name={e.id} value={e.game_name} />
-        ))
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -84,7 +54,7 @@ const GroupForm = () => {
     }else{
         gameDisplay = (
             <div className="card d-flex align-items-center" >
-            <img className="card-img-top" src={game.cover_art} alt="Card image cap" />
+            <img className="card-img-top" src={game.cover_art} alt={game.game_name} />
             <div className="card-body">
                 <h5 className="card-title">{game.game_name}</h5>
             </div>

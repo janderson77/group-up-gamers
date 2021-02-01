@@ -8,15 +8,7 @@ const Group = () => {
     const history = useHistory();
     const user = useSelector(st => st.users.user)
     const FORM_INITIAL_STATE = {message: ""}
-    const [messagePosting, setMessagePosting] = useState(false);
     const [formData, setFormData] = useState(FORM_INITIAL_STATE)
-    
-
-    let userGames;
-    let userGroups;
-
-    user.games_playing ? userGames = user.games_playing.data : userGames = [];
-    user.groups ? userGroups = user.groups.data : userGroups = [];
 
     const dispatch = useDispatch();
     
@@ -24,10 +16,10 @@ const Group = () => {
         () => {
             dispatch(resetGroupsState())
         },
-        [resetGroupsState],
+        [dispatch],
     )
 
-    useEffect(() => {initialize(); }, [])
+    useEffect(() => {initialize(); }, [initialize])
 
     const {id} = useParams();
     const group = useSelector(st => st.groups[id]);
@@ -241,7 +233,7 @@ const Group = () => {
                         <h4>Group Members</h4>
                         <ul className="list-group list-group-flush text-left">
                             {group.members.map(e => (
-                                <div>
+                                <div key={e.user_id}>
                                     <span>{e.user_id === group.group_owner_id ? <span>Owner / </span> : null}
                                     {e.is_group_admin ? <span>Admin </span> : null}</span>
                                     <NavLink to={`/users/${e.username}`} >{e.username}</NavLink>

@@ -1,20 +1,19 @@
 import React, {useEffect, useCallback} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {useParams, useHistory} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {getGameFromAPI, resetGameState} from '../actions/games'
 import {addGameToList} from '../actions/users'
 import "./css/Game.css"
 
 const Game = () => {
     const dispatch = useDispatch();
-    const history = useHistory();
     const user = useSelector(st => st.users.user)
 
     const initialize = useCallback(
         () => {
             dispatch(resetGameState())
         },
-        [resetGameState],
+        [dispatch],
     )
 
     useEffect(() => {initialize(); }, [initialize])
@@ -47,7 +46,6 @@ const Game = () => {
             console.log(e)
             return
         }
-        // history.push("/profile")
     }
 
     let button;
@@ -74,16 +72,16 @@ const Game = () => {
                 <div className="card-body">
                     <p className="card-text">{game.summary}</p><br/>
                     {button}
-                    <ul class="list-group list-group-flush text-left">
-                        <li key="game-modes" class="list-group-item">Game Modes
+                    <ul className="list-group list-group-flush text-left">
+                        <li key="game-modes" className="list-group-item">Game Modes
                             <ul>
-                                {gameModes.map(e => <li key={e.id}>{e}</li>)}
+                                {gameModes.map(e => <li key={e}>{e}</li>)}
                             </ul>
                         </li>
                         
-                        <li class="list-group-item">Platforms
+                        <li className="list-group-item">Platforms
                             <ul>
-                                {gamePlatforms.map(e => <li key={e.id}>{e}</li>)}
+                                {gamePlatforms.map(e => <li key={e}>{e}</li>)}
                             </ul>
                         </li>
 

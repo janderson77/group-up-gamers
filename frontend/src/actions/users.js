@@ -45,7 +45,7 @@ const addGameToList = (user_id, game_id, _token, inGameName) => {
 const removeGameFromList = (user, game_id, token) => {
     return async function(dispatch) {
         const user_id = user.id;
-        const res = axios.delete(`${base_url}/${user_id}/games_playing/${game_id}`,{data: {_token: token}});
+        axios.delete(`${base_url}/${user_id}/games_playing/${game_id}`,{data: {_token: token}});
 
         dispatch(doRemoveGameFromList(user))
     };

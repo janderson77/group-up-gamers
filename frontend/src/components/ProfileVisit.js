@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {useSelector, useDispatch } from 'react-redux'
 import './css/Profile.css'
 import { NavLink, useParams, useHistory } from "react-router-dom";
@@ -20,7 +20,7 @@ function Profile() {
     
     useEffect(() => {
         dispatch(getUser(params.id))
-    }, [params.id])
+    }, [params.id, dispatch])
 
   const user = useSelector(st => st.users.visiting.user)
   if(!user){

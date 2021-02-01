@@ -6,16 +6,17 @@ import {NavLink} from 'react-router-dom'
 
 
 const GroupsList = () => {
+    const dispatch = useDispatch();
     const initialize = useCallback(
         () => {
             dispatch(resetGroupsState())
         },
-        [resetGroupsState],
+        [dispatch],
     )
 
     useEffect(() => {initialize(); }, [initialize])
     const groups = useSelector(st => st.groups.groups);
-    const dispatch = useDispatch();
+
     const missing = !groups;
 
     // const [offset, setOffset] = useState(0);

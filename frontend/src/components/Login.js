@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import { useHistory } from "react-router-dom";
 import {login, register} from '../actions/users'
 import './css/Login.css'
@@ -18,12 +18,14 @@ function Login() {
     errors: []
   });
 
+  let data;
+
   const handleLogin = () => {
-    dispatch(login(loginInfo))
+    dispatch(login(data))
   };
 
   const handleRegister = () => {
-    dispatch(register(loginInfo))
+    dispatch(register(data))
   };
 
   function setLoginView() {
@@ -36,7 +38,7 @@ function Login() {
 
   async function handleSubmit(evt) {
     evt.preventDefault();
-    let data;
+    
     let endpoint;
 
     if (activeView === "signup") {

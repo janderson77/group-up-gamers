@@ -13,48 +13,44 @@ const GroupAdmin = () => {
 
     const {id} = useParams();
     const group = useSelector(st => st.groups[id]);
+    const [groupForm, setGroupForm] = useState({
+        group_name: '',
+        group_discord_url: '',
+        group_logo_url: '',
+        errors: [],
+        saveConfirmed: false,
+        hasErrors: false
+    })
     
     const initialize = useCallback(
         () => {
             dispatch(resetGroupsState())
         },
-        [resetGroupsState],
+        [dispatch],
     );
 
-    useEffect(() => {initialize(); }, [])
+    useEffect(() => {initialize(); }, [initialize])
 
     const missing = !group;
 
     useEffect(function() {
         if(missing) {
-            dispatch(getGroupFromApiAdmin(id));
+            let groupAdmin = dispatch(getGroupFromApiAdmin(id));
+            Promise.all([groupAdmin]).then(v => {
+                let g = v[0];
+                setGroupForm({
+                    group_name: g.group_name,
+                    group_discord_url: g.group_discord_url,
+                    group_logo_url: g.group_logo_url,
+                    errors: [],
+                    saveConfirmed: false,
+                    hasErrors: false
+                })
+            }).catch(e => console.log(e))
         }
     }, [missing, id, dispatch]);
 
-    const [groupForm, setGroupForm] = useState({
-        errors: [],
-        saveConfirmed: false,
-        hasErrors: false
-    })
-
     const [deleteShown, toggleDeleteShown] = useState(false);
-    const [toDeletePass, setToDeletePass] = useState({
-        password: ""
-    })
-
-    useEffect(() => {
-        if(!missing){
-            setGroupForm({
-                group_name: group.group_name,
-                group_discord_url: group.group_discord_url,
-                group_logo_url: group.group_logo_url,
-                errors: [],
-                saveConfirmed: false,
-                hasErrors: false
-            })
-        }
-        
-    }, [missing])
 
     useEffect(
         function() {
@@ -102,15 +98,6 @@ const GroupAdmin = () => {
             group_logo_url: groupForm.group_logo_url
         };
         dispatch(updateGroup(groupData))
-    };
-
-    const handleDeletePassChange = (e) => {
-        const { name, value } = e.target;
-        setToDeletePass(f => ({
-            ...f,
-            [name]: value,
-            errors: []
-        }));
     };
 
     const toggleDelete = () => {

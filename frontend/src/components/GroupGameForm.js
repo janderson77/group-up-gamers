@@ -10,7 +10,6 @@ const GroupGameForm = () => {
     const BASE_URL = 'http://localhost:3001'
     const dispatch = useDispatch();
     const history = useHistory();
-    let [gamesLoaded, setGamesLoaded] = useState(false);
     let [games, setGames] = useState([]);
     let [game, setGame] = useState();
 
@@ -46,13 +45,11 @@ const GroupGameForm = () => {
 
     const handleGameCheck = async (str) => {
         try{
-            setGamesLoaded(false);
             setGames([])
             const res = await axios.post(`${BASE_URL}/games/search`, {search: `${str}`});
 
             if(res.status === 200){
                 setGames([...res.data[0]])
-                setGamesLoaded(true);
             };
         }catch(e){
             console.error(e)
@@ -94,7 +91,7 @@ const GroupGameForm = () => {
     }else{
         gameDisplay = (
             <div className="card" >
-            <img className="card-img-top" src={game.cover_art} alt="Card image cap" />
+            <img className="card-img-top" src={game.cover_art} alt={game.game_name} />
             <div className="card-body">
                 <h5 className="card-title">{game.game_name}</h5>
                 <p className="card-text">{game.summary}</p>

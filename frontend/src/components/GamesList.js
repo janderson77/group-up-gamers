@@ -7,24 +7,18 @@ import {NavLink} from 'react-router-dom'
 
 const GamesList = () => {
     const dispatch = useDispatch();
-    const user = useSelector(st => st.users.user)
     
     const initialize = useCallback(
         () => {
             dispatch(resetGameState())
         },
-        [resetGameState],
+        [dispatch],
     )
 
     useEffect(() => {initialize(); }, [initialize])
     const games = useSelector(st => st.games.games);
     
     const missing = !games;
-
-    // const [offset, setOffset] = useState(0);
-    // const [data, setData] = useState([]);
-    // const [perPage, setPerPage] = useState(10);
-    // const [pageCount, setPageCount] = useState(0);
 
     useEffect(function() {
         if(missing) {
@@ -41,7 +35,7 @@ const GamesList = () => {
     return(
         <div className="container d-flex flex-column align-items-center">
             {gamesArr.map(e => (
-                <div>
+                <div key={e.id}>
                     <NavLink to={`/games/${e.slug}`} >
                     <div className="card flex-row flex-wrap">
                         <div className="card-header border-0">
@@ -49,7 +43,6 @@ const GamesList = () => {
                         </div>
                         <div className="card-block px-2">
                             <h4 className="card-title">{e.game_name}</h4>
-                            {/* <p className="card-text overflow-elipses">{e.summary}</p> */}
                         </div>
 
                     </div>

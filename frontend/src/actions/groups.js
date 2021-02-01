@@ -6,7 +6,6 @@ const BASE_URL = 'http://localhost:3001/groups'
 const getGroupFromApi = (group_id) => {
     return async function(dispatch) {
         const res = await axios.get(`${BASE_URL}/${group_id}`);
-        console.log(res.data)
         let{
             id,
             group_name,
@@ -71,6 +70,7 @@ const getGroupFromApiAdmin = (group_id) => {
         };
 
         dispatch(gotGroup(group))
+        return group
     };
 };
 
@@ -139,7 +139,7 @@ const createMessage = (data) => {
 
 const deleteMessage = (data) => {
     return async function(dispatch){
-        const res = await axios.delete(`${BASE_URL}/${data.group_id}/messages/${data.message_id}`)
+        await axios.delete(`${BASE_URL}/${data.group_id}/messages/${data.message_id}`)
 
         dispatch(doDeleteMessage(data))
         
@@ -166,7 +166,7 @@ const updateGroup = (data) => {
 const kickMember = (group_id, userid) => {
     return async function(dispatch) {
         console.log(userid)
-        const res = await axios.post(`${BASE_URL}/${group_id}/kick/${userid}`);
+        await axios.post(`${BASE_URL}/${group_id}/kick/${userid}`);
 
         let data = {
             group_id: group_id,
@@ -193,7 +193,7 @@ const unBanMember = (group_id, user_id) => {
 
 const deleteGroup = (group_id) => {
     return async function(dispatch){
-        const res = await axios.delete(`${BASE_URL}/${group_id}`)
+        await axios.delete(`${BASE_URL}/${group_id}`)
 
         dispatch(doDeleteGroup(group_id))
     }
