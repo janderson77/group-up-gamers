@@ -1,8 +1,10 @@
-import {LOAD_ALL_GROUPS, LOAD_GROUP, RESET_GROUPS, SET_GROUP_GAME, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER} from '../actions/types';
+import {LOAD_ALL_GROUPS, LOAD_GROUP, RESET_GROUPS, SET_GROUP_GAME, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER} from '../actions/types';
 
 const INITIAL_STATE = {};
 
 const groups = (state = INITIAL_STATE, action) => {
+    let members
+    let bannedMembers
     switch (action.type){
         case RESET_GROUPS:
             return{...INITIAL_STATE};
@@ -52,12 +54,36 @@ const groups = (state = INITIAL_STATE, action) => {
                 [action.payload.group.id]: {...state[action.payload.group.id], ...action.payload.group}
             };
         case KICK_MEMBER:
-            let members = [...state[action.payload.group_id].members].filter(m => (Number(m.user_id) !== Number(action.payload.user_id)))
+            members = [...state[action.payload.group_id].members].filter(m => (Number(m.user_id) !== Number(action.payload.user_id)))
             return {
                 ...state,
                 [action.payload.group_id]: {
                     ...state[action.payload.group_id], 
                     "members": members
+                }
+            };
+        case BAN_MEMBER:
+            members = [...state[action.payload.group_id].members].filter(m => m.user_id !== action.payload.user_id) || [];
+
+            bannedMembers = [...state[action.payload.group_id].bannedMembers, action.payload] || [];
+            return {
+                ...state,
+                [action.payload.group_id] :{
+                    ...state[action.payload.group_id],
+                    "members": members,
+                    "bannedMembers": bannedMembers
+                }
+            };
+        case UNBAN_MEMBER:
+            bannedMembers = [...state[action.payload.group_id].bannedMembers].filter(m => m.user_id !== action.payload.user_id) || [];
+
+            members = [...state[action.payload.group_id].members, action.payload] || [];
+            return {
+                ...state,
+                [action.payload.group_id] :{
+                    ...state[action.payload.group_id],
+                    "members": members,
+                    "bannedMembers": bannedMembers
                 }
             };
         default:

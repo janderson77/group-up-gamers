@@ -142,8 +142,8 @@ class Group {
     return(groupRes.rows[0].data);
   };
 
-  static async banUser(user, group) {
-    const joinedOrBanned = await checkIfJoinedOrBanned(user.user_id, group.id);
+  static async banUser(user_id, group_id) {
+    const joinedOrBanned = await checkIfJoinedOrBanned(user_id, group_id);
 
     if(!joinedOrBanned.joined){
       let error = new Error("This user is not in this group.")
@@ -162,8 +162,8 @@ class Group {
       SET is_banned = true
       WHERE user_id = $1
       AND group_id = $2
-      RETURNING user_id
-    `, [user.user_id, group.id]);
+      RETURNING user_id, group_id
+    `, [user_id, group_id]);
 
     if(banRes.rows.length === 0){
       let error = new Error("ERROR! Something went wrong. Please try again.")
@@ -171,11 +171,20 @@ class Group {
       throw error;
     };
 
-    return banRes.status(200).json(banRes)
+    const bannedUser = await db.query(`
+      SELECT group_id, user_id, is_group_admin, is_banned, username
+      FROM group_members
+      RIGHT JOIN users
+      ON group_members.user_id = users.id
+      WHERE user_id = $1
+      AND group_id = $2
+    `, [user_id, group_id])
+
+    return bannedUser.rows[0]
   };
 
-  static async unbanUser(user, group) {
-    const joinedOrBanned = await checkIfJoinedOrBanned(user.user_id, group.id);
+  static async unbanUser(user_id, group_id) {
+    const joinedOrBanned = await checkIfJoinedOrBanned(user_id, group_id);
 
     if(!joinedOrBanned.joined){
       let error = new Error("This user is not in this group.")
@@ -194,8 +203,8 @@ class Group {
       SET is_banned = false
       WHERE user_id = $1
       AND group_id = $2
-      RETURNING user_id
-    `, [user.user_id, group.id]);
+      RETURNING user_id, group_id
+    `, [user_id, group_id]);
 
     if(unbanRes.rows.length === 0){
       let error = new Error("ERROR! Something went wrong. Please try again.")
@@ -203,7 +212,16 @@ class Group {
       throw error;
     };
 
-    return unbanRes.status(200).json(unbanRes)
+    const unBannedUser = await db.query(`
+      SELECT group_id, user_id, is_group_admin, is_banned, username
+      FROM group_members
+      RIGHT JOIN users
+      ON group_members.user_id = users.id
+      WHERE user_id = $1
+      AND group_id = $2
+    `, [user_id, group_id])
+
+    return unBannedUser.rows[0]
   };
 
   static async kickUser(user, group){

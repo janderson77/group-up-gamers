@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER} from './types';
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER} from './types';
 
 const BASE_URL = 'http://localhost:3001/groups'
 
@@ -25,6 +25,39 @@ const getGroupFromApi = (group_id) => {
             group_discord_url,
             group_logo_url,
             members,
+            messages
+        };
+
+        dispatch(gotGroup(group))
+    };
+};
+
+const getGroupFromApiAdmin = (group_id) => {
+    return async function(dispatch) {
+        const res = await axios.get(`${BASE_URL}/${group_id}`);
+        let{
+            id,
+            group_name,
+            group_slug,
+            group_owner_id,
+            group_discord_url,
+            group_logo_url,
+            members,
+            messages
+        } = res.data.group;
+
+        members = res.data.group.members.filter(m => m.is_banned !== true)
+        const bannedMembers = res.data.group.members.filter(m => m.is_banned === true)
+
+        const group =  {
+            id,
+            group_name,
+            group_slug,
+            group_owner_id,
+            group_discord_url,
+            group_logo_url,
+            members,
+            bannedMembers,
             messages
         };
 
@@ -134,6 +167,29 @@ const kickMember = (group_id, userid) => {
     }
 };
 
+const banMember = (group_id, user_id) => {
+    return async function(dispatch){
+        console.log(group_id, user_id)
+        const res = await axios.post(`${BASE_URL}/${group_id}/ban/${user_id}`)
+        dispatch(doBanMember(res.data))
+    }
+};
+
+const unBanMember = (group_id, user_id) => {
+    return async function(dispatch) {
+        const res = await axios.post(`${BASE_URL}/${group_id}/unban/${user_id}`);
+        dispatch(doUnbanMember(res.data))
+    }
+};
+
+const doUnbanMember = (data) => {
+    return {type: UNBAN_MEMBER, payload: data}
+};
+
+const doBanMember = (data) => {
+    return {type: BAN_MEMBER, payload: data}
+};
+
 const doKickMember = (data) => {
     return{type: KICK_MEMBER, payload: data}
 };
@@ -190,4 +246,4 @@ function resetGroupsState() {
     return {type: RESET_GROUPS};
 };
 
-export {getGroupFromApi, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember}
+export {getGroupFromApi, getGroupFromApiAdmin, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember, banMember, unBanMember}

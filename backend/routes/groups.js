@@ -105,6 +105,26 @@ router.post('/:id/kick/:user_id', async function(req, res, next){
   }
 });
 
+router.post('/:id/ban/:user_id', async function(req, res, next){
+  try{
+    const result = await Group.banUser(req.params.user_id, req.params.id);
+
+    return res.status(200).json(result)
+  }catch(e){
+    return next(e)
+  }
+});
+
+router.post('/:id/unban/:user_id', async function(req, res, next){
+  try{
+    const result = await Group.unbanUser(req.params.user_id, req.params.id);
+
+    return res.status(200).json(result)
+  }catch(e){
+    return next(e)
+  }
+});
+
 router.patch("/:id", async function (req, res, next) {
     try {
       if ("id" in req.body) {

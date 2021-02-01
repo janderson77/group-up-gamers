@@ -74,6 +74,11 @@ const Navigation = () => {
             <div className="d-flex">
             <ul className="navbar-nav">
               <li className="nav-item">
+                <div className="me-2">
+                  <NavLink to="/profile" className="nav-link text-light"><i className="fas fa-user-circle text-light mr-1"></i> {user.username}</NavLink>
+                </div>
+              </li>
+              <li className="nav-item">
               <NavLink className="nav-link me-2" to="/" onClick={handleLogout} >Logout</NavLink>
               </li>
             </ul>

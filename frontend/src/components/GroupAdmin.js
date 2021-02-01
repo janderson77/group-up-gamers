@@ -1,7 +1,7 @@
 import React, {useEffect, useCallback, useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
-import {getGroupFromApi, resetGroupsState, deleteMessage, updateGroup, kickMember} from '../actions/groups';
+import {getGroupFromApiAdmin, resetGroupsState, deleteMessage, updateGroup, kickMember, banMember, unBanMember} from '../actions/groups';
 import Alert from "./Alert";
 
 const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
@@ -26,7 +26,7 @@ const GroupAdmin = () => {
 
     useEffect(function() {
         if(missing) {
-            dispatch(getGroupFromApi(id));
+            dispatch(getGroupFromApiAdmin(id));
         }
     }, [missing, id, dispatch]);
 
@@ -178,13 +178,24 @@ const GroupAdmin = () => {
     };
 
     let members;
+    let bannedMembers;
 
     const handleKickMember = (e) => {
         dispatch(kickMember(group.id, e.target.getAttribute('data-userid')))
     }
 
+    const handleBanMember = (e) => {
+        dispatch(banMember(group.id, Number(e.target.getAttribute('data-userid'))));
+    };
+
+    const handleUnBanMember = (e) => {
+        dispatch(unBanMember(group.id, Number(e.target.getAttribute('data-userid'))))
+    }
+
     if(group.members.length){
-        members = group.members.map(m => (
+        members = group.members.filter(m => m.is_banned !== true);
+        bannedMembers = group.members.filter(m => m.is_banned === true)
+        members = members.map(m => (
             <div className="card text-left" data-userid={m.user_id} key={`member-${m.user_id}`}>
                 <div className="card-body">
                     
@@ -211,7 +222,7 @@ const GroupAdmin = () => {
                                 <button 
                                     data-userid={m.user_id}
                                     className="btn btn-sm btn-danger"
-                                    // onClick={handleDeleteMessage}
+                                    onClick={handleBanMember}
                                 >Ban</button>
                             </>
                             }
@@ -222,8 +233,31 @@ const GroupAdmin = () => {
                     
                 </div>
             </div>
-        ))
+        ));
     };
+
+    if(group.bannedMembers.length){
+        bannedMembers = group.bannedMembers.map(m => (
+            <div className="card text-left" data-userid={m.user_id} key={`member-${m.user_id}`}>
+                <div className="card-body">
+                    
+                    <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 className="card-subtitle mb-2 text-muted">{m.username}</h6>
+                        </div>
+                        <div>
+                            <button 
+                                data-userid={m.user_id}
+                                className="btn btn-sm btn-danger"
+                                onClick={handleUnBanMember}
+                            >Unban</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ))}else{
+            bannedMembers = <div>Empty...</div>
+        }
 
     
 
@@ -342,9 +376,13 @@ const GroupAdmin = () => {
                     {members}
                 </div>
             </div>
-            <div id="group-messages">
+            <div id="group-messages" className="mb-5">
                 <h5>Messages</h5>
                 {messages}
+            </div>
+            <div id="banned-users">
+                <h5>Banned Users</h5>
+                {bannedMembers}
             </div>
         </div>
 
