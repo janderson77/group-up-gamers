@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER} from './types';
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER, DELETE_GROUP, SET_GROUP_AS_DELETED} from './types';
 
 const BASE_URL = 'http://localhost:3001/groups'
 
@@ -16,6 +16,8 @@ const getGroupFromApi = (group_id) => {
             members,
             messages
         } = res.data.group;
+
+        members = res.data.group.members.filter(m => m.is_banned !== true)
 
         const group =  {
             id,
@@ -182,6 +184,18 @@ const unBanMember = (group_id, user_id) => {
     }
 };
 
+const deleteGroup = (group_id) => {
+    return async function(dispatch){
+        const res = await axios.delete(`${BASE_URL}/${group_id}`)
+
+        dispatch(doDeleteGroup(group_id))
+    }
+}
+
+const doDeleteGroup = (group_id) => {
+    return {type: DELETE_GROUP, payload: {group_id}}
+}
+
 const doUnbanMember = (data) => {
     return {type: UNBAN_MEMBER, payload: data}
 };
@@ -246,4 +260,4 @@ function resetGroupsState() {
     return {type: RESET_GROUPS};
 };
 
-export {getGroupFromApi, getGroupFromApiAdmin, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember, banMember, unBanMember}
+export {getGroupFromApi, getGroupFromApiAdmin, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember, banMember, unBanMember, deleteGroup}

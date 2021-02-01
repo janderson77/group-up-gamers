@@ -1,12 +1,13 @@
 import React, {useEffect, useCallback, useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
-import {getGroupFromApiAdmin, resetGroupsState, deleteMessage, updateGroup, kickMember, banMember, unBanMember} from '../actions/groups';
+import {getGroupFromApiAdmin, resetGroupsState, deleteMessage, updateGroup, kickMember, banMember, unBanMember, deleteGroup} from '../actions/groups';
 import Alert from "./Alert";
 
 const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
 
 const GroupAdmin = () => {
+    const history = useHistory();
     const dispatch = useDispatch();
     const user = useSelector(st => st.users.user)
 
@@ -119,23 +120,10 @@ const GroupAdmin = () => {
 
     const handleDelete = async (e) => {
         e.preventDefault();
-        // const toDelete = {
-        //   id: user.id,
-        //   username: user.username,
-        //   password: toDeletePass.password,
-        //   _token: user._token
-        // };
-      
-        // try{
-        //   const res = await axios.delete(`http://localhost:3001/users/${user.id}`,{data: toDelete});
-    
-        //   if(res.status === 200){
-        //     history.push('/deleted');
-        //     dispatch(deleteProfile());
-        //   }
-        // }catch(errors){
-        //   setUserForm(f => ({ ...f, errors }));
-        // }
+
+        dispatch(deleteGroup(group.id))
+        
+        history.push('/profile')
       };
 
     const handleDeleteMessage = (e) => {
@@ -236,7 +224,7 @@ const GroupAdmin = () => {
         ));
     };
 
-    if(group.bannedMembers.length){
+    if(group.bannedMembers && group.bannedMembers.length){
         bannedMembers = group.bannedMembers.map(m => (
             <div className="card text-left" data-userid={m.user_id} key={`member-${m.user_id}`}>
                 <div className="card-body">
@@ -328,29 +316,22 @@ const GroupAdmin = () => {
                 {deleteShown ? (
                 <>
                 <div className="form-group">
-                    <label>
+                    <label>                    
                     <p>
-                        Confirm password to permanently delete this group:
+                        Are you sure you really, really want to delelete your group?
                     </p>
-                    
                     <p className="text-danger">
-                        REMINDER: This cannot be undone!
+                        This really can't be undone. Ever.
                     </p>
                     </label>
-                    <input
-                    type="password"
-                    name="password"
-                    className="form-control"
-                    value={toDeletePass.password}
-                    onChange={handleDeletePassChange}
-                    />
+                    
                 </div>
 
                 <button
                 className="btn btn-primary btn-block mt-4"
                 onClick={handleDelete}
                 >
-                Delete Profile
+                Yes, Permanently Delete This Group
                 </button>
                 <button className="btn btn-danger btn-block mt-4" onClick={toggleDelete} >
                     Cancel
@@ -361,7 +342,7 @@ const GroupAdmin = () => {
                     className="btn btn-primary btn-block mt-4"
                     onClick={toggleDelete}
                 >
-                    Delete Profile
+                    Delete Group Permanently
                 </button>
                 )}            
             </form>

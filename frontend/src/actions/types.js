@@ -19,6 +19,8 @@ export const UPDATE_JOINED_GROUPS = 'UPDATE_JOINED_GROUPS';
 export const KICK_MEMBER = 'KICK_MEMBER';
 export const BAN_MEMBER = 'BAN_MEMBER';
 export const UNBAN_MEMBER = 'UNBAN_MEMBER';
+export const DELETE_GROUP = 'DELETE_GROUP';
+export const SET_GROUP_AS_DELETED = 'SET_GROUP_AS_DELETED';
 
 
 // Group Messages
