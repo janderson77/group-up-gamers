@@ -95,7 +95,6 @@ const GroupAdmin = () => {
     
     const handleGroupEditSubmit = (e) => {
         e.preventDefault();
-        console.log(groupForm)
         let groupData = {
             id: group.id,
             group_name: groupForm.group_name,

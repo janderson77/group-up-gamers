@@ -44,9 +44,11 @@ class Group {
 
   static async findOneById(id) {
       const groupRes = await db.query(
-          `SELECT id, group_name, group_game_id, group_owner_id, group_discord_url, group_logo_url
-              FROM groups
-              WHERE id = $1`,
+          `SELECT groups.id, group_name, group_game_id, group_owner_id, group_discord_url, group_logo_url, game_name, games.id as game_id, slug as game_slug
+          FROM groups
+          RIGHT JOIN games
+          ON groups.group_game_id = games.id
+          WHERE groups.id = $1`,
           [id]);
   
       let group = groupRes.rows[0];

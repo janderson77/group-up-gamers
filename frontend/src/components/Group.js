@@ -221,7 +221,11 @@ const Group = () => {
             <div className="card w-50">
                 <div className="d-flex justify-content-around">
                 <img className="card-img-top" src={group.group_logo_url} alt={group.group_name}></img>
-                <h1>{group.group_name}</h1>
+                <div>
+                    <h1>{group.group_name}</h1>
+                    <h5>Game: <NavLink to={`/games/${group.game_slug}`}>{group.game_name}</NavLink></h5>
+                </div>
+                
                 </div>
                 <div className="justify-self-start">
                     {adminButton ? adminButton: joinButton}

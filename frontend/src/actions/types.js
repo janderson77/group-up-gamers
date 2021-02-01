@@ -20,7 +20,7 @@ export const KICK_MEMBER = 'KICK_MEMBER';
 export const BAN_MEMBER = 'BAN_MEMBER';
 export const UNBAN_MEMBER = 'UNBAN_MEMBER';
 export const DELETE_GROUP = 'DELETE_GROUP';
-export const SET_GROUP_AS_DELETED = 'SET_GROUP_AS_DELETED';
+
 
 
 // Group Messages
@@ -35,4 +35,5 @@ export const LOGIN = 'LOGIN';
 export const REGISTER = 'REGISTER';
 export const EDIT_PROFILE = 'EDIT_PROFILE';
 export const DELETE_PROFILE = 'DELETE_PROFILE';
+export const UPDATE_GROUP_FOR_USER = 'UPDATE_GROUP_FOR_USER';
 

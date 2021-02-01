@@ -1,14 +1,18 @@
 import axios from 'axios';
-import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER, DELETE_GROUP, SET_GROUP_AS_DELETED} from './types';
+import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER, DELETE_GROUP, UPDATE_GROUP_FOR_USER} from './types';
 
 const BASE_URL = 'http://localhost:3001/groups'
 
 const getGroupFromApi = (group_id) => {
     return async function(dispatch) {
         const res = await axios.get(`${BASE_URL}/${group_id}`);
+        console.log(res.data)
         let{
             id,
             group_name,
+            game_name,
+            game_id,
+            game_slug,
             group_slug,
             group_owner_id,
             group_discord_url,
@@ -22,6 +26,9 @@ const getGroupFromApi = (group_id) => {
         const group =  {
             id,
             group_name,
+            game_name,
+            game_slug,
+            game_id,
             group_slug,
             group_owner_id,
             group_discord_url,
@@ -148,11 +155,11 @@ const updateGroup = (data) => {
 
     let group_slug = data.group_name.toLowerCase().split(" ").join("-");
     groupData.group_slug = group_slug;
-    console.log(data.id)
     return async function(dispatch){
         const res = await axios.patch(`${BASE_URL}/${data.id}`, groupData)
 
         dispatch(doUpdateGroup(res.data))
+        dispatch(doUpdateGroupForUsers(res.data))
     }
 };
 
@@ -210,6 +217,10 @@ const doKickMember = (data) => {
 
 const doUpdateGroup = (data) => {
     return{type: UPDATE_GROUP, payload: data}
+};
+
+const doUpdateGroupForUsers = (data) => {
+    return {type: UPDATE_GROUP_FOR_USER, payload: data}
 };
 
 const doDeleteMessage = (data) => {
