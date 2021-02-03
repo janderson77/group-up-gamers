@@ -2,14 +2,17 @@ import React, {useEffect, useCallback, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
 import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup, createMessage, deleteMessage} from '../actions/groups' 
+import {addGameToList} from '../actions/users'
 import "./css/Game.css"
 
 const Group = () => {
     const history = useHistory();
     const user = useSelector(st => st.users.user)
     const FORM_INITIAL_STATE = {message: ""}
-    const [formData, setFormData] = useState(FORM_INITIAL_STATE)
-
+    const IGN_INITIAL_STATE = {in_game_name: ""}
+    const [formData, setFormData] = useState(FORM_INITIAL_STATE);
+    const [ignDisplay, toggleIgnDisplay] = useState(false);
+    const [ignData, setIgnData] = useState(IGN_INITIAL_STATE);
     const dispatch = useDispatch();
     
     const initialize = useCallback(
@@ -34,17 +37,28 @@ const Group = () => {
 
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
-    if(user.groups[id] && user.groups[id].is_banned) return (
-    <div className="mt-5">
-        <h2>You Have Been Banned From This Group.</h2>
-        <h4>You can find another group to join.</h4>
-        <NavLink to='/groups'>Back to groups search.</NavLink>
-    </div>
-    )
+    if(user.groups){
+        if(user.groups[id] && user.groups[id].is_banned) return (
+            <div className="mt-5">
+                <h2>You Have Been Banned From This Group.</h2>
+                <h4>You can find another group to join.</h4>
+                <NavLink to='/groups'>Back to groups search.</NavLink>
+            </div>
+            )
+    }
+    
 
     const handleChange = (e) => {
         const {name, value} = e.target;
         setFormData(formData => ({
+            ...formData,
+            [name]: value
+        }));
+    };
+
+    const handleIgnChange = (e) => {
+        const {name, value} = e.target;
+        setIgnData(formData => ({
             ...formData,
             [name]: value
         }));
@@ -104,7 +118,7 @@ const Group = () => {
 
     let messageArea;
 
-    if(user.groups[id]){
+    if(user.groups && user.groups[id]){
         messageArea = (
             <>
             <div>
@@ -156,6 +170,11 @@ const Group = () => {
         }
     };
 
+    const addGroupAndGame = () => {
+        dispatch(addGameToList(user.id, group.game_id, user._token, ignData.in_game_name || undefined))
+        dispatch(joinGroup(user.id, group.id))
+    }
+
     const doLeaveGroup = () => {
         dispatch(leaveGroup(user.id, group.id))
         history.push('/groups')
@@ -182,9 +201,31 @@ const Group = () => {
         adminButton = null;
     }
 
+    let ignArea;
+
+    if(ignDisplay){
+        ignArea = <>
+            <input name="in_game_name" className="form-control" onChange={handleIgnChange} placeholder="In Game Name" />
+            <div className="btn btn-success btn-sm" onClick={addGroupAndGame}>Join!</div>
+            <div className="btn btn-danger btn-sm" onClick={toggleIgnDisplay}>Cancel</div>
+
+        </>
+    }else{
+        ignArea = <div>
+        <div className="btn btn-success btn-sm" onClick={toggleIgnDisplay}>Join!</div>
+    </div>
+    }
+
 
     if(user.groups){
-        if(user.groups[group.id]){
+        if(!user.groups[group.id] && !user.games_playing[group.game_id]){
+            joinButton = (
+                <div>
+                    {ignArea}
+                </div>
+                
+            );
+        }else if(user.groups[group.id]){
             joinButton = (
                 <div>
                     <div className="btn btn-secondary btn-sm" disabled>Joined</div>
@@ -236,7 +277,7 @@ const Group = () => {
                                 <div key={e.user_id}>
                                     <span>{e.user_id === group.group_owner_id ? <span>Owner / </span> : null}
                                     {e.is_group_admin ? <span>Admin </span> : null}</span>
-                                    <NavLink to={`/users/${e.username}`} >{e.username}</NavLink>
+                                    <NavLink to={`/users/${e.id}`} >{e.username}</NavLink>
                                 </div>
                             ))}
                         </ul>

@@ -140,14 +140,28 @@ class User {
         };
 
         const userGroupsRes = await db.query(`
-                SELECT *
+                SELECT group_id, user_id, is_group_admin, is_banned, groups.group_name
                 FROM group_members
+                RIGHT JOIN groups
+                ON group_members.group_id = groups.id
                 WHERE user_id = $1
             `,[user.id])
 
             if(userGroupsRes.rows.length > 0){
                 user.groups = userGroupsRes.rows;
             };
+
+        const userGamesRes = await db.query(`
+            SELECT games_playing.user_id, games_playing.game_id, in_game_name, game_name, slug
+            from games_playing
+            right join games
+            on games_playing.game_id = games.id
+            where games_playing.user_id = $1
+        `, [user.id]);
+
+        if(userGamesRes.rows.length > 0){
+            user.games_playing = userGamesRes.rows
+        }
 
         return user;
     };

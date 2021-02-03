@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE, DELETE_PROFILE} from './types';
+import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE, DELETE_PROFILE, RESET_VISITING_STATE} from './types';
 
 const base_url = "http://localhost:3001/users"
 
@@ -65,6 +65,10 @@ const editProfile = (data) => {
     }
 };
 
+const resetVisitingState = () => {
+    return {type: RESET_VISITING_STATE}
+};
+
 const deleteProfile = () => {
     return{type: DELETE_PROFILE}
 }
@@ -103,4 +107,4 @@ function doLogout() {
     return {type: LOGOUT}
 };
 
-export {login, logout, register, addGameToList, getUser, removeGameFromList, editProfile, deleteProfile};
+export {login, logout, register, addGameToList, getUser, removeGameFromList, editProfile, deleteProfile, resetVisitingState};

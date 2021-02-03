@@ -1,73 +1,82 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import {useSelector, useDispatch } from 'react-redux'
 import './css/Profile.css'
-import { NavLink, useParams, useHistory } from "react-router-dom";
+import { NavLink, useParams, Redirect } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import {getUser} from '../actions/users'
+import {getUser, resetVisitingState} from '../actions/users'
 
 function Profile() {
     const loggedInUser = useSelector(st => st.users.user);
-    const history = useHistory();
-    const params = useParams();
-    
+    const dispatch = useDispatch();
+
+    const initialize = useCallback(
+        () => {
+            dispatch(resetVisitingState())
+        },
+        [dispatch],
+    );
+
+    useEffect(() => {initialize(); }, [initialize])
+
+    const {id} = useParams();
+    const user = useSelector(st => st.users.visiting[id])
+
+    const missing = !user
+
+    useEffect(() => {
+        if(missing){
+            dispatch(getUser(id));
+        }
+    }, [missing, id, dispatch])    
+
+    if(missing){
+        return <ClipLoader size={150} color="#123abc" />;
+    }
+
     if(loggedInUser){
-        if(loggedInUser.id === params.id){
-            history.push('/profile')
+        if(loggedInUser.id === user.id){
+            return <Redirect to="/profile"/>
         }
     }
+        
+    let userGames;
     
-    const dispatch = useDispatch();
-    
-    useEffect(() => {
-        dispatch(getUser(params.id))
-    }, [params.id, dispatch])
+    user.games_playing ? userGames= Object.values(user.games_playing) : userGames= [];
 
-  const user = useSelector(st => st.users.visiting.user)
-  if(!user){
-      return <ClipLoader size={150} color="#123abc" />;
-  };
+    let gamesList;
 
-  let userGames;
-  let userGroups;
-  
-  user.games_playing ? userGames= Object.values(user.games_playing) : userGames= [];
-  user.userGroups ? userGroups = user.groups : userGroups = [];
-
-  let gamesList;
-
-  if(userGames.length > 0){
-      gamesList = userGames.map(e => (
-          <div key={e.slug}><NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink></div>
-      ))
-  }else{
-      gamesList = <div>
-          <div>{user.username} has not added any games yet.</div>
-      </div>
-  };
-
-  let groups;
-
-  if(userGroups.length){
-      groups = userGroups.map(e => (
-          <div>
-              <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
-          </div>
-      ))
-  }else{
-      groups = (
-        <div>
-          <p>{user.username} has not joined any groups</p>
+    if(userGames.length > 0){
+        gamesList = userGames.map(e => (
+            <div key={e.slug}><NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink></div>
+        ))
+    }else{
+        gamesList = <div>
+            <div>{user.username} has not added any games yet.</div>
         </div>
-      )
-  }
+    };
 
+    let groups;
 
+    if(user.groups.length){
+        groups = user.groups.map(e => (
+            <div key={e.group_id}>
+                <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
+            </div>
+        ))
+    }else{
+        groups = (
+            <div>
+            <p>{user.username} has not joined any groups</p>
+            </div>
+        )
+    }
+
+console.log(user)
 
   return (
-    // <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
     <div>
         <div className="col-md-10 offset-md-1">
-            <h3>Profile</h3>
+            <h3>{user.username}'s Profile</h3>
             <div className="d-flex">
             <div className="col-md-6">
                 {user.profile_img_url ? <img alt={user.username} src={user.profile_img_url} /> : <img alt={user.username} src='../static/404.png'/>}
@@ -97,5 +106,7 @@ function Profile() {
     </div>
   );
 }
+
+    
 
 export default Profile;
