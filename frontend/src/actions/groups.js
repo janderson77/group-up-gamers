@@ -112,9 +112,9 @@ const createGroup = (data) => {
         const res = await axios.post(`${BASE_URL}`, data);
         const groupForMyGroups = {
             ...res.data.newGroup.group,
-            user_id: res.data.newGroup.member.user_id
-        }
-        
+            user_id: res.data.newGroup.member.user_id,
+            group_id: res.data.newGroup.group.id
+        }        
 
         if(res.status === 201){
             dispatch(doCreateGroup(res.data))

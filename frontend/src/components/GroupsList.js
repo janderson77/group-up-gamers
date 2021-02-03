@@ -19,10 +19,6 @@ const GroupsList = () => {
 
     const missing = !groups;
 
-    // const [offset, setOffset] = useState(0);
-    // const [data, setData] = useState([]);
-    // const [perPage, setPerPage] = useState(10);
-    // const [pageCount, setPageCount] = useState(0);
 
     useEffect(function() {
         if(missing) {
@@ -33,6 +29,12 @@ const GroupsList = () => {
     
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
+    if(!groups || !groups.length) return (
+        <>
+        <h2>No Groups Have Been Created</h2>
+        <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
+        </>
+    );
     let groupsArr = Object.values(groups)
     
 
