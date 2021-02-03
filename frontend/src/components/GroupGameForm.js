@@ -4,6 +4,7 @@ import {useDispatch} from 'react-redux'
 import {useHistory} from 'react-router-dom'
 import SelectSearch from 'react-select-search'
 import {setGroupGame} from '../actions/groups';
+import {alphaOptions} from '../helpers/alphaOptions';
 
 
 const GroupGameForm = () => {
@@ -13,34 +14,6 @@ const GroupGameForm = () => {
     let [games, setGames] = useState([]);
     let [game, setGame] = useState();
 
-    const alphaOptions = [
-    {value: "a", name: "A"},
-    {value: "b", name: "B"},
-    {value: "c", name: "C"},
-    {value: "d", name: "D"},
-    {value: "e", name: "E"},
-    {value: "f", name: "F"},
-    {value: "g", name: "G"},
-    {value: "h", name: "H"},
-    {value: "i", name: "I"},
-    {value: "j", name: "J"},
-    {value: "k", name: "K"},
-    {value: "l", name: "L"},
-    {value: "m", name: "M"},
-    {value: "n", name: "N"},
-    {value: "o", name: "O"},
-    {value: "p", name: "P"},
-    {value: "q", name: "Q"},
-    {value: "r", name: "R"},
-    {value: "s", name: "S"},
-    {value: "t", name: "T"},
-    {value: "u", name: "U"},
-    {value: "v", name: "V"},
-    {value: "w", name: "W"},
-    {value: "x", name: "X"},
-    {value: "y", name: "Y"},
-    {value: "z", name: "Z"}
-    ];
     let gamesSelect;
 
     const handleGameCheck = async (str) => {

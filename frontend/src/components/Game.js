@@ -1,13 +1,16 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect, useCallback, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import {getGameFromAPI, resetGameState} from '../actions/games'
-import {addGameToList} from '../actions/users'
+import {addGameToList, removeGameFromList} from '../actions/users'
 import "./css/Game.css"
 
 const Game = () => {
     const dispatch = useDispatch();
     const user = useSelector(st => st.users.user)
+    const [ignView, toggleIgnView] = useState(false);
+    const INITIAL_STATE = {in_game_name: ""}
+    const [formData, setFormData] = useState(INITIAL_STATE)
 
     const initialize = useCallback(
         () => {
@@ -29,6 +32,17 @@ const Game = () => {
         }
     }, [missing, slug, dispatch]);
 
+    const handleToggleIgnView = () => {
+        toggleIgnView(!ignView);
+    };
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData(formData => ({
+            ...formData,
+            [name]: value
+        }));
+    };
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
 
@@ -36,10 +50,17 @@ const Game = () => {
     let gamePlatforms = game.platforms;
 
     const AddGame = () => {
-        dispatch(addGameToList(user.id, game.id, user._token))
-    }
+        handleToggleIgnView();
+        dispatch(addGameToList(user.id, game.id, user._token, formData.in_game_name))
+    };
 
-    const tryAddGame = () => {
+    const handleRemoveGame = (e) => {
+        user.toRemove = e.target.id;
+        dispatch(removeGameFromList(user, user.toRemove, user._token))
+    };    
+
+    const tryAddGame = (e) => {
+        e.preventDefault();
         try{
             AddGame();
         }catch(e){
@@ -49,17 +70,45 @@ const Game = () => {
     }
 
     let button;
-    let notAddedButton = <button onClick={tryAddGame} className="btn btn-small btn-success">Add Game</button>
+    let notAddedButton = <button onClick={handleToggleIgnView} className="btn btn-small btn-success">Add Game</button>
 
     if(user.games_playing){
         if(user.games_playing[game.id]){
-            button = <button className="btn btn-small btn-info" disabled>Added</button>
+            button = (
+            <>
+            <button className="btn btn-small btn-info" disabled>Added</button>
+            <button id={game.id} className="btn btn-small btn-danger" onClick={handleRemoveGame}>Remove</button>
+            </>
+            )
         }else{
             button = notAddedButton
         }
     }else{
         button = notAddedButton
     };
+
+    let ignInput;
+
+    if(ignView){
+        ignInput = (
+            <div>
+                <form onSubmit={tryAddGame}>
+                    <div className="form-group">
+                        <label>In Game Name (optional)</label>
+                        <input
+                            name="in_game_name"
+                            className="form-control"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <button className="btn btn-small btn-success">Add Game</button>
+                </form>
+                <button className="btn btn-small btn-danger" onClick={handleToggleIgnView}>Cancel</button>
+            </div>
+        )
+    }else{
+        ignInput = button;
+    }
     
     
 
@@ -71,7 +120,7 @@ const Game = () => {
                 <img className="card-img-top" src={game.cover_art} alt={game.game_name}></img>
                 <div className="card-body">
                     <p className="card-text">{game.summary}</p><br/>
-                    {button}
+                    {ignInput}
                     <ul className="list-group list-group-flush text-left">
                         <li key="game-modes" className="list-group-item">Game Modes
                             <ul>

@@ -176,6 +176,8 @@ router.post('/:id/games_playing', authRequired, async function(req, res, next){
   try{
     const game = await GamePlaying.addGamePlaying(req.body, req.params.id);
 
+    game[0].in_game_name = req.body.in_game_name;
+
     return res.json(game);
   }catch(e){
     return next(e);

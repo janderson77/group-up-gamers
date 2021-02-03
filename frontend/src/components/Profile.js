@@ -65,7 +65,6 @@ function Profile() {
   }
 
   const handleRemoveGame = (e) => {
-    console.log(e.target.id)
     user.toRemove = e.target.id;
     dispatch(removeGameFromList(user, user.toRemove, user._token))
   }
@@ -75,6 +74,7 @@ function Profile() {
         <div key={e.slug}>
             <button className="btn btn-sm btn-danger" id={e.id} onClick={handleRemoveGame}>X</button>
             <NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink>
+            <p>In Game Name: {e.in_game_name || "None"}</p>
         </div>
     ))
 }else{
