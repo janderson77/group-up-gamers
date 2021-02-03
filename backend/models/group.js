@@ -24,24 +24,6 @@ class Group {
       return groupsRes.rows;
   };
 
-  static async findOneByName(slug) {
-      const groupRes = await db.query(
-          `SELECT id, group_name, group_game_id, group_owner_id, group_discord_url, group_logo_url
-              FROM groups
-              WHERE group_slug ILIKE $1`,
-          [slug]);
-  
-      const group = groupRes.rows[0];
-  
-      if (!group) {
-        const error = new Error(`Sorry, we cannot find this group.`);
-        error.status = 404;   // 404 NOT FOUND
-        throw error;
-      }
-  
-      return group;
-  };
-
   static async findOneById(id) {
       const groupRes = await db.query(
           `SELECT groups.id, group_name, group_game_id, group_owner_id, group_discord_url, group_logo_url, game_name, games.id as game_id, slug as game_slug
@@ -59,13 +41,17 @@ class Group {
         throw error;
       };
 
+      let groupGameId = group.game_id
+
       const membersRes = await db.query(`
-      SELECT group_id, user_id, is_group_admin, is_banned, username, users.id
+      SELECT group_id, group_members.user_id, is_group_admin, is_banned, username, users.id, games_playing.in_game_name
       FROM group_members
       RIGHT JOIN users
       ON group_members.user_id = users.id
-      WHERE group_id = $1
-        `, [id])
+      RIGHT JOIN games_playing
+      ON group_members.user_id = games_playing.user_id
+      WHERE group_id = $1 AND games_playing.game_id = $2
+        `, [id, groupGameId]);
 
       group.members = membersRes.rows;
 
@@ -302,6 +288,21 @@ class Group {
           VALUES ($1,$2,$3)
           RETURNING *
       `,[result.rows[0].id, data.group_owner_id, true])
+
+      const checkIfInGamesPlaying = await db.query(`
+          SELECT *
+          FROM games_playing
+          WHERE user_id = $1 AND game_id = $2
+      `,[data.group_owner_id, data.group_game_id]);
+
+      if(checkIfInGamesPlaying.rows.length === 0){
+        db.query(`
+        INSERT INTO games_playing
+        (user_id, game_id, in_game_name)
+        VALUES
+        ($1,$2,$3)
+        `, [data.group_owner_id, data.group_game_id, data.in_game_name || undefined])
+      }
 
       const returnVal = {
         group: result.rows[0],

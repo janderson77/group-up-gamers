@@ -109,6 +109,7 @@ const leaveGroup = (user_id, group_id) => {
 
 const createGroup = (data) => {
     return async function(dispatch) {
+        delete data.in_game_name
         const res = await axios.post(`${BASE_URL}`, data);
         const groupForMyGroups = {
             ...res.data.newGroup.group,
@@ -165,7 +166,6 @@ const updateGroup = (data) => {
 
 const kickMember = (group_id, userid) => {
     return async function(dispatch) {
-        console.log(userid)
         await axios.post(`${BASE_URL}/${group_id}/kick/${userid}`);
 
         let data = {
@@ -178,7 +178,6 @@ const kickMember = (group_id, userid) => {
 
 const banMember = (group_id, user_id) => {
     return async function(dispatch){
-        console.log(group_id, user_id)
         const res = await axios.post(`${BASE_URL}/${group_id}/ban/${user_id}`)
         dispatch(doBanMember(res.data))
     }
