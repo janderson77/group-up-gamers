@@ -158,7 +158,7 @@ router.get('/:id/games_playing/:game_id', async function(req, res, next){
 }
 });
 
-router.post('/:id/games_playing', authRequired, async function(req, res, next){
+router.post('/:id/games_playing', async function(req, res, next){
   let toValidate = {
     user_id: req.body.user_id,
     game_id: req.body.game_id,

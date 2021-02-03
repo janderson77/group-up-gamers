@@ -107,4 +107,4 @@ function doLogout() {
     return {type: LOGOUT}
 };
 
-export {login, logout, register, addGameToList, getUser, removeGameFromList, editProfile, deleteProfile, resetVisitingState};
+export {login, logout, register, addGameToList, getUser, removeGameFromList, editProfile, deleteProfile, resetVisitingState, addGameToPlaying};

@@ -71,8 +71,6 @@ const users = (state = INITIAL_STATE, action) => {
                 visiting: {}
             }
         case GET_USER:
-            let visiting = INITIAL_STATE;
-            visiting = {...action.payload}
             return {...state, "visiting": {[action.payload.user.id]: {...action.payload.user}}}
         case REGISTER:
             return {...state, user: {...action.payload}};

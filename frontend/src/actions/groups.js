@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER, DELETE_GROUP, UPDATE_GROUP_FOR_USER} from './types';
+import {addGameToPlaying} from './users'
 
 const BASE_URL = 'http://localhost:3001/groups'
 
@@ -196,6 +197,28 @@ const deleteGroup = (group_id) => {
 
         dispatch(doDeleteGroup(group_id))
     }
+};
+
+const joinGroupAndAddGame = (data) => {
+    return async function(dispatch){
+        let body = {
+            game_id: Number(data.game_id),
+            user_id: Number(data.user_id),
+            _token: data._token,
+            in_game_name: data.in_game_name || undefined,
+            username: data.username
+        };
+        const add = await axios.post(`http://localhost:3001/users/${body.user_id}/games_playing`, body)
+
+        dispatch(addGameToPlaying(add.data[0]))
+
+        const res = await axios.post(`${BASE_URL}/${data.group_id}/join`,{user: data.user_id});
+
+        if(res.status === 200){
+            const groups = await axios.get(`${BASE_URL}/members/${data.user_id}`)
+            dispatch(doJoinGroup(groups.data[data.group_id]))
+        }
+    }
 }
 
 const doDeleteGroup = (group_id) => {
@@ -270,4 +293,4 @@ function resetGroupsState() {
     return {type: RESET_GROUPS};
 };
 
-export {getGroupFromApi, getGroupFromApiAdmin, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember, banMember, unBanMember, deleteGroup}
+export {getGroupFromApi, getGroupFromApiAdmin, getAllGroupsFromApi, resetGroupsState, joinGroup, leaveGroup, createGroup, setGroupGame, createMessage, deleteMessage, updateGroup, kickMember, banMember, unBanMember, deleteGroup, joinGroupAndAddGame}

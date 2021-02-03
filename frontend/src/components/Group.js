@@ -1,8 +1,9 @@
 import React, {useEffect, useCallback, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
-import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup, createMessage, deleteMessage} from '../actions/groups' 
-import {addGameToList} from '../actions/users'
+import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup, createMessage, deleteMessage, joinGroupAndAddGame} from '../actions/groups' 
+import groups from '../reducers/groups';
+import users from '../reducers/users';
 import "./css/Game.css"
 
 const Group = () => {
@@ -160,6 +161,7 @@ const Group = () => {
 
     const addGroup = () => {
         dispatch(joinGroup(user.id, group.id))
+        initialize();
     };
 
     const tryAddGroup = () => {
@@ -171,9 +173,19 @@ const Group = () => {
     };
 
     const addGroupAndGame = () => {
-        dispatch(addGameToList(user.id, group.game_id, user._token, ignData.in_game_name || undefined))
-        dispatch(joinGroup(user.id, group.id))
-    }
+        let data = {
+            ...ignData,
+            user_id: user.id,
+            game_id: group.game_id,
+            _token: user._token,
+            group_id: group.id,
+            username: user.username
+        }
+
+        dispatch(joinGroupAndAddGame(data))
+        history.push('/profile')
+        
+    };
 
     const doLeaveGroup = () => {
         dispatch(leaveGroup(user.id, group.id))
@@ -218,7 +230,15 @@ const Group = () => {
 
 
     if(user.groups){
-        if(!user.groups[group.id] && !user.games_playing[group.game_id]){
+        if(!user.games_playing){
+            joinButton = (
+                <div>
+                    {ignArea}
+                </div>
+                
+            );
+        }
+        else if(!user.groups[group.id] && !user.games_playing[group.game_id]){
             joinButton = (
                 <div>
                     {ignArea}
@@ -242,11 +262,20 @@ const Group = () => {
         };
       
     }else{
-        joinButton = (
-            <div>
-                <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
-            </div>
-        )
+        if(!users.games_playing || !users.games_playing[groups.game_id]){
+                joinButton = (
+                    <div>
+                        {ignArea}
+                    </div>
+                )
+        }else{
+            joinButton = (
+                <div>
+                    <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
+                </div>
+            )
+        }
+        
     }
 
     return(

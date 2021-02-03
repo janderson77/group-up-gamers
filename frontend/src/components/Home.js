@@ -1,5 +1,6 @@
 import React from 'react'
 import {Jumbotron, Button} from 'reactstrap'
+import {NavLink} from 'react-router-dom'
 
 const Home = () => {
 
@@ -11,7 +12,7 @@ const Home = () => {
                 <hr className="my-2" />
                 <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
                 <p className="lead">
-                    <Button color="primary">Get Started</Button>
+                    <NavLink to='/games' className="btn btn-lg btn-primary" >Get Started</NavLink>
                 </p>
             </Jumbotron>
         </div>

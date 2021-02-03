@@ -71,8 +71,6 @@ function Profile() {
         )
     }
 
-console.log(user)
-
   return (
     <div>
         <div className="col-md-10 offset-md-1">
