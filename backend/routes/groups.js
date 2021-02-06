@@ -140,6 +140,7 @@ router.patch("/:id", async function (req, res, next) {
       }
   
       const group = await Group.update(req.params.id, req.body);
+      group.group_id = group.id
       return res.json({group});
     }
   

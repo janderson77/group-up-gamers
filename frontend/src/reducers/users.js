@@ -36,8 +36,6 @@ const users = (state = INITIAL_STATE, action) => {
             return{user: user,
                 visiting: {}};
         case UPDATE_GROUP_FOR_USER:
-            console.log(state)
-            console.log(action.payload.group)
             return {
                 ...state,
                 "user": {
