@@ -5,7 +5,12 @@ const toObject = require('../helpers/toObject')
 
 class Group {
   static async findAll(data) {
-      let baseQuery = `SELECT id, group_name, group_slug, group_game_id, group_owner_id, group_discord_url, group_logo_url FROM groups`;
+      let baseQuery = `SELECT groups.id, group_name, group_slug, group_game_id, group_owner_id, group_discord_url, group_logo_url, game_name, games.slug as game_slug 
+      FROM groups
+      RIGHT JOIN games
+      ON games.id = groups.group_game_id
+      WHERE groups.group_name IS NOT null
+      `;
       
       let whereExpressions = [];
       let queryValues = [];

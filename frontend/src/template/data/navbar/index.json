@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Home",
+    "link": "/",
+    "subMenu": false,
+    "megaMenu": false
+  },
+  {
+    "id": 2,
+    "title": "Pages",
+    "link": "/",
+    "subMenu": false,
+    "megaMenu": false
+  },
+  {
+    "id": 3,
+    "title": "Portfolios",
+    "link": "/",
+    "subMenu": false,
+    "megaMenu": false
+  },
+  {
+    "id": 4,
+    "title": "Blogs",
+    "link": "/",
+    "subMenu": false,
+    "megaMenu": false
+  },
+  {
+    "id": 5,
+    "title": "Elements",
+    "link": "/",
+    "subMenu": false,
+    "megaMenu": false
+  }
+]
+

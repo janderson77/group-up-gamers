@@ -18,7 +18,7 @@ const Navigation = () => {
   }
   const loggedOutNav = () => {
     return(
-        <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
           <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">GG</NavLink>
 
@@ -50,7 +50,7 @@ const Navigation = () => {
 
   const loggedInNav = () => {
     return(
-        <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
           <div className="container-fluid">
             <NavLink className="navbar-brand" to="/">GG</NavLink>
 

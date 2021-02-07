@@ -5,6 +5,7 @@ import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup, createMessage,
 import groups from '../reducers/groups';
 import users from '../reducers/users';
 import "./css/Game.css"
+import Default from '../static/Default.png';
 
 const Group = () => {
     const history = useHistory();
@@ -279,10 +280,15 @@ const Group = () => {
     }
 
     return(
-        <div className="d-flex flex-column align-items-center">
+        <div className="d-flex flex-column align-items-center pt-5 mt-5">
             <div className="card w-50">
                 <div className="d-flex justify-content-around">
-                <img className="card-img-top" src={group.group_logo_url} alt={group.group_name}></img>
+                {group.group_logo_url ? 
+                    <img className="card-img-top" src={group.group_logo_url} alt={group.group_name}></img>
+                    :
+                    <img className="card-img-top" src={Default} alt={group.group_name}></img>
+                }
+                
                 <div>
                     <h1>{group.group_name}</h1>
                     <h5>Game: <NavLink to={`/games/${group.game_slug}`}>{group.game_name}</NavLink></h5>
@@ -297,7 +303,12 @@ const Group = () => {
                     <div id="group-info">
                         <h4>Group Info</h4>
                         <p className="card-text">Discord:</p>
-                        <p className="card-text">{group.group_discord_url || "No Discord"}</p>
+                        {user.groups[group.id] ? 
+                            <p className="card-text">{group.group_discord_url || "No Discord"}</p>
+                            : 
+                            <p className="card-text">You must be in the group to see this.</p>
+                        }
+                        
                     </div>
                     <div id="group-members">
                         <h4>Group Members</h4>
