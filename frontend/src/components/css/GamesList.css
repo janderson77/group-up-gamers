@@ -1,3 +1,7 @@
+#main-cont {
+	min-height: 50rem;
+}
+
 .card {
 	width: 40rem;
 }
@@ -9,4 +13,8 @@
 .card img {
 	max-width: 90px;
 	max-height: 90px;
+}
+
+.select-search__input {
+	min-width: 50rem;
 }

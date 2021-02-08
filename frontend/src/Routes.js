@@ -13,22 +13,23 @@ import GroupAdmin from './components/GroupAdmin'
 import ProfileVisit from './components/ProfileVisit'
 import ProfileEdit from './components/ProfileEdit'
 import ProfileDeleted from './components/ProfileDeleted'
+import PrivateRoute from './PrivateRoute'
 
 const Routes = () => {
     return(
         <Switch>
             <Route path="/" exact><Home /></Route>
             <Route exact path="/games" ><GamesList /></Route>
-            <Route exact path="/games/:slug" ><Game /></Route>
+            <PrivateRoute exact path="/games/:slug" ><Game /></PrivateRoute>
             <Route exact path="/login"><Login /></Route>
             <Route exact path="/profile" ><Profile /></Route>
-            <Route exact path="/profile/edit" ><ProfileEdit /></Route>
+            <PrivateRoute exact path="/profile/edit" ><ProfileEdit /></PrivateRoute>
             <Route exact path="/groups"><GroupsList /></Route>
-            <Route exact path="/groups/select"><GroupGameForm /></Route>
-            <Route exact path="/groups/create"><GroupForm /></Route>
-            <Route exact path="/groups/:id"><Group /></Route>
-            <Route exact path="/groups/:id/admin"><GroupAdmin /></Route>
-            <Route exact path="/users/:id"><ProfileVisit /></Route>
+            <PrivateRoute exact path="/groups/select"><GroupGameForm /></PrivateRoute>
+            <PrivateRoute exact path="/groups/create"><GroupForm /></PrivateRoute>
+            <PrivateRoute exact path="/groups/:id"><Group /></PrivateRoute>
+            <PrivateRoute exact path="/groups/:id/admin"><GroupAdmin /></PrivateRoute>
+            <PrivateRoute exact path="/users/:id"><ProfileVisit /></PrivateRoute>
             <Route exact path="/deleted"><ProfileDeleted /></Route>
             <Redirect to="/" />
         </Switch>

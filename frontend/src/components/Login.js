@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import {useDispatch} from 'react-redux'
 import { useHistory } from "react-router-dom";
 import {login, register} from '../actions/users'
 import './css/Login.css'
 import Alert from "./Alert";
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
 
 function Login() {
   const dispatch = useDispatch();
@@ -118,7 +120,12 @@ function Login() {
   );
 
   return (
-    <div className="Login">
+    <Fragment>
+      <Helmet>
+          <title>Group-Up Gamers || Login/Register</title>
+      </Helmet>
+      <LayoutDefault className="template-color-1 template-font-1">
+    <div className="Login d-flex justify-content-center align-items-center">
       <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
         <div className="d-flex justify-content-end">
           <div className="btn-group">
@@ -175,6 +182,8 @@ function Login() {
         </div>
       </div>
     </div>
+    </LayoutDefault>
+    </Fragment>
   );
 }
 

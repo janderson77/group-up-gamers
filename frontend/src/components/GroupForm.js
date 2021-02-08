@@ -1,8 +1,13 @@
-import React, {useState} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
-import {useHistory} from 'react-router-dom'
-import {createGroup} from '../actions/groups'
-import {addGameToList} from '../actions/users'
+import React, {useState, Fragment} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {useHistory} from 'react-router-dom';
+import {createGroup} from '../actions/groups';
+import {addGameToList} from '../actions/users';
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import gamesbg from '../static/gamesbg.jpg';
+import NotLoggedIn from './NotLoggedIn'
 
 const GroupForm = () => {
     const user = useSelector(st => st.users.user)
@@ -11,6 +16,7 @@ const GroupForm = () => {
     const history = useHistory();
 
     
+
 
     let FORM_INITIAL_STATE = {
         group_name: "",
@@ -26,6 +32,10 @@ const GroupForm = () => {
     }
 
     let [formData, setFormData] = useState(FORM_INITIAL_STATE);
+
+    if(!user){
+        <NotLoggedIn />
+    };
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -144,16 +154,27 @@ const GroupForm = () => {
                 <button className="btn btn-info btn-lg" type="submit">Submit</button>
                 <button className="btn btn-danger btn-lg" onClick={handleCancel}>Cancel</button>
             </form>
-
+    let previous = [{title: "Groups"}, {title: "Select"}]
     return(
-        <>
-        <div className='container d-flex justify-content-center align-items-center'>
-            {gameDisplay}
-        </div>
-        <div className='container GroupForm'>
-            {user.games_playing[game.id] ? create : createAndAddGameToPlaying}
-        </div>
-        </>
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers || Group Form</title>
+            </Helmet>
+            <Breadcrumb
+                        title="Game Select"
+                        bg={gamesbg}
+                        prev={previous}
+                        stem="/groups"
+                />
+            <LayoutDefault className="template-color-1 template-font-1 mb--40">
+            <div className='container d-flex justify-content-center align-items-center mt-5 mb-5 pt-5'>
+                {gameDisplay}
+            </div>
+            <div className='container GroupForm'>
+                {user.games_playing[game.id] ? create : createAndAddGameToPlaying}
+            </div>
+            </LayoutDefault>
+        </Fragment>
     );
 
 }

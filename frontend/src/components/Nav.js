@@ -31,7 +31,7 @@ const Navigation = () => {
                   <a className="nav-link" href="/games">Games</a>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link" href="groups">Groups</a>
+                  <a className="nav-link" href="/groups">Groups</a>
                 </li>
               </ul>
             </div>

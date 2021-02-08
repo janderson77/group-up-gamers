@@ -1,4 +1,15 @@
-img {
-	width: 180px;
-	height: 180px;
+.profile-own-img {
+	width: 200px;
+	height: 200px;
+	min-width: 200px;
+	min-height: 200px;
+}
+
+.profile-games {
+	min-width: 250px;
+	max-width: 500px;
+}
+
+.profile-cont {
+	min-height: 48.5rem;
 }

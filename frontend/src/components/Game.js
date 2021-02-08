@@ -1,9 +1,17 @@
-import React, {useEffect, useCallback, useState} from 'react';
+import React, {useEffect, useCallback, useState, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import {getGameFromAPI, resetGameState} from '../actions/games'
 import {addGameToList, removeGameFromList} from '../actions/users'
 import "./css/Game.css"
+import Default from '../static/Default.png';
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import {Col, Container, Row} from "react-bootstrap";
+import Thumbnail from "../template/components/about-us/thumbnail/AboutThumbOne";
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import gamesbg from '../static/gamesbg.jpg';
+import NotLoggedIn from './NotLoggedIn'
 
 const Game = () => {
     const dispatch = useDispatch();
@@ -49,6 +57,12 @@ const Game = () => {
     let gameModes = game.game_modes;
     let gamePlatforms = game.platforms;
 
+    if(!user){
+        return(
+            <NotLoggedIn />
+        )
+    };
+
     const AddGame = () => {
         handleToggleIgnView();
         dispatch(addGameToList(user.id, game.id, user._token, formData.in_game_name))
@@ -71,6 +85,8 @@ const Game = () => {
 
     let button;
     let notAddedButton = <button onClick={handleToggleIgnView} className="btn btn-small btn-success">Add Game</button>
+
+    
 
     if(user.games_playing){
         if(user.games_playing[game.id]){
@@ -110,34 +126,71 @@ const Game = () => {
         ignInput = button;
     }
     
-    
+    let previous = [{title: 'Games'}]
 
     return(
-        <div className="d-flex flex-column align-items-center">
-           <h1>{game.game_name}</h1>
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers || {game.game_name}</title>
+            </Helmet>
+            <LayoutDefault className="template-color-1 template-font-1">
+            <Breadcrumb
+                    title={game.game_name}
+                    bg={gamesbg}
+                    prev={previous}
+                    stem="/games"
+            />
+            <div className="brook-blog-details-area bg_color--1 pt--90 pb--150">
+            
+                <Container>
+                    <Row>
+                        <Col lg={8} className={'mx-auto'}>
+                            <div className="blog-details-wrapper">
+                                <article className="blog-post standard-post">
+                                    <header className="header mb--40 text-center">
+                                        <h3 className="heading heading-h3 font-32">
+                                            {game.game_name}
+                                        </h3>
+                                        
+                                    </header>
 
-            <div className="card w-50">
-                <img className="card-img-top" src={game.cover_art} alt={game.game_name}></img>
-                <div className="card-body">
-                    <p className="card-text">{game.summary}</p><br/>
-                    {ignInput}
-                    <ul className="list-group list-group-flush text-left">
-                        <li key="game-modes" className="list-group-item">Game Modes
-                            <ul>
-                                {gameModes.map(e => <li key={e}>{e}</li>)}
-                            </ul>
-                        </li>
-                        
-                        <li className="list-group-item">Platforms
-                            <ul>
-                                {gamePlatforms.map(e => <li key={e}>{e}</li>)}
-                            </ul>
-                        </li>
+                                    <Thumbnail thumb={game.cover_art ? game.cover_art: Default} className="mb--60 d-flex justify-content-center " imgClass='gameImg'/>
 
-                    </ul>
+                                    <section className="content basic-dark2-line-1px pb--50 mb--35">
+                                        <div className="inner">
+                                            <h5 className="heading heading-h5 line-height-1-95 wow move-up">
+                                                {game.summary}
+                                            </h5>
+                                            <div className="desc mt--45 mb--35">
+                                                <div className="bk_pra wow move-up">
+                                                    {ignInput}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="basic-dark2-line-1px mb--35 wow move-up" />
+                                            <h5 className="heading heading-h5 line-height-1-95 wow move-up">Game Modes</h5>
+                                            <div className="desc mt--45 mb--50 wow move-up">
+                                                {gameModes.map(e => <p className="wow move-up" key={e}>{e}</p>)}
+                                            </div>
+                                        <div className="basic-dark2-line-1px mb--35 wow move-up" />
+                                            <h5 className="heading heading-h5 line-height-1-95 wow move-up">Platforms</h5>
+                                            <div className="desc mt--45 mb--50 wow move-up">
+                                                {gamePlatforms.map(e => <p key={e}>{e}</p>)}
+                                            </div>
+                                        
+                                    </section>
+
+                                    <footer className="blog-footer mb--85 wow move-up">
+                                    </footer>
+                                </article>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
                 </div>
-            </div>
-        </div>
+
+            </LayoutDefault>
+        </Fragment>
     )
 }
 

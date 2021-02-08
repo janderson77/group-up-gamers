@@ -1,19 +1,31 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {useSelector, useDispatch} from 'react-redux'
 import './css/Profile.css'
 import { NavLink } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
 import {removeGameFromList} from '../actions/users'
+import Default from '../static/Default.png';
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import {Col, Container, Row} from "react-bootstrap";
+import Thumbnail from "../template/components/about-us/thumbnail/AboutThumbOne";
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import profilebg from '../static/profilebg.jpg';
+import './css/Group.css';
+import SidebarItem from '../template/container/sidebar/elements/SidebarItem';
+import NotLoggedIn from './NotLoggedIn'
 
 function Profile() {
   const user = useSelector(st => st.users.user)
   const dispatch = useDispatch();
-  if(!user){
-      return <ClipLoader size={150} color="#123abc" />;
-  };
 
   let userGames;
   let userGroups;
+
+  if(!user){
+    return(
+        <NotLoggedIn />
+    )
+};
 
   user.games_playing ? userGames = Object.values(user.games_playing) : userGames = {};
   user.groups ? userGroups = Object.values(user.groups).filter(b => b.is_banned !== true) : userGroups = {};
@@ -23,15 +35,15 @@ function Profile() {
 
   if(userGroups.length){
       groups = userGroups.map(e => (
-          <div key={e.id}>
+          <div key={e.id } className="border-bottom p-1">
               <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
           </div>
       ))
   }else{
       groups = (
-        <div>
-          <p>You have not joined any groups</p>
-          <p><NavLink to="/groups">Join One Now!</NavLink></p>
+        <div className="border-bottom p-1">
+          <div>You have not joined any groups</div>
+          <div><NavLink to="/groups">Join One Now!</NavLink></div>
         </div>
       )
   }
@@ -45,22 +57,29 @@ function Profile() {
   if(ownedGroups.length){
     let myOwnedGroups =  ownedGroups.map(e => (
         <div key={e.id}>
-            <NavLink to={`/groups/${e.id}/admin`}>{e.group_name}</NavLink>
+            <div className="border-bottom p-1">
+                <NavLink to={`/groups/${e.id}/admin`}>{e.group_name}</NavLink>
+            </div>
+            
         </div>
     ))
     ownedGroupsDisplay = (
-        <div>
-            <div>{myOwnedGroups}</div>
-            <hr></hr>
-            <div><NavLink to={'/groups/select'} >Make another!</NavLink></div>
-        </div>
+        <li>
+            <div className="border-bottom p-1">
+                <div>{myOwnedGroups}</div>
+                <div><NavLink to={'/groups/select'} >Make another!</NavLink></div>
+            </div>
+        </li>
     )
   }else{
     ownedGroupsDisplay = (
-        <div>
-            <p>You haven't created any groups yet.</p>
-            <p><NavLink to="/groups/select" >Go Make One!</NavLink></p>
-        </div>
+        <li>
+            <div className="border-bottom p-1">
+                <div>You haven't created any groups yet.</div>
+                <div className='mt-1'><NavLink className="btn btn-sm btn-primary" to="/groups/select" >Go Make One!</NavLink></div>
+            </div>
+            
+        </li>
     )
   }
 
@@ -71,60 +90,106 @@ function Profile() {
 
   if(userGames.length > 0){
     gamesList = userGames.map(e => (
-        <div key={e.slug}>
-            <button className="btn btn-sm btn-danger" id={e.id} onClick={handleRemoveGame}>X</button>
-            <NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink>
-            <p>In Game Name: {e.in_game_name || "None"}</p>
-        </div>
+        <li key={e.slug} className="my-1 py-1 d-flex flex-column">
+            <div className="d-flex flex-row justify-content-center align-items-center flex-wrap border-bottom pt-0 pb-1">
+
+                <NavLink to={`/games/${e.slug}`}><span className='bold'>{e.game_name}:</span></NavLink> <span className="mr-1">In Game Name: {e.in_game_name || "None"}</span>
+
+                <button className="btn btn-sm btn-danger mr-1 px-1 py-0" id={e.id} onClick={handleRemoveGame}>Remove</button>
+            </div>
+        </li>
     ))
 }else{
-    gamesList = <div>
+    gamesList = <li>
         <div>No Games Added Yet</div>
         <div><NavLink to='/games'>Go Add Some!</NavLink></div>
-    </div>
+    </li>
 };
 
 
 
 
   return (
-    // <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
-    <div>
-        <div className="col-md-10 offset-md-1 my-5">
-            <h3>My Profile</h3>
-            <div className="d-flex">
-                <div className="col-md-6">
-                    <div className="d-flex justify-content-center align-items-end">
-                    {user.profile_img_url ? <img className="border" alt={user.username} src={user.profile_img_url} /> : <img className="border" alt={user.username} src='../static/404.png'/>}
-                    <NavLink to="/profile/edit" className="btn btn-info btn-sm" style={{height: '2rem'}}>Edit Profile</NavLink>
-                    </div>
-                </div>
-            
-                <div className="col-md-6 d-flex flex-column align-items-center">
-                    <div>
-                        <h4>My Groups</h4>
-                        {groups}
-                    </div>
-                </div>
-            </div>
-        </div>
+      <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers || My Profile</title>
+            </Helmet>
+            <Breadcrumb
+                title="My Profile"
+                bg={profilebg}
+            />
+            <LayoutDefault className="template-color-1 template-font-1">
+                <div className="brook-blog-details-area bg_color--1 pt--90 pb--150">
+                    <Container>
+                        <Row>
+                            <Col lg={8}>
+                                <div className="blog-details-wrapper wow move-up">
+                                    <article className="blog-post standard-post wow move-up">
+                                        <header className="header mb--40 text-center"></header>
+                                        <div className="group-info d-flex justify-content-around wow move-up">
+                                            <div className="group-info-img wow move-up">
+                                                <div className="bold">Profile Image</div>
+                                                <Thumbnail 
+                                                thumb={user.profile_img_url ? user.profile_img_url: Default}
+                                                className="mb--60 profile-own-img"/>
+                                            </div>
+                                            <div className="group-info-info wow move-up">
+                                                <div className="group-info-discord wow move-up">
+                                                    <div className="card-text"><span className="bold">My Info</span></div>
+                                                        <div>First Name: {user.first_name}</div>
+                                                        <div>Last Name: {user.last_name}</div>
+                                                        <div>Email: {user.email}</div>
+                                                        <div>Discord: {user.discord_url}</div>
+                                                        <div className="mt-5"><NavLink to="/profile/edit" className="btn btn-primary btn-sm" style={{height: '2rem'}}>Edit Profile</NavLink></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </Col>
 
-        <div className="col-md-10 offset-md-1 my-5 py-3">
-            <div className="d-flex">
-                <div className="col-md-6">
-                    <h4>My Games</h4>
-                    {gamesList}
-                </div>
+                            <Col lg={4} className="mt_md--60 mt_sm--60">
+                                <div className="blog-sidebar-container">
+                                    <div className="blog-sidebar-wrapper">
+                                    <SidebarItem
+                                        title="My Games"
+                                        className="category "
+                                    >
+                                        <div className="inner">
+                                            <ul className="category-list">
+                                                {gamesList}
+                                            </ul>
+                                        </div>
+                                    </SidebarItem>
+                                    <SidebarItem
+                                            title="Joined Groups"
+                                            className="category mt--30 mb--30"
+                                        >
+                                            <div className="inner">
+                                                <ul className="category-list">
+                                                    {groups}
+                                                </ul>
+                                            </div>
+                                        </SidebarItem>
+                                        <SidebarItem
+                                            title="Owned Groups"
+                                            className="category mt--30 mb--30"
+                                        >
+                                            <div className="inner">
+                                                <ul className="category-list">
+                                                    {ownedGroupsDisplay}
+                                                </ul>
+                                            </div>
+                                        </SidebarItem>
 
-                <div className="col-md-6 d-flex flex-column align-items-center">
-                    <div>
-                        <h4>My Owned Groups</h4>
-                        {ownedGroupsDisplay}
-                    </div>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Container>
                 </div>
-            </div>
-        </div>
-    </div>
+            </LayoutDefault>
+    </Fragment>
   );
 }
 

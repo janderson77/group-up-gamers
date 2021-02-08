@@ -1,9 +1,13 @@
-import React, {useState} from 'react';
-import './css/GamesList.css';
+import React, {useState, Fragment} from 'react';
+import {Helmet} from "react-helmet";
 import {NavLink} from 'react-router-dom';
 import {alphaOptions} from '../helpers/alphaOptions';
 import SelectSearch from 'react-select-search';
 import axios from 'axios';
+import './css/GamesList.css';
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import gamesbg from '../static/gamesbg.jpg'
 
 
 const GamesList = () => {
@@ -56,7 +60,7 @@ const GamesList = () => {
         gameDisplay = null;
     }else{
         gameDisplay = (
-            <div className="card" >
+            <div className="card d-flex flex-column align-items-center" >
             <img className="card-img-top" src={game.cover_art} alt={game.game_name} />
             <div className="card-body">
                 <h5 className="card-title">{game.game_name}</h5>
@@ -70,23 +74,35 @@ const GamesList = () => {
 
     
     return(
-        <div className="container">
-            <div>
-                <h2>Find a game here.</h2>
-                <SelectSearch
-                    onChange={handleGameCheck}
-                    options={alphaOptions}
-                    search
-                    placeholder="Start Here."
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers | Games</title>
+            </Helmet>
+            <LayoutDefault className="template-color-1 template-font-1">
+            <Breadcrumb
+                    title="Games"
+                    bg={gamesbg}
                 />
+
+            </LayoutDefault>
+            <div id="main-cont" className="container mt-5 pt-5 d-flex flex-column align-items-center">
+                <div>
+                    <h2>Find a game</h2>
+                    <SelectSearch
+                        onChange={handleGameCheck}
+                        options={alphaOptions}
+                        search
+                        placeholder="Start By Clicking Here."
+                    />
+                </div>
+                <div>
+                    {gamesSelect}
+                </div>
+                <div>
+                    {gameDisplay}
+                </div>
             </div>
-            <div>
-                {gamesSelect}
-            </div>
-            <div>
-                {gameDisplay}
-            </div>
-        </div>
+        </Fragment>
     )
 };
 

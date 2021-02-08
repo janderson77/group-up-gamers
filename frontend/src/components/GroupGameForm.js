@@ -1,10 +1,16 @@
 import axios from 'axios'
-import React, {useState} from 'react'
-import {useDispatch} from 'react-redux'
+import React, {useState, Fragment} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import {useHistory} from 'react-router-dom'
 import SelectSearch from 'react-select-search'
 import {setGroupGame} from '../actions/groups';
 import {alphaOptions} from '../helpers/alphaOptions';
+import Default from '../static/Default.png';
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import gamesbg from '../static/gamesbg.jpg';
+import NotLoggedIn from './NotLoggedIn'
 
 
 const GroupGameForm = () => {
@@ -13,8 +19,15 @@ const GroupGameForm = () => {
     const history = useHistory();
     let [games, setGames] = useState([]);
     let [game, setGame] = useState();
+    const user = useSelector(st => st.users.user)
 
     let gamesSelect;
+
+    if(!user){
+        return(
+            <NotLoggedIn />
+        )
+    };
 
     const handleGameCheck = async (str) => {
         try{
@@ -63,8 +76,8 @@ const GroupGameForm = () => {
         gameDisplay = null;
     }else{
         gameDisplay = (
-            <div className="card" >
-            <img className="card-img-top" src={game.cover_art} alt={game.game_name} />
+            <div className="card d-flex justify-content center align-items-center mt-5" >
+            <img className="card-img-top" src={game.cover_art ? game.cover_art : Default} alt={game.game_name} />
             <div className="card-body">
                 <h5 className="card-title">{game.game_name}</h5>
                 <p className="card-text">{game.summary}</p>
@@ -74,24 +87,39 @@ const GroupGameForm = () => {
         );
     };
 
-    
+    let previous = [{title: "Groups"}]
     return(
-        <div className="container">
-            <div>
-                <SelectSearch
-                    onChange={handleGameCheck}
-                    options={alphaOptions}
-                    search
-                    placeholder="Start Here."
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers || Game Select</title>
+            </Helmet>
+            <LayoutDefault className="template-color-1 template-font-1">
+                <Breadcrumb
+                        title="Game Select"
+                        bg={gamesbg}
+                        prev={previous}
+                        stem="/groups"
                 />
-            </div>
-            <div>
-                {gamesSelect}
-            </div>
-            <div>
-                {gameDisplay}
-            </div>
-        </div>
+                <div id="group-game-form" className="container mt-5 pt-5 d-flex flex-column align-items-center ">
+                    <h2>Select A Game</h2>
+                    <div>
+                        <SelectSearch
+                            onChange={handleGameCheck}
+                            options={alphaOptions}
+                            search
+                            placeholder="Start Here."
+                            
+                        />
+                    </div>
+                    <div>
+                        {gamesSelect}
+                    </div>
+                    <div>
+                        {gameDisplay}
+                    </div>
+                </div>
+            </LayoutDefault>
+        </Fragment>
     )
 };
 

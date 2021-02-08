@@ -1,10 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import {useHistory} from 'react-router-dom'
 import {useSelector, useDispatch} from 'react-redux'
 import axios from 'axios'
 import {editProfile, deleteProfile} from '../actions/users'
 import './css/Profile.css'
 import Alert from "./Alert";
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import profilebg from '../static/profilebg.jpg';
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import NotLoggedIn from './NotLoggedIn'
 
 const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
 
@@ -57,6 +62,12 @@ function Profile() {
     },
     [userForm]
   );
+
+  if(!user){
+    return(
+      <NotLoggedIn />
+    )
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -137,9 +148,21 @@ function Profile() {
     }
   };
 
+  let previous = [{title: "Profile"}]
+
   return (
-    <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4 d-flex flex-column align-items-center">
-      <h3>Edit Profile</h3>
+    <Fragment>
+    <Helmet>
+        <title>Group-Up Gamers || Edit Profile</title>
+    </Helmet>
+    <Breadcrumb
+                title="Edit Profile"
+                bg={profilebg}
+                prev={previous}
+                stem="Profile"
+            />
+    <LayoutDefault className="template-color-1 template-font-1">
+    <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4 d-flex flex-column align-items-center mt-5 pt-3">
       <div className="card">
         <div className="card-body">
           <form>
@@ -211,7 +234,10 @@ function Profile() {
           </form>
         </div>
       </div>
-      <h3>Delete Profile</h3>
+      <div className="mt-3">
+        <h3>Delete Profile</h3>
+      </div>
+      
       <div className="card">
         <div className="card-body">
           <form>
@@ -254,6 +280,8 @@ function Profile() {
         </div>
       </div>
     </div>
+    </LayoutDefault>
+    </Fragment>
   );
 }
 

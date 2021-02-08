@@ -1,8 +1,14 @@
-import React, {useEffect, useCallback, useState, useRef} from 'react';
+import React, {useEffect, useCallback, useState, useRef, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
 import {getGroupFromApiAdmin, resetGroupsState, deleteMessage, updateGroup, kickMember, banMember, unBanMember, deleteGroup} from '../actions/groups';
 import Alert from "./Alert";
+import './css/GroupAdmin.css'
+import Helmet from 'react-helmet';
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import groupsbg from '../static/groupsbg.jpg';
+import NotLoggedIn from './NotLoggedIn'
 
 const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
 
@@ -133,9 +139,9 @@ const GroupAdmin = () => {
                         <span className="card-text">{m.message_body}</span>
                         <button 
                             id={m.message_id}
-                            className="btn btn-sm btn-danger"
+                            className="btn btn-sm btn-danger py-0 px-1"
                             onClick={handleDeleteMessage}
-                        >X</button>
+                        >Delete</button>
                     </div>
                     
                 </div>
@@ -164,7 +170,11 @@ const GroupAdmin = () => {
 
     const handleUnBanMember = (e) => {
         dispatch(unBanMember(group.id, Number(e.target.getAttribute('data-userid'))))
-    }
+    };
+
+    if(!user){
+        return <NotLoggedIn />
+    };
 
     if(group.members.length){
         members = group.members.filter(m => m.is_banned !== true);
@@ -184,18 +194,18 @@ const GroupAdmin = () => {
                         <div>
                             {m.user_id === user.id ? 
                             <>
-                                <button className="btn btn-primary" disabled>You</button>
+                                <button className="btn btn-primary px-2 py-1" disabled>You</button>
                             </> :
                                 
                                 <>
                                 <button 
                                 data-userid={m.user_id}
-                                className="btn btn-sm btn-warning"
+                                className="btn btn-sm btn-warning px-2 py-1"
                                 onClick={handleKickMember}
                                 >Kick</button>
                                 <button 
                                     data-userid={m.user_id}
-                                    className="btn btn-sm btn-danger"
+                                    className="btn btn-sm btn-danger px-2 py-1"
                                     onClick={handleBanMember}
                                 >Ban</button>
                             </>
@@ -222,7 +232,7 @@ const GroupAdmin = () => {
                         <div>
                             <button 
                                 data-userid={m.user_id}
-                                className="btn btn-sm btn-danger"
+                                className="btn btn-sm btn-danger px-1 py-1"
                                 onClick={handleUnBanMember}
                             >Unban</button>
                         </div>
@@ -233,11 +243,22 @@ const GroupAdmin = () => {
             bannedMembers = <div>Empty...</div>
         }
 
-    
+    let previous = [{title: "groups"},{title: `${group.id}`}]
 
     return(
-        <>
-        <div className="m-3">
+        <Fragment>
+        <Helmet>
+            <title>Group-Up Gamers || {group.group_name} Admin</title>
+        </Helmet>
+        <Breadcrumb
+            title={`${group.group_name} Admin`}
+            bg={groupsbg}
+            prev={previous}
+            stem={`/groups`}
+        />
+        <LayoutDefault className="template-color-1 template-font-1">
+        <div id="admin-wrapper">
+        <div className="m-3 my-5 pt-3">
             <h3><NavLink to={`/groups/${group.id}`}>{group.group_name}</NavLink> Admin Page</h3>
             <h6>Here you can edit your group, kick or ban users, and delete unwanted messages.</h6>
         </div>
@@ -355,7 +376,9 @@ const GroupAdmin = () => {
 
         </div>
 
-        </>
+        </div>
+        </LayoutDefault>
+        </Fragment>
     )
 
 };

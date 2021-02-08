@@ -1,11 +1,18 @@
-import React, {useEffect, useCallback, useState} from 'react';
+import React, {useEffect, useCallback, useState, Fragment} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavLink, useParams, useHistory} from 'react-router-dom';
 import {getGroupFromApi, resetGroupsState, joinGroup, leaveGroup, createMessage, deleteMessage, joinGroupAndAddGame} from '../actions/groups' 
-import groups from '../reducers/groups';
-import users from '../reducers/users';
-import "./css/Game.css"
 import Default from '../static/Default.png';
+import {Helmet} from "react-helmet";
+import LayoutDefault from "../template/layouts/LayoutDefault";
+import {Col, Container, Row} from "react-bootstrap";
+import Thumbnail from "../template/components/about-us/thumbnail/AboutThumbOne";
+import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
+import groupsbg from '../static/groupsbg.jpg';
+import './css/Group.css';
+import SidebarItem from '../template/container/sidebar/elements/SidebarItem';
+import NotLoggedIn from './NotLoggedIn'
+
 
 const Group = () => {
     const history = useHistory();
@@ -16,6 +23,10 @@ const Group = () => {
     const [ignDisplay, toggleIgnDisplay] = useState(false);
     const [ignData, setIgnData] = useState(IGN_INITIAL_STATE);
     const dispatch = useDispatch();
+
+    const handleIgnToggle = () => {
+        toggleIgnDisplay(!ignDisplay)
+    }
     
     const initialize = useCallback(
         () => {
@@ -39,6 +50,11 @@ const Group = () => {
 
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
+    if(!user){
+        return(
+            <NotLoggedIn />
+        )
+    };
     if(user.groups){
         if(user.groups[id] && user.groups[id].is_banned) return (
             <div className="mt-5">
@@ -124,11 +140,13 @@ const Group = () => {
         messageArea = (
             <>
             <div>
-                <form className="form-inline pl-0 ml-0" onSubmit={handleSubmit}>
-                    <div className="form-group mb-2 pl-0 col-12">
-                        <div className="col-sm-10">
+                <form 
+                id="message-form"
+                className="form-inline pl-0 ml-0" 
+                onSubmit={handleSubmit}>
+                    <div id="message-form-group" className="form-group mb-2 pl-0 d-flex flex-row flex-nowrap">
+                        <div id="form-input-wrapper">
                             <input 
-                            style={{width: "100%"}}
                             onChange={handleChange}
                             type="text" 
                             className="form-control" 
@@ -182,7 +200,7 @@ const Group = () => {
             group_id: group.id,
             username: user.username
         }
-
+        
         dispatch(joinGroupAndAddGame(data))
         history.push('/profile')
         
@@ -220,12 +238,12 @@ const Group = () => {
         ignArea = <>
             <input name="in_game_name" className="form-control" onChange={handleIgnChange} placeholder="In Game Name" />
             <div className="btn btn-success btn-sm" onClick={addGroupAndGame}>Join!</div>
-            <div className="btn btn-danger btn-sm" onClick={toggleIgnDisplay}>Cancel</div>
+            <div className="btn btn-danger btn-sm" onClick={handleIgnToggle}>Cancel</div>
 
         </>
     }else{
         ignArea = <div>
-        <div className="btn btn-success btn-sm" onClick={toggleIgnDisplay}>Join!</div>
+        <div className="btn btn-success btn-sm" onClick={handleIgnToggle}>Join!</div>
     </div>
     }
 
@@ -263,12 +281,18 @@ const Group = () => {
         };
       
     }else{
-        if(!users.games_playing || !users.games_playing[groups.game_id]){
+        if(!user.games_playing){
                 joinButton = (
                     <div>
                         {ignArea}
                     </div>
                 )
+        }else if(!user.games_playing[group.game_id]){
+            joinButton = (
+                <div>
+                    {ignArea}
+                </div>
+            )
         }else{
             joinButton = (
                 <div>
@@ -279,59 +303,126 @@ const Group = () => {
         
     }
 
-    return(
-        <div className="d-flex flex-column align-items-center pt-5 mt-5">
-            <div className="card w-50">
-                <div className="d-flex justify-content-around">
-                {group.group_logo_url ? 
-                    <img className="card-img-top" src={group.group_logo_url} alt={group.group_name}></img>
-                    :
-                    <img className="card-img-top" src={Default} alt={group.group_name}></img>
-                }
-                
-                <div>
-                    <h1>{group.group_name}</h1>
-                    <h5>Game: <NavLink to={`/games/${group.game_slug}`}>{group.game_name}</NavLink></h5>
-                </div>
-                
-                </div>
-                <div className="justify-self-start">
-                    {adminButton ? adminButton: joinButton}
-                </div>
-                <div className="card-body d-flex justify-content-around">
-                
-                    <div id="group-info">
-                        <h4>Group Info</h4>
-                        <p className="card-text">Discord:</p>
-                        {user.groups[group.id] ? 
-                            <p className="card-text">{group.group_discord_url || "No Discord"}</p>
-                            : 
-                            <p className="card-text">You must be in the group to see this.</p>
-                        }
-                        
-                    </div>
-                    <div id="group-members">
-                        <h4>Group Members</h4>
-                        <ul className="list-group list-group-flush text-left">
-                            {group.members.map(e => (
-                                <div key={e.user_id}>
-                                    <span>{e.user_id === group.group_owner_id ? <span>Owner / </span> : null}
-                                    {e.is_group_admin ? <span>Admin </span> : null}</span>
-                                    <NavLink to={`/users/${e.id}`} >{e.username}</NavLink>
-                                </div>
-                            ))}
-                        </ul>
-                    </div>
-                    
-                </div>
-            </div>
+    let owner_info = group.members.filter(e => e.user_id === group.group_owner_id)
 
-            <div className="messages-area w-50 mt-5" >
-                <h3>Messages</h3>
-                {messageArea}
-                
-            </div>
+    let admins = group.members.filter(e => e.is_group_admin === true && e.id !== group.group_owner_id)
+
+    let previous = [{title: 'Groups'}]
+    return(
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers || {group.group_name}</title>
+            </Helmet>
+            <Breadcrumb
+                    title={group.group_name}
+                    bg={groupsbg}
+                    prev={previous}
+                    stem="groups"
+                />
+        <LayoutDefault className="template-color-1 template-font-1">
+        <div className="brook-blog-details-area bg_color--1 pt--90 pb--150">
+            <Container>
+                <Row>
+                    <Col lg={8}>
+                        <div className="blog-details-wrapper wow move-up">
+                            <article className="blog-post standard-post wow move-up">
+                                <header className="header mb--40 text-center">
+                                    <h3 className="heading heading-h3 font-32 wow move-up">
+                                        {group.group_name}
+                                    </h3>
+                                    <div className="post-meta mt--20 wow move-up">
+                                        <div className="post-date ">Game</div>
+                                        <div className="post-category">
+                                            <NavLink to={`/games/${group.game_slug}`}>{group.game_name}</NavLink>
+                                        </div>
+                                    </div>
+                                </header>
+                                <div className="group-info d-flex justify-content-around wow move-up">
+                                    <div className="group-info-img wow move-up">
+                                        <Thumbnail thumb={group.group_logo_url ? group.group_logo_url: Default} className="mb--60"/>
+                                    </div>
+                                    <div className="group-info-info wow move-up">
+                                        <div className="group-info-discord wow move-up">
+                                            <div className="card-text"><span className="bold">Discord: </span></div>
+                                                {user.groups && user.groups[group.id] ? 
+                                                    <p className="card-text">{group.group_discord_url || "No Discord"}</p>
+                                                    : 
+                                                    <p className="card-text">You must be in the group to see this.</p>
+                                                }
+                                        </div>
+                                        <div className="group-info-admins wow move-up">
+                                            <div className='mt-2'>
+                                                <div>
+                                                    <span className="bold">Owner:</span>
+                                                </div> 
+                                                <NavLink to={`/users/${owner_info[0].id}`}>{owner_info[0].username}</NavLink></div>
+
+                                            
+                                        </div>
+                                        <div className="mt-4">
+                                        {adminButton ? adminButton: joinButton}
+                                        </div>
+                                    </div>
+                                </div>
+                                <section className="content basic-dark2-line-1px pb--50 mb--35 mt--50">
+                                    <div className="d-flex flex-column justify-content-center">
+                                        <h3>Messages</h3>
+                                        {messageArea}
+                                    </div>
+                                
+                                </section>
+                            </article>
+                        </div>
+                    </Col>
+
+                    
+                    <Col lg={4} className="mt_md--60 mt_sm--60">
+                        <div className="blog-sidebar-container">
+                            <div className="blog-sidebar-wrapper">
+                            <SidebarItem
+                                    title="Admins"
+                                    className="category mt--10"
+                                >
+                                    <div className="inner">
+                                        <ul className="category-list">
+                                            {admins.length ? 
+                                                admins.map(e => (
+                                                    <div key={`admin-${e.id}`}>
+                                                        <NavLink to={`/users/${e.id}`}>{e.username}</NavLink>
+                                                    </div>
+                                                    
+                                                ))
+                                            : <div key="no-admins">No Admins. See Group Owner</div>}
+                                            
+                                        </ul>
+                                    </div>
+                                </SidebarItem>
+                                <SidebarItem
+                                    title="Members"
+                                    className="category mt--30"
+                                >
+                                    <div className="inner">
+                                        <ul className="category-list">
+                                            {group.members.map((e) => (
+                                                <li key={e.user_id}>
+                                                    
+                                                    <NavLink to={`/users/${e.id}`} ><span>{e.user_id === group.group_owner_id ? <span>Owner/</span> : null}
+                                                    {e.is_group_admin ? <span>Admin </span> : null}</span>{e.username}</NavLink>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </SidebarItem>
+
+                            </div>
+                        </div>
+                    </Col>
+                    
+                </Row>
+            </Container>
         </div>
+        </LayoutDefault>
+        </Fragment>
     )
 }
 

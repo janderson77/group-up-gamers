@@ -36,3 +36,11 @@
 		transform: rotate(360deg);
 	}
 }
+
+.breadcrumb-area .breadcrumb-inner .heading {
+	font-size: 10rem;
+}
+
+#group-game-form {
+	min-height: 50rem;
+}

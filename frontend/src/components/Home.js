@@ -13,7 +13,8 @@ const Home = () => {
     const links = ['games', 'groups'];
 
     const options = {
-        navigation: true
+        navigation: true,
+        
     }
     return(
         <div>
