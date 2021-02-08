@@ -2,7 +2,7 @@ import React from 'react';
 
 const Copyright = () => {
     return (
-        <p>© {new Date().getFullYear()} Brook. All Rights Reserved.</p>
+        <p>© {new Date().getFullYear()} Group-Up Gamers. All Rights Reserved.</p>
     );
 };
 
