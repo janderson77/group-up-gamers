@@ -20,6 +20,7 @@ const Game = () => {
     const INITIAL_STATE = {in_game_name: ""}
     const [formData, setFormData] = useState(INITIAL_STATE)
 
+    // Sets the game state to empty
     const initialize = useCallback(
         () => {
             dispatch(resetGameState())
@@ -34,12 +35,14 @@ const Game = () => {
 
     const missing = !game;
 
+    // Collects the game data from the db
     useEffect(function() {
         if(missing) {
             dispatch(getGameFromAPI(slug));
         }
     }, [missing, slug, dispatch]);
 
+    // Toggles the in game name input view
     const handleToggleIgnView = () => {
         toggleIgnView(!ignView);
     };
@@ -57,17 +60,20 @@ const Game = () => {
     let gameModes = game.game_modes;
     let gamePlatforms = game.platforms;
 
+    // Will display that the user must be logged in to see this. Backup in case protected route fails
     if(!user){
         return(
             <NotLoggedIn />
         )
     };
 
+    // Handles adding the game to the users list with an optional in game name
     const AddGame = () => {
         handleToggleIgnView();
         dispatch(addGameToList(user.id, game.id, user._token, formData.in_game_name))
     };
 
+    // Handles removing the game from the users list
     const handleRemoveGame = (e) => {
         user.toRemove = e.target.id;
         dispatch(removeGameFromList(user, user.toRemove, user._token))
@@ -86,10 +92,10 @@ const Game = () => {
     let button;
     let notAddedButton = <button onClick={handleToggleIgnView} className="btn btn-small btn-success">Add Game</button>
 
-    
-
     if(user.games_playing){
+        // checks that the user has a games playing entry
         if(user.games_playing[game.id]){
+            // If the user has a games playing entry, and the game is in their games playing, they're given the option to remove it
             button = (
             <>
             <button className="btn btn-small btn-info" disabled>Added</button>
@@ -97,15 +103,18 @@ const Game = () => {
             </>
             )
         }else{
+            // Gives the option to add the game to their list with an optional in game name
             button = notAddedButton
         }
     }else{
+        // Gives the option to add the game to their list with an optional in game name
         button = notAddedButton
     };
 
     let ignInput;
 
     if(ignView){
+        // If the ignView state is set to true, the add game form with optional in game name is displayed
         ignInput = (
             <div>
                 <form onSubmit={tryAddGame}>
@@ -123,9 +132,11 @@ const Game = () => {
             </div>
         )
     }else{
+        // If the ignView state is false, they are shown the join button, but no form yet
         ignInput = button;
     }
     
+    // Breadcrumbs
     let previous = [{title: 'Games'}]
 
     return(

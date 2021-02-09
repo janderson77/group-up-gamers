@@ -24,10 +24,12 @@ const Group = () => {
     const [ignData, setIgnData] = useState(IGN_INITIAL_STATE);
     const dispatch = useDispatch();
 
+    // Will toggle the input for an in game name on and off, as well as the actual join button if the user has not added the game to their list already
     const handleIgnToggle = () => {
         toggleIgnDisplay(!ignDisplay)
     }
     
+    // Resets group data in the store to empty
     const initialize = useCallback(
         () => {
             dispatch(resetGroupsState())
@@ -42,6 +44,7 @@ const Group = () => {
 
     const missing = !group;
 
+    // Collects the group data and sends it to the store
     useEffect(function() {
         if(missing) {
             dispatch(getGroupFromApi(id));
@@ -50,11 +53,15 @@ const Group = () => {
 
 
     if(missing) return <h1 className="mt-5">Loading...</h1>;
+
+    // Will display that the user must be logged in to see this. Backup in case protected route fails
     if(!user){
         return(
             <NotLoggedIn />
         )
     };
+
+    // Prevents the group page from being displayed if the user is banned, and shows a message that they have been banned from the gruop
     if(user.groups){
         if(user.groups[id] && user.groups[id].is_banned) return (
             <div className="mt-5">
@@ -74,6 +81,7 @@ const Group = () => {
         }));
     };
 
+    // For the in game name input
     const handleIgnChange = (e) => {
         const {name, value} = e.target;
         setIgnData(formData => ({
@@ -107,6 +115,8 @@ const Group = () => {
     }
     
 
+    // Collects the messages for the group from the db and displays them
+    // If the user has messages that they posted they will be shown a delete button next to the message should they wish to delete it
     if(group.messages.length){
         messages = group.messages.map(m => (
             <div className="card w-75 text-left" data-messageid={m.message_id} key={`message-${m.message_id}`}>
@@ -136,6 +146,7 @@ const Group = () => {
 
     let messageArea;
 
+    // Will only display the messages if the user is logged in and is part of the group
     if(user.groups && user.groups[id]){
         messageArea = (
             <>
@@ -178,6 +189,7 @@ const Group = () => {
         )
     }
 
+    // Handles joining the gruop if the user already has the game in their games playing
     const addGroup = () => {
         dispatch(joinGroup(user.id, group.id))
         initialize();
@@ -191,6 +203,7 @@ const Group = () => {
         }
     };
 
+    // Handles joining the group and adding the game to the users games playing with an optional in game name
     const addGroupAndGame = () => {
         let data = {
             ...ignData,
@@ -206,6 +219,7 @@ const Group = () => {
         
     };
 
+    // Handles leaving a group
     const doLeaveGroup = () => {
         dispatch(leaveGroup(user.id, group.id))
         history.push('/groups')
@@ -222,6 +236,7 @@ const Group = () => {
     let joinButton;
     let adminButton;
 
+    // Will display a button that takes the user to the groups admin page if they are an admin or owner of the group
     if(user.owned_groups && user.owned_groups[group.id]){
         adminButton = (
             <div>
@@ -234,6 +249,7 @@ const Group = () => {
 
     let ignArea;
 
+    // Will display a button to toggle the in game name input, which can be toggled again by clicking the cancel button
     if(ignDisplay){
         ignArea = <>
             <input name="in_game_name" className="form-control" onChange={handleIgnChange} placeholder="In Game Name" />
@@ -248,8 +264,12 @@ const Group = () => {
     }
 
 
+    
     if(user.groups){
+        // Checks to see if the user has a groups entry in the store
         if(!user.games_playing){
+            // checks to see if the user has a games playing entry in the store
+            // If no games playing entry, shows the join and add game form
             joinButton = (
                 <div>
                     {ignArea}
@@ -258,6 +278,7 @@ const Group = () => {
             );
         }
         else if(!user.groups[group.id] && !user.games_playing[group.game_id]){
+            // If they do have a games playing and groups entry in the store, but has not joined the group or added the game, they get the join and add game form
             joinButton = (
                 <div>
                     {ignArea}
@@ -265,6 +286,8 @@ const Group = () => {
                 
             );
         }else if(user.groups[group.id]){
+            // If they have a groups entry and have joined the group, they get the option to leave
+            // This is a backup in case something fails
             joinButton = (
                 <div>
                     <div className="btn btn-secondary btn-sm" disabled>Joined</div>
@@ -273,6 +296,7 @@ const Group = () => {
                 
             );
         }else{
+            // If they have added the game, but have not joined the group or do not have a groups entry, they get the option to join the group
             joinButton = (
                 <div>
                     <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
@@ -282,12 +306,14 @@ const Group = () => {
       
     }else{
         if(!user.games_playing){
+            // If they do have a groups entry but no games playing entry, they get the join and add game form
                 joinButton = (
                     <div>
                         {ignArea}
                     </div>
                 )
         }else if(!user.games_playing[group.game_id]){
+            // If they have a groups and games playing entry, but have not joined and have not added the game they get the join and add game form
             joinButton = (
                 <div>
                     {ignArea}
@@ -295,6 +321,7 @@ const Group = () => {
             )
         }else{
             joinButton = (
+                // If they have a groups entry and a games playing entry, have not joined the group, but have added the game, they get the stadard join option
                 <div>
                     <div className="btn btn-success btn-sm" onClick={tryAddGroup}>Join!</div>
                 </div>
@@ -303,10 +330,13 @@ const Group = () => {
         
     }
 
+    // Gets the group owner info
     let owner_info = group.members.filter(e => e.user_id === group.group_owner_id)
 
+    // Gets the list of admins for the group, but filters out the owner
     let admins = group.members.filter(e => e.is_group_admin === true && e.id !== group.group_owner_id)
 
+    // breadcrumbs
     let previous = [{title: 'Groups'}]
     return(
         <Fragment>

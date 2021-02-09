@@ -44,7 +44,6 @@ function Login() {
     let endpoint;
 
     if (activeView === "signup") {
-      // these fields aren't req'd---pass undefined, not empty string
       data = {
         username: loginInfo.username,
         password: loginInfo.password,
@@ -125,64 +124,64 @@ function Login() {
           <title>Group-Up Gamers || Login/Register</title>
       </Helmet>
       <LayoutDefault className="template-color-1 template-font-1">
-    <div className="Login d-flex justify-content-center align-items-center">
-      <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-        <div className="d-flex justify-content-end">
-          <div className="btn-group">
-            <button
-              className={`btn btn-primary ${loginActive ? "active" : ""} `}
-              onClick={setLoginView}
-            >
-              Login
-            </button>
-            <button
-              className={`btn btn-primary ${loginActive ? "" : "active"} `}
-              onClick={setSignupView}
-            >
-              Sign up
-            </button>
-          </div>
-        </div>
-        <div className="card">
-          <div className="card-body">
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Username</label>
-                <input
-                  name="username"
-                  className="form-control"
-                  value={loginInfo.username}
-                  onChange={handleChange}
-                />
+        <div className="Login d-flex justify-content-center align-items-center">
+          <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+            <div className="d-flex justify-content-end">
+              <div className="btn-group">
+                <button
+                  className={`btn btn-primary ${loginActive ? "active" : ""} `}
+                  onClick={setLoginView}
+                >
+                  Login
+                </button>
+                <button
+                  className={`btn btn-primary ${loginActive ? "" : "active"} `}
+                  onClick={setSignupView}
+                >
+                  Sign up
+                </button>
               </div>
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  className="form-control"
-                  value={loginInfo.password}
-                  onChange={handleChange}
-                />
-              </div>
-              {loginActive ? "" : signupFields}
-              {loginInfo.errors.length ? (
-                <Alert type="danger" messages={loginInfo.errors} />
-              ) : null}
+            </div>
+            <div className="card">
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label>Username</label>
+                    <input
+                      name="username"
+                      className="form-control"
+                      value={loginInfo.username}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      name="password"
+                      className="form-control"
+                      value={loginInfo.password}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  {loginActive ? "" : signupFields}
+                  {loginInfo.errors.length ? (
+                    <Alert type="danger" messages={loginInfo.errors} />
+                  ) : null}
 
-              <button
-                type="submit"
-                className="btn btn-primary float-right"
-                onSubmit={handleSubmit}
-              >
-                Submit
-              </button>
-            </form>
+                  <button
+                    type="submit"
+                    className="btn btn-primary float-right"
+                    onSubmit={handleSubmit}
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    </LayoutDefault>
+      </LayoutDefault>
     </Fragment>
   );
 }

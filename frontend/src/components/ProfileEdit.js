@@ -37,6 +37,7 @@ function Profile() {
 
   const messageShownRef = useRef(false);
   
+  // Will display a message that the data has been updated if the form is submitted successfully
   useEffect(
     function() {
       if (userForm.saveConfirmed && !messageShownRef.current) {
@@ -50,6 +51,7 @@ function Profile() {
     [userForm]
   );
 
+  // Will display an error message if the user attempts to submit something with incorrect or no data
   useEffect(
     function() {
       if (userForm.hasErrors && !messageShownRef.current) {
@@ -63,6 +65,7 @@ function Profile() {
     [userForm]
   );
 
+  // Will display that the user must be logged in to see this. Backup in case protected route fails
   if(!user){
     return(
       <NotLoggedIn />
@@ -123,6 +126,7 @@ function Profile() {
     }));
   }
 
+  // Will toggle the display of the delete form on and off
   const toggleDelete = () => {
     toggleDeleteShown(!deleteShown);
   };
@@ -148,6 +152,7 @@ function Profile() {
     }
   };
 
+  // This is for the breadcrumbs
   let previous = [{title: "Profile"}]
 
   return (

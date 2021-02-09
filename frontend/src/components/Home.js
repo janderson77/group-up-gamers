@@ -2,7 +2,6 @@ import React, {Fragment} from 'react'
 import {Helmet} from "react-helmet";
 import LayoutDefault from '../template/layouts/LayoutDefault'
 import LayoutFullPage from '../template/layouts/LayoutFullPage'
-// import {Jumbotron} from 'reactstrap'
 import HeroBanner from '../template/container/hero-banner/HeroVerticalSlidePortfolio';
 import PortfolioItem from '../template/components/portfolio/PortfolioItemFullPage';
 import portfolios from '../template/data/portfolio/portfolio-two.json'

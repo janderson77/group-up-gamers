@@ -30,6 +30,7 @@ class User {
           if (isValid) {
             delete user.password;
 
+            // Gets the groups the user has joined
             const userGroupsRes = await db.query(`
                 SELECT *
                 FROM group_members
@@ -38,6 +39,7 @@ class User {
                 WHERE user_id = $1
             `,[user.id])
 
+            // Adds the list of groups to the return object if there is any to add
             if(userGroupsRes.rows.length > 0){
                 let groups = userGroupsRes.rows;
                 groups = toObject(groups, "id")
@@ -45,12 +47,14 @@ class User {
                 user.groups = groups;
             };
 
+            // Gets the array of groups the user owns
             const userOwnedGroups = await db.query(`
                 SELECT*
                 FROM groups
                 WHERE group_owner_id = $1
             `,[user.id]);
 
+            // Adds the array of owned groups to the return object if any
             if(userOwnedGroups.rows.length > 0){
                 let ogroups = userOwnedGroups.rows;
                 ogroups = toObject(ogroups, "id")
@@ -58,6 +62,7 @@ class User {
                 user.owned_groups = ogroups;
             };
 
+            // Gets the array of games the user has added
             const userGamesRes = await db.query(`
                 SELECT *
                 FROM games_playing
@@ -66,6 +71,7 @@ class User {
                 WHERE user_id = $1
             `,[user.id]);
 
+            // Adds the array of games to the return object if any
             if(userGamesRes.rows.length > 0){
                 let games_playing = userGamesRes.rows;
                 games_playing = toObject(games_playing, "id")
@@ -116,6 +122,7 @@ class User {
     };
 
     static async findAll() {
+        // Returns array of all users in the db.
         const result = await db.query(
             `SELECT id, username, first_name, last_name, email
                 FROM users
@@ -125,6 +132,7 @@ class User {
     };
 
     static async findOne(id) {
+        // Finds a user by their ID and return the user, as well as their groups and games data
         const userRes = await db.query(
             `SELECT id, username, first_name, last_name, email, profile_img_url 
                 FROM users 

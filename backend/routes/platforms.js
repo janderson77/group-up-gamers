@@ -4,6 +4,7 @@ const router = express.Router();
 const Platform = require('../models/platform')
 
 router.post('/', async function(req, res, next){
+    // For admin use only
     try{
         const newPlatform = await Platform.addPlatform(req.body);
         return res.status(201).json(newPlatform)

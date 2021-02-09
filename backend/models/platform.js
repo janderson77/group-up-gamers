@@ -1,6 +1,8 @@
 const db = require('../db');
 
 class Platform {
+    // For admin user only.
+    // Will add a new platform to the DB should a new platform be released.
     static async addPlatform(data) {
 
         let res = await db.query(`

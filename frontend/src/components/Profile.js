@@ -15,46 +15,52 @@ import SidebarItem from '../template/container/sidebar/elements/SidebarItem';
 import NotLoggedIn from './NotLoggedIn'
 
 function Profile() {
-  const user = useSelector(st => st.users.user)
-  const dispatch = useDispatch();
+    const user = useSelector(st => st.users.user)
+    const dispatch = useDispatch();
 
-  let userGames;
-  let userGroups;
+    let userGames;
+    let userGroups;
 
-  if(!user){
+    // Will display that the user must be logged in to see this. Backup in case protected route fails
+    if(!user){
     return(
         <NotLoggedIn />
     )
-};
+    };
 
-  user.games_playing ? userGames = Object.values(user.games_playing) : userGames = {};
-  user.groups ? userGroups = Object.values(user.groups).filter(b => b.is_banned !== true) : userGroups = {};
+    // Builds the list of games the user is playing
+    user.games_playing ? userGames = Object.values(user.games_playing) : userGames = {};
+    // Builds the list of groups the user is in, but also filters out the groups the user has been banned from
+    user.groups ? userGroups = Object.values(user.groups).filter(b => b.is_banned !== true) : userGroups = {};
 
-  let gamesList;
-  let groups;
+    let gamesList;
+    let groups;
 
-  if(userGroups.length){
-      groups = userGroups.map(e => (
-          <div key={e.id } className="border-bottom p-1">
-              <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
-          </div>
-      ))
-  }else{
-      groups = (
+    // Builds the elements to be used in the users groups section, or sets it to a default value
+    if(userGroups.length){
+        groups = userGroups.map(e => (
+            <div key={e.id } className="border-bottom p-1">
+                <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
+            </div>
+        ))
+    }else{
+        groups = (
         <div className="border-bottom p-1">
-          <div>You have not joined any groups</div>
-          <div><NavLink to="/groups">Join One Now!</NavLink></div>
+            <div>You have not joined any groups</div>
+            <div><NavLink to="/groups">Join One Now!</NavLink></div>
         </div>
-      )
-  }
+        )
+    }
 
-  let ownedGroups = [];
-  user.owned_groups ? ownedGroups = Object.values(user.owned_groups) : ownedGroups = [] ;
-  
+    let ownedGroups = [];
+    // Builds the list of groups the user owns and manages
+    user.owned_groups ? ownedGroups = Object.values(user.owned_groups) : ownedGroups = [] ;
 
-  let ownedGroupsDisplay;
 
-  if(ownedGroups.length){
+    let ownedGroupsDisplay;
+
+    // Builds the owned groups list into usable elements, or sets to a default value
+    if(ownedGroups.length){
     let myOwnedGroups =  ownedGroups.map(e => (
         <div key={e.id}>
             <div className="border-bottom p-1">
@@ -71,7 +77,7 @@ function Profile() {
             </div>
         </li>
     )
-  }else{
+    }else{
     ownedGroupsDisplay = (
         <li>
             <div className="border-bottom p-1">
@@ -81,14 +87,15 @@ function Profile() {
             
         </li>
     )
-  }
+    }
 
-  const handleRemoveGame = (e) => {
+    const handleRemoveGame = (e) => {
     user.toRemove = e.target.id;
     dispatch(removeGameFromList(user, user.toRemove, user._token))
-  }
+    }
 
-  if(userGames.length > 0){
+    // Takes the users list of games playing and turns them into usable elements, or a default value
+    if(userGames.length > 0){
     gamesList = userGames.map(e => (
         <li key={e.slug} className="my-1 py-1 d-flex flex-column">
             <div className="d-flex flex-row justify-content-center align-items-center flex-wrap border-bottom pt-0 pb-1">
@@ -99,12 +106,12 @@ function Profile() {
             </div>
         </li>
     ))
-}else{
+    }else{
     gamesList = <li>
         <div>No Games Added Yet</div>
         <div><NavLink to='/games'>Go Add Some!</NavLink></div>
     </li>
-};
+    };
 
 
 

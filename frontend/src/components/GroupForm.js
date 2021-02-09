@@ -15,9 +15,6 @@ const GroupForm = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    
-
-
     let FORM_INITIAL_STATE = {
         group_name: "",
         group_slug: "",
@@ -33,6 +30,7 @@ const GroupForm = () => {
 
     let [formData, setFormData] = useState(FORM_INITIAL_STATE);
 
+    // Will display that the user must be logged in to see this. Backup in case protected route fails
     if(!user){
         <NotLoggedIn />
     };
@@ -67,6 +65,7 @@ const GroupForm = () => {
 
     let gameDisplay;
 
+    // Will display info about the selected game, or nothing
     if(!game){
         gameDisplay = null;
     }else{
@@ -80,6 +79,7 @@ const GroupForm = () => {
         );
     };
 
+    // This form will not ask for an in-game-name if the user already has the game the group is being created for in their list of games playing
     const create =
         <form className="GroupForm-form" onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -113,6 +113,7 @@ const GroupForm = () => {
                 <button className="btn btn-danger btn-lg" onClick={handleCancel}>Cancel</button>
             </form>
 
+    // This form will ask for an in-game-name if the game the group is being created for is not in the users list of games playing, and then add that game and in-game-name to the users games playing list
     const createAndAddGameToPlaying = 
         <form className="GroupForm-form" onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -154,6 +155,8 @@ const GroupForm = () => {
                 <button className="btn btn-info btn-lg" type="submit">Submit</button>
                 <button className="btn btn-danger btn-lg" onClick={handleCancel}>Cancel</button>
             </form>
+            
+    // breadcrumbs
     let previous = [{title: "Groups"}, {title: "Select"}]
     return(
         <Fragment>

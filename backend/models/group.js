@@ -5,6 +5,7 @@ const toObject = require('../helpers/toObject')
 
 class Group {
   static async findAll(data) {
+      // Finds and returns all groups in the db as well as the groups game data
       let baseQuery = `SELECT groups.id, group_name, group_slug, group_game_id, group_owner_id, group_discord_url, group_logo_url, game_name, games.slug as game_slug 
       FROM groups
       RIGHT JOIN games
@@ -30,6 +31,7 @@ class Group {
   };
 
   static async findOneById(id) {
+      // Finds and returns a group in the db as well as the groups game data, members data and messages
       const groupRes = await db.query(
           `SELECT groups.id, group_name, group_game_id, group_owner_id, group_discord_url, group_logo_url, game_name, games.id as game_id, slug as game_slug
           FROM groups
@@ -75,6 +77,7 @@ class Group {
   };
 
   static async findAllOfOwn(user_id){
+    // Will find all of a given user's groups that they have joined or been banned from
     const groupRes = await db.query(`
         SELECT *
         FROM group_members
@@ -87,8 +90,6 @@ class Group {
     if(groupRes.rows.length > 0){
         groups = groupRes.rows;
         groups = toObject(groups, "id")
-
-        // user.groups = groups;
     }else{
       groups.message = "You have not joined any groups"
     };
@@ -137,6 +138,7 @@ class Group {
 
   static async banUser(user_id, group_id) {
     const joinedOrBanned = await checkIfJoinedOrBanned(user_id, group_id);
+    // Checks if the user being banned is in the group or already banned
 
     if(!joinedOrBanned.joined){
       let error = new Error("This user is not in this group.")
@@ -157,6 +159,7 @@ class Group {
       AND group_id = $2
       RETURNING user_id, group_id
     `, [user_id, group_id]);
+    // Bans the user by setting the value of is_banned to true
 
     if(banRes.rows.length === 0){
       let error = new Error("ERROR! Something went wrong. Please try again.")
@@ -172,12 +175,14 @@ class Group {
       WHERE user_id = $1
       AND group_id = $2
     `, [user_id, group_id])
+    // returns the banned user with updated data for use in the redux reducers so that the store is updated appropriately
 
     return bannedUser.rows[0]
   };
 
   static async unbanUser(user_id, group_id) {
     const joinedOrBanned = await checkIfJoinedOrBanned(user_id, group_id);
+    // Checks to see if the user being unbanned is in the group, or is currently banned at all
 
     if(!joinedOrBanned.joined){
       let error = new Error("This user is not in this group.")
@@ -198,6 +203,7 @@ class Group {
       AND group_id = $2
       RETURNING user_id, group_id
     `, [user_id, group_id]);
+    // Unbans the user by setting the value of is_banned to false
 
     if(unbanRes.rows.length === 0){
       let error = new Error("ERROR! Something went wrong. Please try again.")
@@ -213,11 +219,13 @@ class Group {
       WHERE user_id = $1
       AND group_id = $2
     `, [user_id, group_id])
+    // returns the unbanned user with updated data for use in the redux reducers so that the store is updated appropriately
 
     return unBannedUser.rows[0]
   };
 
   static async kickUser(user, group){
+    // Deletes the user from the user_groups table, but only the row that relates to the respective group
     const kickRes = await db.query(`
     DELETE FROM group_members
     WHERE user_id = $1
@@ -236,6 +244,7 @@ class Group {
 
   static async leaveGroup(user, group){
     const checkIfJoined = await checkIfJoinedOrBanned(user, group);
+    // checks if the user is in the group or not
 
     if(!checkIfJoined.joined || checkIfJoined.is_banned){
       let error = new Error("You are not in this group.")
@@ -249,6 +258,7 @@ class Group {
       AND group_id = $2
       RETURNING group_id, user_id
     `, [user, group])
+    // Deletes the user from the user_groups table, but only the row that relates to the respective group
 
     if(leaveRes.rows.length === 0){
       let error = new Error(`ERROR! Something went wrong!`);
@@ -260,6 +270,7 @@ class Group {
   };
 
   static async create(data) {
+    // Checks that there are not any current groups with the same name
       const duplicateCheck = await db.query(
           `SELECT group_slug 
               FROM groups 
@@ -273,6 +284,7 @@ class Group {
         throw duplicateError
       }
   
+      // Creates the group row in the db, and sets the user as the group owner
       const result = await db.query(
           `INSERT INTO groups 
                 (group_name, group_slug, group_game_id, group_owner_id, group_discord_url, group_logo_url)
@@ -287,6 +299,7 @@ class Group {
             data.group_logo_url
           ]);
       
+      // Adds the user creating the group to the members and sets the value of admin to true
       const membersRes = await db.query(`
           INSERT INTO group_members
           (group_id, user_id, is_group_admin)
@@ -294,12 +307,14 @@ class Group {
           RETURNING *
       `,[result.rows[0].id, data.group_owner_id, true])
 
+      // If the user hasn't added the game the group is for to their list
       const checkIfInGamesPlaying = await db.query(`
           SELECT *
           FROM games_playing
           WHERE user_id = $1 AND game_id = $2
       `,[data.group_owner_id, data.group_game_id]);
 
+      // If the user has not added the game, then it is added here
       if(checkIfInGamesPlaying.rows.length === 0){
         db.query(`
         INSERT INTO games_playing

@@ -23,12 +23,14 @@ const GroupGameForm = () => {
 
     let gamesSelect;
 
+    // Will display that the user must be logged in to see this. Backup in case protected route fails
     if(!user){
         return(
             <NotLoggedIn />
         )
     };
 
+    // Will find the selected game on the db and return it
     const handleGameCheck = async (str) => {
         try{
             setGames([])
@@ -42,6 +44,7 @@ const GroupGameForm = () => {
         };
     };
 
+    // Will collect the selected game from the db
     const handleGameSelect = async (e) => {
         try{
             setGame(null)
@@ -53,6 +56,7 @@ const GroupGameForm = () => {
         
     }
 
+    // After the initial game data is loaded it is passed to the SelectSearch, which displays the list of games to be filtered through and one selected
     if(games.length){
         let gamesList = games.map(e =>({name: e.game_name, value: e.slug}))
         gamesSelect = <SelectSearch
@@ -72,6 +76,7 @@ const GroupGameForm = () => {
         history.push("/groups/create")
     }
 
+    // Will display some info about the selected game, or return null if no game is selected
     if(!game){
         gameDisplay = null;
     }else{
@@ -87,6 +92,7 @@ const GroupGameForm = () => {
         );
     };
 
+    // This is for the breadcrumbs
     let previous = [{title: "Groups"}]
     return(
         <Fragment>

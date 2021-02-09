@@ -28,6 +28,7 @@ const GroupAdmin = () => {
         hasErrors: false
     })
     
+    // Resets the group data in the store to nothing
     const initialize = useCallback(
         () => {
             dispatch(resetGroupsState())
@@ -39,6 +40,7 @@ const GroupAdmin = () => {
 
     const missing = !group;
 
+    // Collects the groups data from the db
     useEffect(function() {
         if(missing) {
             let groupAdmin = dispatch(getGroupFromApiAdmin(id));
@@ -58,6 +60,7 @@ const GroupAdmin = () => {
 
     const [deleteShown, toggleDeleteShown] = useState(false);
 
+    // Displays a message stating that changes were made if the form submission is successful
     useEffect(
         function() {
         if (groupForm.saveConfirmed && !messageShownRef.current) {
@@ -71,6 +74,7 @@ const GroupAdmin = () => {
         [groupForm]
     );
 
+    // Displays error messages if the form submission fails
     useEffect(
         function() {
         if (groupForm.hasErrors && !messageShownRef.current) {
@@ -106,10 +110,12 @@ const GroupAdmin = () => {
         dispatch(updateGroup(groupData))
     };
 
+    // Toggles the delete button display on and off
     const toggleDelete = () => {
         toggleDeleteShown(!deleteShown);
       };
 
+    // Handles the deletion of the group
     const handleDelete = async (e) => {
         e.preventDefault();
 
@@ -118,6 +124,7 @@ const GroupAdmin = () => {
         history.push('/profile')
       };
 
+    // Handles the deletion of messages
     const handleDeleteMessage = (e) => {
         const deleteMessageData = {
             message_id: e.target.id,
@@ -130,6 +137,7 @@ const GroupAdmin = () => {
 
     let messages;
 
+    // Collects the messages for this group to be displayed and available for deletion, or a default value if there are none
     if(group.messages.length){
         messages = group.messages.map(m => (
             <div className="card text-left" data-messageid={m.message_id} key={`message-${m.message_id}`}>
@@ -160,22 +168,27 @@ const GroupAdmin = () => {
     let members;
     let bannedMembers;
 
+    // Handles kicking a member, but not banning them, from the gruop
     const handleKickMember = (e) => {
         dispatch(kickMember(group.id, e.target.getAttribute('data-userid')))
     }
 
+    // Removes the selected user from the group and bans them, preventing them from joining again
     const handleBanMember = (e) => {
         dispatch(banMember(group.id, Number(e.target.getAttribute('data-userid'))));
     };
 
+    // Allows for unbanning someone from the group, allowing them to join again
     const handleUnBanMember = (e) => {
         dispatch(unBanMember(group.id, Number(e.target.getAttribute('data-userid'))))
     };
 
+    // Will display that the user must be logged in to see this. Backup in case protected route fails
     if(!user){
         return <NotLoggedIn />
     };
 
+    // Collects the users that have joined the group, filters out the banned ones, and displays the ones left
     if(group.members.length){
         members = group.members.filter(m => m.is_banned !== true);
         bannedMembers = group.members.filter(m => m.is_banned === true)
@@ -220,6 +233,7 @@ const GroupAdmin = () => {
         ));
     };
 
+    // Collects the list of banned users and displays them to allow for unbanning
     if(group.bannedMembers && group.bannedMembers.length){
         bannedMembers = group.bannedMembers.map(m => (
             <div className="card text-left" data-userid={m.user_id} key={`member-${m.user_id}`}>

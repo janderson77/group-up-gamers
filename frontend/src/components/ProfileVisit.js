@@ -17,6 +17,7 @@ function Profile() {
     const loggedInUser = useSelector(st => st.users.user);
     const dispatch = useDispatch();
 
+    // Clears the state of user infomation other than the logged in user's
     const initialize = useCallback(
         () => {
             dispatch(resetVisitingState())
@@ -31,6 +32,7 @@ function Profile() {
 
     const missing = !user
 
+    // Gets the data of the user whose profile the logged in user is visiting
     useEffect(() => {
         if(missing){
             dispatch(getUser(id));
@@ -43,20 +45,24 @@ function Profile() {
 
     if(loggedInUser){
         if(loggedInUser.id === user.id){
+            // Redirects to the profile route if the logged in user somehow navigates to their own profile page
             return <Redirect to="/profile"/>
         }
     }else{
         return (
+            // Backup in case the person navigating here is not logged in and the route protection fails. 
             <NotLoggedIn />
         )
     }
         
     let userGames;
     
+    // Collects the list of games the user is playing
     user.games_playing ? userGames= Object.values(user.games_playing) : userGames= [];
 
     let gamesList;
 
+    // Builds the list of games the user is playing and creates usable elements, or a default value if the userGames array has no values
     if(userGames.length > 0){
         gamesList = userGames.map(e => (
             <div key={e.slug} className="user-lists"><NavLink to={`/games/${e.slug}`}>{e.game_name}</NavLink></div>
@@ -69,6 +75,7 @@ function Profile() {
 
     let groups;
 
+    // Builds the list of groups the user is in to be displayed, or a default value if they are not in any
     if(user.groups.length){
         groups = user.groups.map(e => (
             <div key={e.group_id} className="user-lists">

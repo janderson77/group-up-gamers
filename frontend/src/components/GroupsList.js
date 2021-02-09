@@ -12,6 +12,7 @@ import groupsbg from '../static/groupsbg.jpg'
 
 const GroupsList = () => {
     const dispatch = useDispatch();
+    // Resets the groups state to initial state of being empty
     const initialize = useCallback(
         () => {
             dispatch(resetGroupsState())
@@ -20,11 +21,12 @@ const GroupsList = () => {
     )
 
     useEffect(() => {initialize(); }, [initialize])
+
     const groups = useSelector(st => st.groups.groups);
 
     const missing = !groups;
 
-
+    // Gets all the groups from the db and adds them to the state
     useEffect(function() {
         if(missing) {
             dispatch(getAllGroupsFromApi())
@@ -33,13 +35,21 @@ const GroupsList = () => {
 
     
 
-    if(missing) return <h1 className="mt-5">Loading...</h1>;
+    if(missing) return (
+        <>
+        <h2>No Groups Have Been Created</h2>
+        <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
+        </>
+    );
+
+    // Backup in case the above fails
     if(!groups || !groups.length) return (
         <>
         <h2>No Groups Have Been Created</h2>
         <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
         </>
     );
+
     let groupsArr = Object.values(groups)
 
     return(
