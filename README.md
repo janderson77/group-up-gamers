@@ -39,7 +39,7 @@ export const licenseKey = 'your-key-here'
 export const TOKEN_STORAGE_ID = "GG-token"
 ```
 
-To set up the database, you will need to be using a PostgreSQL.
+To set up the database, you will need to be using PostgreSQL.
 
 First run
 
