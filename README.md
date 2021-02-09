@@ -4,5 +4,5 @@
 
 ---
 
-![Front Page Preview](https://imgur.com/a/XyoOjvt)
+![Front Page Preview](https://i.imgur.com/ScgqaBz.png)
 
