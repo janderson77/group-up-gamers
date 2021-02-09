@@ -39,16 +39,20 @@ function Profile() {
     // Builds the elements to be used in the users groups section, or sets it to a default value
     if(userGroups.length){
         groups = userGroups.map(e => (
-            <div key={e.id } className="border-bottom p-1">
-                <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
-            </div>
+            <li key={e.id} className="border-bottom p-1">
+                <div>
+                    <NavLink to={`/groups/${e.group_id}`}>{e.group_name}</NavLink>
+                </div>
+            </li>
         ))
     }else{
         groups = (
-        <div className="border-bottom p-1">
-            <div>You have not joined any groups</div>
-            <div><NavLink to="/groups">Join One Now!</NavLink></div>
-        </div>
+        <li className="border-bottom p-1">
+            <div>
+                <div>You have not joined any groups</div>
+                <div><NavLink to="/groups">Join One Now!</NavLink></div>
+            </div>
+        </li>
         )
     }
 
@@ -62,30 +66,30 @@ function Profile() {
     // Builds the owned groups list into usable elements, or sets to a default value
     if(ownedGroups.length){
     let myOwnedGroups =  ownedGroups.map(e => (
-        <div key={e.id}>
-            <div className="border-bottom p-1">
+        <li key={e.id} className="border-bottom p-1">
+            <div >
                 <NavLink to={`/groups/${e.id}/admin`}>{e.group_name}</NavLink>
             </div>
             
-        </div>
+        </li>
     ))
     ownedGroupsDisplay = (
-        <li>
+        <div>
             <div className="border-bottom p-1">
                 <div>{myOwnedGroups}</div>
-                <div><NavLink to={'/groups/select'} >Make another!</NavLink></div>
+                <div className="mt-5 bold"><NavLink to={'/groups/select'} >Make another!</NavLink></div>
             </div>
-        </li>
+        </div>
     )
     }else{
     ownedGroupsDisplay = (
-        <li>
+        <div>
             <div className="border-bottom p-1">
                 <div>You haven't created any groups yet.</div>
                 <div className='mt-1'><NavLink className="btn btn-sm btn-primary" to="/groups/select" >Go Make One!</NavLink></div>
             </div>
             
-        </li>
+        </div>
     )
     }
 
@@ -158,37 +162,40 @@ function Profile() {
                             <Col lg={4} className="mt_md--60 mt_sm--60">
                                 <div className="blog-sidebar-container">
                                     <div className="blog-sidebar-wrapper">
-                                    <SidebarItem
-                                        title="My Games"
-                                        className="category "
-                                    >
-                                        <div className="inner">
-                                            <ul className="category-list">
-                                                {gamesList}
-                                            </ul>
-                                        </div>
-                                    </SidebarItem>
-                                    <SidebarItem
+                                        <SidebarItem
+                                            title="My Games"
+                                            className="category mb--30"
+                                            >
+                                            <div className="inner">
+                                                <ul className="category-list">
+                                                    {gamesList}
+                                                </ul>
+                                            </div>
+                                        </SidebarItem>
+                                        <div className="border-bottom border-dark"></div>
+                                        <div className="border-bottom border-dark" style={{height: '2rem'}}></div>
+                                        <SidebarItem
                                             title="Joined Groups"
                                             className="category mt--30 mb--30"
-                                        >
+                                            >
                                             <div className="inner">
                                                 <ul className="category-list">
                                                     {groups}
                                                 </ul>
                                             </div>
                                         </SidebarItem>
+                                        <div className="border-bottom border-dark"></div>
+                                        <div className="border-bottom border-dark" style={{height: '2rem'}}></div>
                                         <SidebarItem
                                             title="Owned Groups"
                                             className="category mt--30 mb--30"
-                                        >
+                                            >
                                             <div className="inner">
                                                 <ul className="category-list">
                                                     {ownedGroupsDisplay}
                                                 </ul>
                                             </div>
                                         </SidebarItem>
-
                                     </div>
                                 </div>
                             </Col>
