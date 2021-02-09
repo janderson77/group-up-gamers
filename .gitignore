@@ -34,3 +34,5 @@ yarn-error.log*
 /todo.md
 
 /frontend/src/secrets.js
+
+proposal.md
