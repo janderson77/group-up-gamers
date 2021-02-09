@@ -64,3 +64,5 @@ Once all dependencies are installed, the db has been created and the dump file u
 At the moment the group messaging system is very basic. I plan to implement more of a forum style system with topics, announcements and things of that nature.
 
 I am also investigating integration with the Discord API, as well as elastic search to refine the game and group search
+
+I am also planning to integrate with Amazon S3 for user profile image and group logo image storage
