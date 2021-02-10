@@ -32,7 +32,6 @@ Navigate to the backend folder and run `npm install` to install dependancies
 
 You wil need to obtain a FullPage.js license. Once obtained, create a secrets.js file in the frontend's src directory. Export a variable named "licenseKey", or set an environment variable called liceseKey with this data
 
-
 ```js
 export const licenseKey = 'your-key-here'
 ```
