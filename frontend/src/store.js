@@ -18,9 +18,8 @@ const persistedReducer = persistReducer(persistConfig, root);
 
 export const store = createStore(
   persistedReducer,
-  composeWithDevTools(
-    applyMiddleware(thunk),
-  )
+    applyMiddleware(thunk)
+
 );
 
 export const persistedStore = persistStore(store);

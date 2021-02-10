@@ -30,13 +30,11 @@ Navigate to the frontend folder and run `npm install` to install dependancies
 
 Navigate to the backend folder and run `npm install` to install dependancies
 
-You wil need to obtain a FullPage.js license. Once obtained, create a secrets.js file in the frontend's src directory. Export a variable named "licenseKey".
+You wil need to obtain a FullPage.js license. Once obtained, create a secrets.js file in the frontend's src directory. Export a variable named "licenseKey", or set an environment variable called liceseKey with this data
 
-You will also need to create and export a variable called "TOKEN_STORAGE_ID" which should be named "GG-token"
 
 ```js
 export const licenseKey = 'your-key-here'
-export const TOKEN_STORAGE_ID = "GG-token"
 ```
 
 To set up the database, you will need to be using PostgreSQL.
