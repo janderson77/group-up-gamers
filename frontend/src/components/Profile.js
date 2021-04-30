@@ -12,7 +12,7 @@ import Breadcrumb from "../template/components/breadcrumb/BreadcrumbOne";
 import profilebg from '../static/profilebg.jpg';
 import './css/Group.css';
 import SidebarItem from '../template/container/sidebar/elements/SidebarItem';
-import NotLoggedIn from './NotLoggedIn'
+import ClipLoader from 'react-spinners/ClipLoader'
 
 function Profile() {
     const user = useSelector(st => st.users.user)
@@ -21,10 +21,19 @@ function Profile() {
     let userGames;
     let userGroups;
 
-    // Will display that the user must be logged in to see this. Backup in case protected route fails
+    // Will display that a loading screen indicating that the user is being logged in. Also acts as an additional barrier to entry
     if(!user){
     return(
-        <NotLoggedIn />
+        <Fragment>
+            <LayoutDefault>
+                <div className="mt-5 pt-5">
+                    <h2>Logging You In!</h2>
+                    <h5>This may take a moment...</h5>
+                    <ClipLoader />
+                </div>
+            </LayoutDefault>
+        </Fragment>
+        
     )
     };
 

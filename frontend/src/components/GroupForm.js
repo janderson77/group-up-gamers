@@ -24,7 +24,9 @@ const GroupForm = () => {
         group_logo_url: ""
     };
 
-    if(!user.games_playing[game.id]){
+    if(!user.games_playing){
+        FORM_INITIAL_STATE.in_game_name = ""
+    }else if(!user.games_playing[game.id]){
         FORM_INITIAL_STATE.in_game_name = ""
     }
 
@@ -155,6 +157,16 @@ const GroupForm = () => {
                 <button className="btn btn-info btn-lg" type="submit">Submit</button>
                 <button className="btn btn-danger btn-lg" onClick={handleCancel}>Cancel</button>
             </form>
+
+    let formDisplay;
+
+    if(!user.games_playing){
+        formDisplay = createAndAddGameToPlaying
+    }else if(!user.games_playing[game.id]){
+        formDisplay = createAndAddGameToPlaying
+    }else{
+        formDisplay = create
+    }
             
     // breadcrumbs
     let previous = [{title: "Groups"}, {title: "Select"}]
@@ -174,7 +186,7 @@ const GroupForm = () => {
                 {gameDisplay}
             </div>
             <div className='container GroupForm'>
-                {user.games_playing[game.id] ? create : createAndAddGameToPlaying}
+                {formDisplay}
             </div>
             </LayoutDefault>
         </Fragment>

@@ -8,12 +8,11 @@ const Message = require('../models/message')
 const {validate} = require("jsonschema");
 
 const {groupNew, groupUpdate, messagesNew} = require('../schemas/index');
-const toObject = require("../helpers/toObject");
 
 // Groups Routes
 // ************************************************************
 
-router.get("/", async function (req, res, next) {
+router.get("/",  async function (req, res, next) {
     try {
       if(req.query.search){
         searchString = req.query.search;
@@ -32,7 +31,7 @@ router.get("/", async function (req, res, next) {
     }
   });
 
-router.get("/:id", async function (req, res, next) {
+router.get("/:id",  async function (req, res, next) {
     try {
       const group = await Group.findOneById(req.params.id);
       return res.json({group});
@@ -43,7 +42,7 @@ router.get("/:id", async function (req, res, next) {
     }
 });
 
-router.get('/members/:id', async function(req, res, next){
+router.get('/members/:id',  async function(req, res, next){
   try{
     const groups = await Group.findAllOfOwn(req.params.id);
     return res.json(groups)
@@ -52,7 +51,7 @@ router.get('/members/:id', async function(req, res, next){
   }
 })
 
-router.post("/", async function (req, res, next) {
+router.post("/",  async function (req, res, next) {
     try {
       const isValid = validate(req.body, groupNew);
   
@@ -71,7 +70,7 @@ router.post("/", async function (req, res, next) {
     };
 });
 
-router.post('/:id/join', async function(req, res, next){
+router.post('/:id/join',  async function(req, res, next){
   try{
     const user = req.body.user;
     const group_id = req.params.id;
@@ -83,7 +82,7 @@ router.post('/:id/join', async function(req, res, next){
   }
 });
 
-router.post('/:id/leave', async function(req, res, next) {
+router.post('/:id/leave',  async function(req, res, next) {
   try{
     const user = req.body.user;
     const group_id = req.params.id;
@@ -95,7 +94,7 @@ router.post('/:id/leave', async function(req, res, next) {
   };
 });
 
-router.post('/:id/kick/:user_id', async function(req, res, next){
+router.post('/:id/kick/:user_id',  async function(req, res, next){
   try{
     const result = await Group.kickUser(req.params.user_id, req.params.id);
 
@@ -105,7 +104,7 @@ router.post('/:id/kick/:user_id', async function(req, res, next){
   }
 });
 
-router.post('/:id/ban/:user_id', async function(req, res, next){
+router.post('/:id/ban/:user_id',  async function(req, res, next){
   try{
     const result = await Group.banUser(req.params.user_id, req.params.id);
 
@@ -115,7 +114,7 @@ router.post('/:id/ban/:user_id', async function(req, res, next){
   }
 });
 
-router.post('/:id/unban/:user_id', async function(req, res, next){
+router.post('/:id/unban/:user_id',  async function(req, res, next){
   try{
     const result = await Group.unbanUser(req.params.user_id, req.params.id);
 
@@ -125,7 +124,7 @@ router.post('/:id/unban/:user_id', async function(req, res, next){
   }
 });
 
-router.patch("/:id", async function (req, res, next) {
+router.patch("/:id",  async function (req, res, next) {
     try {
       if ("id" in req.body) {
         return next({status: 400, message: "Not allowed"});
@@ -149,7 +148,8 @@ router.patch("/:id", async function (req, res, next) {
     }
 });
 
-router.delete("/:id", async function (req, res, next) {
+
+router.delete("/:id",  async function (req, res, next) {
     try {
       await Group.remove(req.params.id);
       return res.json({message: "Group deleted"});
@@ -164,7 +164,7 @@ router.delete("/:id", async function (req, res, next) {
 // Group messages Routes
 // ************************************************************
 
-router.get('/:id/messages', async function(req, res, next){
+router.get('/:id/messages',  async function(req, res, next){
   try{
     const messages = await Message.getMessage(req.params.id);
     return res.status(200).json(messages);
@@ -173,7 +173,7 @@ router.get('/:id/messages', async function(req, res, next){
   }
 });
 
-router.post('/:id/messages', async function(req, res, next){
+router.post('/:id/messages',  async function(req, res, next){
   try{
     const data = req.body;
     const message = {
@@ -203,7 +203,7 @@ router.post('/:id/messages', async function(req, res, next){
   };
 });
 
-router.delete('/:id/messages/:message_id', async function(req, res, next){
+router.delete('/:id/messages/:message_id',  async function(req, res, next){
   try{
     const message = await Message.deleteMessage(req.params.message_id);
 

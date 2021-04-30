@@ -1,12 +1,13 @@
 const express = require('express')
 const router = express.Router();
 
+
 const Game = require('../models/game')
 const {validate} = require("jsonschema");
 
 const {gameNewSchema, gameUpdate} = require('../schemas/index')
 
-router.get('/', async function(req, res, next) {
+router.get('/',  async function(req, res, next) {
     try{
         const games = await Game.findAll(req.body);
         return res.json({games})
@@ -15,7 +16,7 @@ router.get('/', async function(req, res, next) {
     }
 });
 
-router.get('/min', async function(req, res, next){
+router.get('/min',  async function(req, res, next){
     try{
         const games = await Game.findAllMin();
         return res.json([games])
@@ -24,7 +25,7 @@ router.get('/min', async function(req, res, next){
     }
 });
 
-router.post('/search', async function(req, res, next){
+router.post('/search',  async function(req, res, next){
     try{
         console.log(req.body)
         const games = await Game.findAllStartsWith(req.body.search);
@@ -34,7 +35,7 @@ router.post('/search', async function(req, res, next){
     }
 });
 
-router.get('/:slug', async function (req, res, next) {
+router.get('/:slug',  async function (req, res, next) {
     try{
         const game = await Game.findOne(req.params.slug);
         return res.json({game})
@@ -43,7 +44,7 @@ router.get('/:slug', async function (req, res, next) {
     }
 });
 
-router.post('/', async function(req, res, next){
+router.post('/',  async function(req, res, next){
     try{
         const isValid = validate(req.body, gameNewSchema)
 
@@ -61,7 +62,7 @@ router.post('/', async function(req, res, next){
     }
 });
 
-router.patch('/:slug', async function(req, res, next) {
+router.patch('/:slug',  async function(req, res, next) {
     try{
         if('slug' in req.body){
             return next({status: 400, message: "Not Allowed"});
@@ -82,7 +83,7 @@ router.patch('/:slug', async function(req, res, next) {
     }
 });
 
-router.delete('/:slug', async function(req, res, next) {
+router.delete('/:slug',  async function(req, res, next) {
     try{
         await Game.removeGame(req.params.slug);
         return res.json({message: "Game deleted"});

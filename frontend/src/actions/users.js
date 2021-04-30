@@ -1,11 +1,11 @@
 import axios from 'axios';
 import {LOGIN, LOGOUT, REGISTER, ADD_GAME_TO_PLAYING, GET_USER, REMOVE_GAME_FROM_PLAYING, EDIT_PROFILE, DELETE_PROFILE, RESET_VISITING_STATE} from './types';
 
-const base_url = "http://localhost:3001/users"
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001"
 
 const register = (data) => {
     return async function(dispatch) {
-        const res = await axios.post(`${base_url}/register`, {
+        const res = await axios.post(`${BASE_URL}/users/register`, {
             username: data.username, 
             password: data.password, 
             first_name: data.first_name, 
@@ -21,7 +21,7 @@ const register = (data) => {
 
 const login = (data) => {
     return async function(dispatch) {
-        const res = await axios.post(`${base_url}/login`, {username: data.username, password: data.password});
+        const res = await axios.post(`${BASE_URL}/users/login`, {username: data.username, password: data.password});
         let user = res.data;
         dispatch(doLogin(user));
     };
@@ -36,7 +36,7 @@ const addGameToList = (user_id, game_id, _token, inGameName) => {
             in_game_name: inGameName || undefined
         };
 
-        const res = await axios.post(`${base_url}/${user_id}/games_playing`,body);          
+        const res = await axios.post(`${BASE_URL}/users/${user_id}/games_playing`,body);          
 
         dispatch(addGameToPlaying(res.data[0]))
     }
@@ -45,7 +45,7 @@ const addGameToList = (user_id, game_id, _token, inGameName) => {
 const removeGameFromList = (user, game_id, token) => {
     return async function(dispatch) {
         const user_id = user.id;
-        axios.delete(`${base_url}/${user_id}/games_playing/${game_id}`,{data: {_token: token}});
+        axios.delete(`${BASE_URL}/users/${user_id}/games_playing/${game_id}`,{data: {_token: token}});
 
         dispatch(doRemoveGameFromList(user))
     };
@@ -53,7 +53,7 @@ const removeGameFromList = (user, game_id, token) => {
 
 const getUser = (user_id) => {
     return async function(dispatch) {
-        const res = await axios.get(`${base_url}/${user_id}`)
+        const res = await axios.get(`${BASE_URL}/users/${user_id}`)
 
         dispatch(doGetUser(res.data))
     }

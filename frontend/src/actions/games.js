@@ -3,9 +3,11 @@ import {LOAD_GAME, LOAD_ALL_GAMES, RESET_GAME} from './types'
 import {platformsWithId} from '../dataSets/platforms'
 import {game_modesWithId} from '../dataSets/game_modes'
 
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001"
+
 const getGameFromAPI = (game_slug) => {
     return async function (dispatch) {
-        const res = await axios.get(`http://localhost:3001/games/${game_slug}`);
+        const res = await axios.get(`${BASE_URL}/games/${game_slug}`);
         let{
             id,
             game_name,
@@ -50,7 +52,7 @@ const getGameFromAPI = (game_slug) => {
 
 const getAllGamesFromAPI = (limit, offset) => {
     return async function(dispatch) {
-        const res = await axios.get(`http://localhost:3001/games`, {limit: limit, offset: offset});
+        const res = await axios.get(`${BASE_URL}/games`, {limit: limit, offset: offset});
 
         let gamesList = res.data.games
 

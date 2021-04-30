@@ -7,8 +7,6 @@ import {BrowserRouter} from 'react-router-dom'
 import ScrollToTop from "./helpers/scrollToTop";
 import WOW from "wowjs";
 
-export const TOKEN_STORAGE_ID = "GG-token"
-
 function App() {
   useEffect(() => {
     new WOW.WOW().init();

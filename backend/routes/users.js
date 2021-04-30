@@ -14,7 +14,7 @@ const createToken = require('../helpers/createToken');
 // User Routes
 // **************************************************************
 
-router.get('/', async function(req, res, next) {
+router.get('/',  async function(req, res, next) {
     try{
         const users = User.findAll();
         return res.json({users});
@@ -23,7 +23,7 @@ router.get('/', async function(req, res, next) {
     };
 });
 
-router.get("/:id", async function(req, res, next) {
+router.get("/:id",  async function(req, res, next) {
     try {
       const user = await User.findOne(req.params.id);
       return res.json({ user });
@@ -53,7 +53,7 @@ router.post("/register", async function(req, res, next) {
 };
 });
 
-router.post('/login', async function(req, res, next){
+router.post('/login',  async function(req, res, next){
   try{
     const isValid = validate(req.body, userAuth);
 
@@ -75,7 +75,7 @@ router.post('/login', async function(req, res, next){
   };
 });
 
-router.patch("/:id", authRequired, ensureCorrectUser, async function(req, res, next) {
+router.patch("/:id",  authRequired, ensureCorrectUser, async function(req, res, next) {
   let data = req.body
     try {
       if (data.isAdmin) {
@@ -114,7 +114,7 @@ router.patch("/:id", authRequired, ensureCorrectUser, async function(req, res, n
     }
 });
 
-router.delete("/:id",authRequired, ensureCorrectUser, async function(req, res, next) {
+router.delete("/:id", authRequired, ensureCorrectUser, async function(req, res, next) {
   const data = req.body
     try {
       console.log(data)
@@ -135,7 +135,7 @@ router.delete("/:id",authRequired, ensureCorrectUser, async function(req, res, n
 // games_playing routes
 // ******************************************************
 
-router.get('/:id/games_playing', async function(req, res, next){
+router.get('/:id/games_playing',  async function(req, res, next){
   try{
     const gamesPlaying = await GamePlaying.getAllGamesPlaying(req.params.id);
 
@@ -145,7 +145,7 @@ router.get('/:id/games_playing', async function(req, res, next){
 }
 });
 
-router.get('/:id/games_playing/:game_id', async function(req, res, next){
+router.get('/:id/games_playing/:game_id',  async function(req, res, next){
   try{
     let game_id = req.params.game_id;
     let body = req.body;
@@ -158,7 +158,7 @@ router.get('/:id/games_playing/:game_id', async function(req, res, next){
 }
 });
 
-router.post('/:id/games_playing', async function(req, res, next){
+router.post('/:id/games_playing',  async function(req, res, next){
   let toValidate = {
     user_id: req.body.user_id,
     game_id: req.body.game_id,
@@ -184,7 +184,7 @@ router.post('/:id/games_playing', async function(req, res, next){
 }
 });
 
-router.patch('/:id/games_playing/:game_id', authRequired, ensureCorrectUser, async function(req, res, next){
+router.patch('/:id/games_playing/:game_id',  authRequired, ensureCorrectUser, async function(req, res, next){
   const isValid = validate(req.body, gamePlayingSchema);
 
   if (!isValid.valid) {
@@ -207,7 +207,7 @@ router.patch('/:id/games_playing/:game_id', authRequired, ensureCorrectUser, asy
 }
 });
 
-router.delete('/:id/games_playing/:game_id', authRequired, async function(req, res, next){
+router.delete('/:id/games_playing/:game_id',  authRequired, async function(req, res, next){
   try{
     let game_id = req.params.game_id;
     let body = {game_id: game_id};

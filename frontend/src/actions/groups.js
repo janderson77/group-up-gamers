@@ -2,11 +2,11 @@ import axios from 'axios';
 import {LOAD_GROUP, LOAD_ALL_GROUPS, RESET_GROUPS, JOIN_GROUP, LEAVE_GROUP, CREATE_GROUP, SET_GROUP_GAME, UPDATE_JOINED_GROUPS, CREATE_MESSAGE, DELETE_MESSAGE, UPDATE_GROUP, KICK_MEMBER, BAN_MEMBER, UNBAN_MEMBER, DELETE_GROUP, UPDATE_GROUP_FOR_USER} from './types';
 import {addGameToPlaying} from './users'
 
-const BASE_URL = 'http://localhost:3001/groups'
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001"
 
 const getGroupFromApi = (group_id) => {
     return async function(dispatch) {
-        const res = await axios.get(`${BASE_URL}/${group_id}`);
+        const res = await axios.get(`${BASE_URL}/groups/${group_id}`);
         let{
             id,
             group_name,
@@ -43,7 +43,7 @@ const getGroupFromApi = (group_id) => {
 
 const getGroupFromApiAdmin = (group_id) => {
     return async function(dispatch) {
-        const res = await axios.get(`${BASE_URL}/${group_id}`);
+        const res = await axios.get(`${BASE_URL}/groups/${group_id}`);
         let{
             id,
             group_name,
@@ -77,7 +77,7 @@ const getGroupFromApiAdmin = (group_id) => {
 
 const getAllGroupsFromApi = (limit, offset) => {
     return async function(dispatch) {
-        const res = await axios.get(`${BASE_URL}`, {limit: limit, offset: offset});
+        const res = await axios.get(`${BASE_URL}/groups`, {limit: limit, offset: offset});
 
         let groupsList = res.data;
 
@@ -87,10 +87,10 @@ const getAllGroupsFromApi = (limit, offset) => {
 
 const joinGroup = (user_id, group_id) => {
     return async function(dispatch) {
-        const res = await axios.post(`${BASE_URL}/${group_id}/join`,{user: user_id});
+        const res = await axios.post(`${BASE_URL}/groups/${group_id}/join`,{user: user_id});
 
         if(res.status === 200){
-            const groups = await axios.get(`${BASE_URL}/members/${user_id}`)
+            const groups = await axios.get(`${BASE_URL}/groups/members/${user_id}`)
             dispatch(doJoinGroup(groups.data[group_id]))
         }
     }
@@ -98,7 +98,7 @@ const joinGroup = (user_id, group_id) => {
 
 const leaveGroup = (user_id, group_id) => {
     return async function(dispatch) {
-        const res = await axios.post(`${BASE_URL}/${group_id}/leave`,{
+        const res = await axios.post(`${BASE_URL}/groups/${group_id}/leave`,{
             user: user_id
         });
 
@@ -111,7 +111,7 @@ const leaveGroup = (user_id, group_id) => {
 const createGroup = (data) => {
     return async function(dispatch) {
         delete data.in_game_name
-        const res = await axios.post(`${BASE_URL}`, data);
+        const res = await axios.post(`${BASE_URL}/groups`, data);
         const groupForMyGroups = {
             ...res.data.newGroup.group,
             user_id: res.data.newGroup.member.user_id,
@@ -133,7 +133,7 @@ const setGroupGame = (game) => {
 
 const createMessage = (data) => {
     return async function(dispatch){
-        const res = await axios.post(`${BASE_URL}/${data.group_id}/messages`,data)
+        const res = await axios.post(`${BASE_URL}/groups/${data.group_id}/messages`,data)
 
         dispatch(doCreateMessage(res.data))
     }
@@ -141,7 +141,7 @@ const createMessage = (data) => {
 
 const deleteMessage = (data) => {
     return async function(dispatch){
-        await axios.delete(`${BASE_URL}/${data.group_id}/messages/${data.message_id}`)
+        await axios.delete(`${BASE_URL}/groups/${data.group_id}/messages/${data.message_id}`)
 
         dispatch(doDeleteMessage(data))
         
@@ -158,7 +158,7 @@ const updateGroup = (data) => {
     let group_slug = data.group_name.toLowerCase().split(" ").join("-");
     groupData.group_slug = group_slug;
     return async function(dispatch){
-        const res = await axios.patch(`${BASE_URL}/${data.id}`, groupData)
+        const res = await axios.patch(`${BASE_URL}/groups/${data.id}`, groupData)
 
         dispatch(doUpdateGroup(res.data))
         dispatch(doUpdateGroupForUsers(res.data))
@@ -167,7 +167,7 @@ const updateGroup = (data) => {
 
 const kickMember = (group_id, userid) => {
     return async function(dispatch) {
-        await axios.post(`${BASE_URL}/${group_id}/kick/${userid}`);
+        await axios.post(`${BASE_URL}/groups/${group_id}/kick/${userid}`);
 
         let data = {
             group_id: group_id,
@@ -179,21 +179,21 @@ const kickMember = (group_id, userid) => {
 
 const banMember = (group_id, user_id) => {
     return async function(dispatch){
-        const res = await axios.post(`${BASE_URL}/${group_id}/ban/${user_id}`)
+        const res = await axios.post(`${BASE_URL}/groups/${group_id}/ban/${user_id}`)
         dispatch(doBanMember(res.data))
     }
 };
 
 const unBanMember = (group_id, user_id) => {
     return async function(dispatch) {
-        const res = await axios.post(`${BASE_URL}/${group_id}/unban/${user_id}`);
+        const res = await axios.post(`${BASE_URL}/groups/${group_id}/unban/${user_id}`);
         dispatch(doUnbanMember(res.data))
     }
 };
 
 const deleteGroup = (group_id) => {
     return async function(dispatch){
-        await axios.delete(`${BASE_URL}/${group_id}`)
+        await axios.delete(`${BASE_URL}/groups/${group_id}`)
 
         dispatch(doDeleteGroup(group_id))
     }
@@ -208,14 +208,14 @@ const joinGroupAndAddGame = (data) => {
             in_game_name: data.in_game_name || undefined,
             username: data.username
         };
-        const add = await axios.post(`http://localhost:3001/users/${body.user_id}/games_playing`, body)
+        const add = await axios.post(`${BASE_URL}/groups/users/${body.user_id}/games_playing`, body)
 
         dispatch(addGameToPlaying(add.data[0]))
 
-        const res = await axios.post(`${BASE_URL}/${data.group_id}/join`,{user: data.user_id});
+        const res = await axios.post(`${BASE_URL}/groups/${data.group_id}/join`,{user: data.user_id});
 
         if(res.status === 200){
-            const groups = await axios.get(`${BASE_URL}/members/${data.user_id}`)
+            const groups = await axios.get(`${BASE_URL}/groups/members/${data.user_id}`)
             dispatch(doJoinGroup(groups.data[data.group_id]))
         }
     }

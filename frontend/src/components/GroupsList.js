@@ -36,18 +36,28 @@ const GroupsList = () => {
     
 
     if(missing) return (
-        <>
-        <h2>No Groups Have Been Created</h2>
-        <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
-        </>
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers | Groups</title>
+            </Helmet>
+            <div className="mt-5 pt-5">
+                <h2>No Groups Have Been Created</h2>
+                <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
+            </div>
+        </Fragment>
     );
 
     // Backup in case the above fails
     if(!groups || !groups.length) return (
-        <>
-        <h2>No Groups Have Been Created</h2>
-        <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
-        </>
+        <Fragment>
+            <Helmet>
+                <title>Group-Up Gamers | Groups</title>
+            </Helmet>
+            <div className="mt-5 pt-5">
+                <h2>No Groups Have Been Created</h2>
+                <h5>You can make one <NavLink to="/groups/select">here!</NavLink></h5>
+            </div>
+        </Fragment>
     );
 
     let groupsArr = Object.values(groups)

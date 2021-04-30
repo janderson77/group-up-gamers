@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const PUBLIC_URL = 'http://localhost:3000'
+const PUBLIC_URL = 'https://groupupgamers.herokuapp.com'
 
 module.exports = {
     PUBLIC_URL

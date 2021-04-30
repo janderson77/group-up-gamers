@@ -14,6 +14,7 @@ import NotLoggedIn from './NotLoggedIn'
 const MESSAGE_SHOW_PERIOD_IN_MSEC = '3000'
 
 function Profile() {
+  const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001"
   const user = useSelector(st => st.users.user)
   const dispatch = useDispatch();
   const history = useHistory();
@@ -87,7 +88,7 @@ function Profile() {
       profileData.username = user.username;
       profileData._token = user._token
 
-      let updatedUser = await axios.patch(`http://localhost:3001/users/${user.id}`,profileData);
+      let updatedUser = await axios.patch(`${BASE_URL}/users/${user.id}`,profileData);
 
       setUserForm(f => ({
         ...f,
@@ -141,7 +142,7 @@ function Profile() {
     };
   
     try{
-      const res = await axios.delete(`http://localhost:3001/users/${user.id}`,{data: toDelete});
+      const res = await axios.delete(`${BASE_URL}/users/${user.id}`,{data: toDelete});
 
       if(res.status === 200){
         history.push('/deleted');

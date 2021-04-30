@@ -5,7 +5,8 @@ import LayoutFullPage from '../template/layouts/LayoutFullPage'
 import HeroBanner from '../template/container/hero-banner/HeroVerticalSlidePortfolio';
 import PortfolioItem from '../template/components/portfolio/PortfolioItemFullPage';
 import portfolios from '../template/data/portfolio/portfolio-two.json'
-import {licenseKey} from '../secrets'
+
+const licenseKey = process.env.fullpageLicense
 
 
 const Home = () => {
@@ -14,7 +15,7 @@ const Home = () => {
 
     const options = {
         navigation: true,
-        licenseKey: licenseKey
+        licenseKey: String(licenseKey)
         
     }
     return(

@@ -11,7 +11,7 @@ import gamesbg from '../static/gamesbg.jpg'
 
 
 const GamesList = () => {
-    const BASE_URL = 'http://localhost:3001'
+    const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3001"
 
     let [games, setGames] = useState([]);
     let [game, setGame] = useState();
