@@ -14,7 +14,7 @@ This is a React.js application powered by Redux, Node.js and the Twitch [IGDB AP
 
 * Account creation/deletion/editing
 * Adding games to a list of games you enjoy
-* Group creation/deltion/editing
+* Group creation/deletion/editing
 * Group admin with kick/ban/message removal capabilities
 * Joining existing groups
 * Messaging on group message board
