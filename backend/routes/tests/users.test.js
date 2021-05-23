@@ -144,7 +144,7 @@ describe('PATCH /users/:id', () => {
 
         expect(getRes.body.user.profile_img_url).toBe("https://i.imgur.com/FNxk7B4.jpg");
 
-        expect(patchRes.body.user.profile_img_url).not.toEqual(getRes.body.user.profile_img_url);
+        expect(patchRes.body.user.profile_img_url).not.toBe(getRes.body.user.profile_img_url);
 
         expect(patchRes.body.user.profile_img_url).toBe("https://static.wikia.nocookie.net/deadliestfiction/images/7/73/Doomslayer.png/revision/latest?cb=20200325231240");
 
@@ -162,8 +162,51 @@ describe('PATCH /users/:id', () => {
 
         expect(getRes.body.user.discord_url).toBe("https://discord.com/channels/98834784855285760/252220568135270403");
 
-        expect(patchRes.body.user.discord_url).not.toEqual(getRes.body.user.discord_url);
+        expect(patchRes.body.user.discord_url).not.toBe(getRes.body.user.discord_url);
 
         expect(patchRes.body.user.discord_url).toBe("https://discord.com/channels/257360451665395721/257360451665395721")
+    });
+});
+
+describe("DELETE /users", () => {
+    test('Returns Unauthorized if invalid password', async () => {
+        const res = await request(app).delete('/users/1').send({
+            username: testUser.username,
+            password: "nonsense",
+            _token: testUser._token
+        });
+
+        expect(res.statusCode).toBe(401);
+    });
+
+    test('Returns Unauthorized if no _token', async () => {
+        const res = await request(app).delete('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+        });
+
+        expect(res.statusCode).toBe(401);
+    });
+
+    test('Returns 404 if invalid user id', async () => {
+        const res = await request(app).delete('/users/0').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token
+        });
+
+        expect(res.statusCode).toBe(404);
+    });
+
+    test('Deletes a user', async () => {
+        const res = await request(app).delete('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token
+        });
+        const getRes = await request(app).get('/users/1');
+        
+        expect(res.statusCode).toBe(200);
+        expect(getRes.statusCode).toBe(404);
     });
 });
