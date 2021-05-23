@@ -51,6 +51,7 @@ describe('POST /users authentication', () => {
 describe('GET /users', () => {
     test('Gets a list of users', async () => {
         const res = await request(app).get('/users');
+        console.log(res.body)
         expect(res.statusCode).toBe(200)
     });
 
@@ -66,19 +67,6 @@ describe('GET /users', () => {
 });
 
 describe('PATCH /users/:id', () => {
-    test('Returns user data with changes', async () => {
-        const res = await request(app).patch('/users/1').send({
-            username: testUser.username,
-            password: testUser.password,
-            _token: testUser._token,
-            first_name: "Roger"
-        });
-
-        expect(res.body.user.first_name).not.toBe("James");
-        expect(res.body.user.first_name).toBe("Roger");
-        expect(res.statusCode).toBe(200);
-    });
-
     test('Returns Unauthorized for invalid password', async () => {
         const res = await request(app).patch('/users/1').send({
             username: testUser.username,
@@ -97,5 +85,48 @@ describe('PATCH /users/:id', () => {
         });
 
         expect(res.statusCode).toBe(401);
-    })
+    });
+
+    test('Returns user data with changes', async () => {
+        const res = await request(app).patch('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token,
+            first_name: "Roger"
+        });
+
+        expect(res.body.user.first_name).not.toBe("James");
+        expect(res.body.user.first_name).toBe("Roger");
+        expect(res.statusCode).toBe(200);
+    });
+
+    test('Adds discord URL', async () => {
+        const res = await request(app).patch('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token,
+            discord_url: "https://discord.com/channels/98834784855285760/252220568135270403"
+        });
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.user).toHaveProperty('discord_url');
+        expect(res.body.user.discord_url).toBe("https://discord.com/channels/98834784855285760/252220568135270403");
+    });
+
+    test('Adds profile_img_url', async () => {
+        const res = await request(app).patch('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token,
+            profile_img_url: "https://i.imgur.com/FNxk7B4.jpg"
+        });
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.user).toHaveProperty('profile_img_url');
+        expect(res.body.user.profile_img_url).toBe("https://i.imgur.com/FNxk7B4.jpg");
+    });
+
+    // test('Changes profile_img_url', async => {
+    //     const getRes = await request(app).get('/users/1')
+    // });
 });

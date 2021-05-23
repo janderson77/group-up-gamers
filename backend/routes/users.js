@@ -16,7 +16,7 @@ const createToken = require('../helpers/createToken');
 
 router.get('/',  async function(req, res, next) {
     try{
-        const users = User.findAll();
+        const users = await User.findAll();
         return res.json({users});
     }catch(e) {
         return next(e)
