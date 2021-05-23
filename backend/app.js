@@ -34,7 +34,7 @@ app.use(function (req, res, next) {
   /** general error handler */
 
 app.use(function (err, req, res, next) {
-    if (err.stack) console.log(err.stack);
+    // if (err.stack) console.log(err.stack);
   
     res.status(err.status || 500);
   

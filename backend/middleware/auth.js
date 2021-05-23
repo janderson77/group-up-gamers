@@ -76,7 +76,6 @@ function ensureCorrectUser(req, res, next) {
 
     let token = jwt.verify(tokenStr, SECRET);
     req.username = token.username;
-    console.log(req.username)
 
     if (token.username === req.body.username) {
       return next();
