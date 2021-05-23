@@ -134,7 +134,7 @@ class User {
     static async findOne(id) {
         // Finds a user by their ID and return the user, as well as their groups and games data
         const userRes = await db.query(
-            `SELECT id, username, first_name, last_name, email, profile_img_url 
+            `SELECT id, username, first_name, last_name, email, profile_img_url, discord_url 
                 FROM users 
                 WHERE id = $1`,
             [id]);

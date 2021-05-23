@@ -117,7 +117,6 @@ router.patch("/:id",  authRequired, ensureCorrectUser, async function(req, res, 
 router.delete("/:id", authRequired, ensureCorrectUser, async function(req, res, next) {
   const data = req.body
     try {
-      console.log(data)
       await User.authenticate({
         username: data.username,
         password: data.password

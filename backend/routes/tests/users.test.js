@@ -51,13 +51,20 @@ describe('POST /users authentication', () => {
 describe('GET /users', () => {
     test('Gets a list of users', async () => {
         const res = await request(app).get('/users');
-        console.log(res.body)
         expect(res.statusCode).toBe(200)
+        expect(res.body.users.length).not.toBe(0);
+        expect(res.body.users[0]).toHaveProperty("id");
+        expect(res.body.users[0]).not.toHaveProperty("_token");
+        expect(res.body.users[0]).not.toHaveProperty("password");
     });
 
     test('Gets a single user by ID', async () => {
         const res = await request(app).get('/users/1');
         expect(res.statusCode).toBe(200);
+        expect(res.body.user).toHaveProperty('id');
+        expect(res.body.user).not.toHaveProperty("_token");
+        expect(res.body.user).not.toHaveProperty("password");
+
     });
 
     test('Returns 404 for invalid id', async () => {
@@ -126,7 +133,37 @@ describe('PATCH /users/:id', () => {
         expect(res.body.user.profile_img_url).toBe("https://i.imgur.com/FNxk7B4.jpg");
     });
 
-    // test('Changes profile_img_url', async => {
-    //     const getRes = await request(app).get('/users/1')
-    // });
+    test('Changes profile_img_url', async () => {
+        const getRes = await request(app).get('/users/1')
+        const patchRes = await request(app).patch('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token,
+            profile_img_url: "https://static.wikia.nocookie.net/deadliestfiction/images/7/73/Doomslayer.png/revision/latest?cb=20200325231240"
+        });
+
+        expect(getRes.body.user.profile_img_url).toBe("https://i.imgur.com/FNxk7B4.jpg");
+
+        expect(patchRes.body.user.profile_img_url).not.toEqual(getRes.body.user.profile_img_url);
+
+        expect(patchRes.body.user.profile_img_url).toBe("https://static.wikia.nocookie.net/deadliestfiction/images/7/73/Doomslayer.png/revision/latest?cb=20200325231240");
+
+
+    });
+
+    test('Changes discord_url', async () => {
+        const getRes = await request(app).get('/users/1');
+        const patchRes = await request(app).patch('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token,
+            discord_url: "https://discord.com/channels/257360451665395721/257360451665395721"
+        });
+
+        expect(getRes.body.user.discord_url).toBe("https://discord.com/channels/98834784855285760/252220568135270403");
+
+        expect(patchRes.body.user.discord_url).not.toEqual(getRes.body.user.discord_url);
+
+        expect(patchRes.body.user.discord_url).toBe("https://discord.com/channels/257360451665395721/257360451665395721")
+    });
 });
