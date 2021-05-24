@@ -94,6 +94,17 @@ describe('PATCH /users/:id', () => {
         expect(res.statusCode).toBe(401);
     });
 
+    test('Returns Unauthorized if invalid _token', async () => {
+        const res = await request(app).patch('/users/1').send({
+            username: testUser.username,
+            password: testUser.password,
+            first_name: "Nope",
+            _token: "hellothere.generalkenobi"
+        });
+
+        expect(res.statusCode).toBe(401);
+    });
+
     test('Returns user data with changes', async () => {
         const res = await request(app).patch('/users/1').send({
             username: testUser.username,
@@ -168,6 +179,88 @@ describe('PATCH /users/:id', () => {
     });
 });
 
+describe('POST /users/:id/games_playing', () => {
+    test('Adds game to user games playing list', async () => {
+        const res = await request(app).post('/users/1/games_playing').send({
+            user_id: 1,
+            game_id: 17725,
+            in_game_name: "Doomslayer"
+        });
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body[0]).toHaveProperty('id');
+        expect(res.body[0].id).toBe(17725);
+        expect(res.body[0].game_name).toBe("DOOM");
+    });
+
+    test('Adds game to user games playing list with no in game name', async () => {
+        const res = await request(app).post('/users/1/games_playing').send({
+            user_id: 1,
+            game_id: 6954
+        });
+
+        expect(res.statusCode).toBe(200);
+    });
+
+    test('Returns 400 if no game id', async () => {
+        const res = await request(app).post('/users/1/games_playing').send({
+            user_id: 1,
+            in_game_name: "Doomslayer"
+        });
+
+        expect(res.statusCode).toBe(400);
+    });
+
+    test('Returns 400 if no user id', async () => {
+        const res = await request(app).post('/users/1/games_playing').send({
+            game_id: 17725,
+            in_game_name: "Doomslayer"
+        });
+
+        expect(res.statusCode).toBe(400);
+    })
+});
+
+describe('GET /users/:id/games_playing', () => {
+    test('Gets a list of games the user is playing', async() => {
+        const res = await request(app).get('/users/1/games_playing');
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.length).not.toBe(0);
+        expect(res.body[0]).toHaveProperty('user_id');
+        expect(res.body[0].user_id).toBe(1);
+        expect(res.body[0].game_id).toBe(17725)
+    });
+
+    
+});
+
+describe('DELETE users/:id/games_playing/:game_id', () => {
+    test('Returns 401 if no _token', async () => {
+        const res = await request(app).delete('/users/1/games_playing/17725')
+
+        expect(res.statusCode).toBe(401);
+    });
+
+    test('Returns 401 if invalid _token', async () => {
+        const res = await request(app).delete('/users/1/games_playing/17725').send({
+            _token: "hellothere.generalkenobi"
+        })
+
+        expect(res.statusCode).toBe(401);
+    });
+
+    test('Removes game from games_playing list', async () => {
+        const res = await request(app).delete('/users/1/games_playing/17725').send({
+            username: testUser.username,
+            password: testUser.password,
+            _token: testUser._token
+        })
+
+        expect(res.statusCode).toBe(200)
+    });
+});
+
 describe("DELETE /users", () => {
     test('Returns Unauthorized if invalid password', async () => {
         const res = await request(app).delete('/users/1').send({
@@ -210,3 +303,4 @@ describe("DELETE /users", () => {
         expect(getRes.statusCode).toBe(404);
     });
 });
+

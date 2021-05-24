@@ -183,6 +183,7 @@ router.post('/:id/games_playing',  async function(req, res, next){
 }
 });
 
+// Not yet implemented
 router.patch('/:id/games_playing/:game_id',  authRequired, ensureCorrectUser, async function(req, res, next){
   const isValid = validate(req.body, gamePlayingSchema);
 
