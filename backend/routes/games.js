@@ -27,7 +27,6 @@ router.get('/min',  async function(req, res, next){
 
 router.post('/search',  async function(req, res, next){
     try{
-        console.log(req.body)
         const games = await Game.findAllStartsWith(req.body.search);
         return res.json([games])
     }catch(e){
