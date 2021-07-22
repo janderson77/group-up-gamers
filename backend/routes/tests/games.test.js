@@ -11,19 +11,19 @@ let testUser = {
     last_name: "Logan"
 };
 
-beforeAll(async() => {
-    const res = await request(app).post('/users/register').send(testUser);
-    if(res.statusCode === 201){
-        testUser._token = res.body._token;
-    }
-});
+// beforeAll(async() => {
+//     const res = await request(app).post('/users/register').send(testUser);
+//     if(res.statusCode === 201){
+//         testUser._token = res.body._token;
+//     }
+// });
 
-afterAll(async () => {
-    delete testUser._token;
-    await db.query(`DELETE FROM users`)
-    await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
-    await db.end();
-});
+// afterAll(async () => {
+//     delete testUser._token;
+//     await db.query(`DELETE FROM users`)
+//     await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
+//     await db.end();
+// });
 
 describe('GET /games', () => {
     test('Gets a list of all games', async () => {
@@ -81,12 +81,18 @@ describe('POST /games/search', () => {
 });
 
 describe('GET /games/:slug', () => {
-    test('returns game information for :slug', async() => {
+    test('Returns game information for :slug', async() => {
         const res = await request(app).get('/games/doom');
 
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty("game");
         expect(res.body.game.id).toBe(17725);
         expect(res.body.game.slug).toBe("doom");
+    })
+
+    test('Returns 404 for invalid slug', async() => {
+        const res = await request(app).get('/games/doomsfadsf');
+
+        expect(res.statusCode).toBe(404);
     })
 });
