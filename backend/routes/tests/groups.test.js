@@ -46,18 +46,20 @@ beforeAll(async() => {
 
 afterAll(async () => {
     delete testUser._token;
-    await db.query(`DELETE FROM users`)
-    await db.query('DELETE FROM GROUPS')
+    await db.query(`DELETE FROM users`);
+    await db.query('DELETE FROM GROUPS');
     await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
-    await db.query('ALTER SEQUENCE groups_id_seq RESTART WITH 1')
+    await db.query('ALTER SEQUENCE groups_id_seq RESTART WITH 1');
     await db.end();
 });
 
 describe('GET /groups', () => {
     test('Gets a list of all groups', async () => {
         const res = await request(app).get('/groups');
-        expect(res.statusCode).toBe(200)
-        expect(res.body.length).toBeGreaterThan(0)
+        expect(res.statusCode).toBe(200);
+        expect(res.body.length).toBeGreaterThan(0);
+        expect(res.body[0].id).toBe(1);
+        expect(res.body[0].group_owner_id).toBe(1);
 
     });
 });
