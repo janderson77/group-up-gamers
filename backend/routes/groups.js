@@ -43,6 +43,7 @@ router.get("/:id",  async function (req, res, next) {
 });
 
 router.get('/members/:id',  async function(req, res, next){
+  // Will find all of a given user's groups that they have joined or been banned from
   try{
     const groups = await Group.findAllOfOwn(req.params.id);
     return res.json(groups)

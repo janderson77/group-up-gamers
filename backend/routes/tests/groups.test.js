@@ -63,3 +63,32 @@ describe('GET /groups', () => {
 
     });
 });
+
+describe('GET /groups/:id', () => {
+    test('Gets a group by its id', async() => {
+        const res = await request(app).get('/groups/1');
+        expect(res.statusCode).toBe(200);
+        expect(res.body.group.id).toBe(1);
+        expect(res.body.group.group_owner_id).toBe(1);
+        expect(res.body.group.group_game_id).toBe(6954)
+    });
+    test('Returns error 500 if group ID is invalid', async() => {
+        const res = await request(app).get('/groups/0')
+        expect(res.statusCode).toBe(500);
+    });
+});
+
+describe('GET /groups/members/:id before joining group', async() => {
+    test('Returns no groups joined message', async() => {
+        const res = await request(app).get('/groups/members/1')
+        expect(res.statusCode).toBe(200);
+        expect(res.body.message).toBe("You have not joined any groups")
+    });
+
+    // Not implimented 
+    // test('Returns 400 if not own user ID', async() => {
+    //     const res = await request(app).get('/groups/members/2')
+    //     expect(res.statusCode).toBe(400);
+    // });
+    
+});

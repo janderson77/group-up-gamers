@@ -91,7 +91,7 @@ class Group {
         groups = groupRes.rows;
         groups = toObject(groups, "id")
     }else{
-      groups.message = "You have not joined any groups"
+      groups = {message: "You have not joined any groups"}
     };
     return groups;
 
