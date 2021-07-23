@@ -78,11 +78,11 @@ describe('GET /groups/:id', () => {
     });
 });
 
-describe('GET /groups/members/:id before joining group', async() => {
+describe('GET /groups/members/:id before joining group', () => {
     test('Returns no groups joined message', async() => {
         const res = await request(app).get('/groups/members/1')
         expect(res.statusCode).toBe(200);
-        expect(res.body.message).toBe("You have not joined any groups")
+        expect(res.body.message).toBe('You have not joined any groups')
     });
 
     // Not implimented 
@@ -91,4 +91,24 @@ describe('GET /groups/members/:id before joining group', async() => {
     //     expect(res.statusCode).toBe(400);
     // });
     
+});
+
+describe('POST /groups', () => {
+    test('Creates a new group and adds user to it as admin', async() => {
+        const res = await request(app).post('/groups').send({
+            group_name: "BossKillers",
+            group_slug: "bosskillers",
+            group_game_id: 6954,
+            group_owner_id: 2,
+            group_discord_url: "https//:discord.gg/server",
+            group_logo_url: "https://avatars0.githubusercontent.com/u/13444851?s=460&v=4"
+        });
+        expect(res.statusCode).toBe(201);
+        expect(res.body.newGroup.group.id).toBe(2);
+        expect(res.body.newGroup.group.group_name).toBe('BossKillers');
+        expect(res.body.newGroup.group.group_game_id).toBe(6954);
+        expect(res.body.newGroup.group.group_owner_id).toBe(2);
+        expect(res.body.newGroup.member.user_id).toBe(2);
+        expect(res.body.newGroup.member.is_group_admin).toBe(true)
+    });
 });
