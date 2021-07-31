@@ -3,6 +3,12 @@ const request = require('supertest');
 const app = require('../../app');
 const db = require('../../db');
 
+
+afterAll(async () => {
+    await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
+    await db.end();
+});
+
 let testUser = {
     username: "TestUser",
     password: "Testpassword1!",
@@ -11,18 +17,13 @@ let testUser = {
     last_name: "Logan"
 };
 
-afterAll(async () => {
-    delete testUser._token;
-    await db.query(`DELETE FROM users`)
-    await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
-    await db.end();
-})
-
 describe('POST /users authentication', () => {
     test('Creates a new user', async () => {
         const res = await request(app).post('/users/register').send(testUser);
         if(res.statusCode === 201){
             testUser._token = res.body._token;
+        }else{
+            console.log(res.body)
         }
         expect(res.statusCode).toBe(201)
         expect(res.body).toHaveProperty('_token')

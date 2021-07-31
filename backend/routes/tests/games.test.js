@@ -11,19 +11,18 @@ let testUser = {
     last_name: "Logan"
 };
 
-// beforeAll(async() => {
-//     const res = await request(app).post('/users/register').send(testUser);
-//     if(res.statusCode === 201){
-//         testUser._token = res.body._token;
-//     }
-// });
+beforeAll(async() => {
+    const res = await request(app).post('/users/register').send(testUser);
+    if(res.statusCode === 201){
+        testUser._token = res.body._token;
+    }
+});
 
-// afterAll(async () => {
-//     delete testUser._token;
-//     await db.query(`DELETE FROM users`)
-//     await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
-//     await db.end();
-// });
+afterAll(async () => {
+    await db.query(`DELETE FROM users`)
+    await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
+    await db.end();
+});
 
 describe('GET /games', () => {
     test('Gets a list of all games', async () => {

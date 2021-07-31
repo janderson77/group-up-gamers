@@ -12,7 +12,8 @@ let testUser = {
 };
 
 beforeAll(async() => {
-    
+    await db.query(`DELETE FROM users`)
+    await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);  
     const userRes = await db.query(
         `INSERT INTO users
         (username, password, first_name, last_name, email)
@@ -45,9 +46,9 @@ beforeAll(async() => {
 });
 
 afterAll(async () => {
-    delete testUser._token;
+    await db.query('DELETE FROM groups'); 
     await db.query(`DELETE FROM users`);
-    await db.query('DELETE FROM GROUPS');
+    
     await db.query(`ALTER SEQUENCE users_id_seq RESTART WITH 1`);
     await db.query('ALTER SEQUENCE groups_id_seq RESTART WITH 1');
     await db.end();
@@ -111,4 +112,25 @@ describe('POST /groups', () => {
         expect(res.body.newGroup.member.user_id).toBe(2);
         expect(res.body.newGroup.member.is_group_admin).toBe(true)
     });
+    test('Does not create new group if no group name', async() => {
+        const res = await request(app).post('/groups').send({
+            group_slug: "",
+            group_game_id: 6954,
+            group_owner_id: 2,
+            group_discord_url: "https//:discord.gg/server",
+            group_logo_url: "https://avatars0.githubusercontent.com/u/13444851?s=460&v=4"
+        });
+
+        expect(res.statusCode).toBe(400)
+    })
+    test('does not create a group if no game id', async() => {
+        const res = await request(app).post('/groups').send({
+            group_name: "DoomSlayers",
+            group_slug: "doomslayers",
+            group_owner_id: 2,
+            group_discord_url: "https//:discord.gg/server",
+            group_logo_url: "https://avatars0.githubusercontent.com/u/13444851?s=460&v=4"
+        });
+        expect(res.statusCode).toBe(400)
+    })
 });
