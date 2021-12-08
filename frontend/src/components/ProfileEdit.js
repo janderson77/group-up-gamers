@@ -165,7 +165,7 @@ function Profile() {
                 title="Edit Profile"
                 bg={profilebg}
                 prev={previous}
-                stem="Profile"
+                stem="/profile"
             />
     <LayoutDefault className="template-color-1 template-font-1">
     <div className="col-md-6 col-lg-4 offset-md-3 offset-lg-4 d-flex flex-column align-items-center mt-5 pt-3">

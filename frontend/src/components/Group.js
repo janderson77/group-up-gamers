@@ -347,7 +347,7 @@ const Group = () => {
                     title={group.group_name}
                     bg={groupsbg}
                     prev={previous}
-                    stem="groups"
+                    stem="/groups"
                 />
         <LayoutDefault className="template-color-1 template-font-1">
         <div className="brook-blog-details-area bg_color--1 pt--90 pb--150">
