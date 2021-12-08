@@ -102,6 +102,12 @@ class Group {
 
     const joinedOrBanned = await checkIfJoinedOrBanned(user, group_id);
 
+    if(!user){
+      let joinError = new Error('No User ID Provided');
+      joinError.status = 400;
+      throw joinError
+    }
+
     if(joinedOrBanned.joined){
       if(joinedOrBanned.is_banned){
         let joinError = new Error(`You cannot join this group. You have been banned.`);
@@ -133,7 +139,7 @@ class Group {
       WHERE groups.id = $1
     `,[group_id]);
 
-    return(groupRes.rows[0].data);
+    return(groupRes.rows[0]);
   };
 
   static async banUser(user_id, group_id) {

@@ -1,4 +1,5 @@
 process.env.NODE_ENV = 'test';
+const { text } = require('stream/consumers');
 const request = require('supertest');
 const app = require('../../app');
 const db = require('../../db');
@@ -27,6 +28,34 @@ beforeAll(async() => {
             "Doomguy@doom.com"
         ]
     );
+
+    const userRes2 = await db.query(
+        `INSERT INTO users
+        (username, password, first_name, last_name, email)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, username, first_name, last_name, email`,
+        [
+            "TestUser2",
+            "thisisatest123",
+            "Victor",
+            "Logan",
+            "test2@test.com"
+        ]
+    );
+
+    const userRes3 = await db.query(
+        `INSERT INTO users
+        (username, password, first_name, last_name, email)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, username, first_name, last_name, email`,
+        [
+            "TestUser3",
+            "thisisatest123",
+            "Keanu",
+            "Reeves",
+            "test3@test.com"
+        ]
+    );
     const groupRes = await db.query(
         `INSERT INTO groups
         (group_name, group_slug, group_game_id, group_owner_id)
@@ -39,6 +68,7 @@ beforeAll(async() => {
             1
         ]
         );
+        
     const res = await request(app).post('/users/register').send(testUser);
     if(res.statusCode === 201){
         testUser._token = res.body._token;
@@ -133,4 +163,24 @@ describe('POST /groups', () => {
         });
         expect(res.statusCode).toBe(400)
     })
+
+    test('adds new user to group', async() => {
+        const res = await request(app).post('/groups/2/join').send({
+            user: 3
+        })
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.id).toBe(2);
+        expect(res.body.group_name).toBe('BossKillers')
+        expect(res.body.group_game_id).toBe(6954)
+
+    })
+
+    test('does not add user to group if no user_id', async() => {
+        const res = await request(app).post('/groups/2/join')
+
+        expect(res.statusCode).not.toBe(200)
+        expect(res.statusCode).toBe(400)
+    })
+
 });
