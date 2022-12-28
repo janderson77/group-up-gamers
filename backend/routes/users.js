@@ -78,6 +78,7 @@ router.post('/login',  async function(req, res, next){
 router.patch("/:id",  authRequired, ensureCorrectUser, async function(req, res, next) {
   let data = req.body
     try {
+      // Will catch if a user is trying to change their admin status.
       if (data.isAdmin) {
         return next({ status: 400, message: "Not allowed" });
       }
