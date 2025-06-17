@@ -20,36 +20,6 @@ This is a React.js application powered by Redux, Node.js and the Twitch [IGDB AP
 * Messaging on group message board
 * More amazing features to come
 
-## Setup
-
----
-
-Clone this repo to your chosen destination.
-
-Navigate to the frontend folder and run `npm install` to install dependancies
-
-Navigate to the backend folder and run `npm install` to install dependancies
-
-You wil need to obtain a FullPage.js license. Once obtained, create a secrets.js file in the frontend's src directory. Export a variable named "licenseKey", or set an environment variable called liceseKey with this data
-
-```js
-export const licenseKey = 'your-key-here'
-```
-
-To set up the database, you will need to be using PostgreSQL.
-
-First run
-
-```console
-createdb groupupgamers_db
-```
-
-The included db file is a db dump, so you will just need to run the following command from your shell
-
-```console
-psql groupupgamers_db < db.pgsql
-```
-
 ## Usage
 
 ---
