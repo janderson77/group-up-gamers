@@ -6,7 +6,7 @@ This is a React.js application powered by Redux, Node.js and the Twitch [IGDB AP
 
 ---
 
-[![Front-Page-Preview](https://github.com/janderson77/group-up-gamers/blob/main/GGFrontPage.png)]
+[![Front-Page-Preview](https://github.com/janderson77/group-up-gamers/blob/main/GGFrontPage.png)](https://github.com/janderson77/group-up-gamers/blob/main/GGFrontPage.png)
 
 ## Features
 
