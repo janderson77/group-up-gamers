@@ -6,7 +6,7 @@ This is a React.js application powered by Redux, Node.js and the Twitch [IGDB AP
 
 ---
 
-![Front Page Preview](https://i.imgur.com/ScgqaBz.png)
+![Front Page Preview]([https://i.imgur.com/ScgqaBz.png](https://i.imgur.com/DNrZLsN.png))
 
 ## Features
 
